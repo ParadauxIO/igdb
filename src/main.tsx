@@ -1,0 +1,26 @@
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter, Route, Routes } from "react-router";
+
+import './style/reset.scss';
+import './main.scss';
+import ProtectedView from './views/ProtectedView.tsx';
+import AuthView from './views/AuthView.tsx';
+import HomeView from './views/HomeView.tsx';
+
+import LogoutView from './views/LogoutView.tsx';
+import DogView from "./views/DogView.tsx";
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <ProtectedView authView={<AuthView/>}> {/* This is the auth view that will be shown if the user is not authenticated */}
+      <BrowserRouter> {/* This is the router that maps endpoints to particular components */}
+        <Routes>
+            <Route path="/" element={<HomeView/>} />
+            <Route path="/logout" element={<LogoutView/>} />
+            <Route path="/dogs" element={<DogView/>} />
+        </Routes>
+      </BrowserRouter>
+    </ProtectedView>
+  </StrictMode>,
+)

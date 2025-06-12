@@ -1,0 +1,46 @@
+.dog-view {
+  .dog-view-container {
+    flex: 1;
+    display: flex;
+    min-height: 100dvh;
+  }
+
+  .dog-view-settings {
+    font-family: sans-serif;
+    font-size: 0.9rem;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 1rem;
+    background: #EEE;
+  }
+  .dog-feed {
+    font-family: sans-serif;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding-right: 7rem;
+    padding-left: 2rem;
+
+    .dog-feed-item {
+      padding: 1rem;
+      border-radius: 6px;
+      background: #EEE;
+      margin-block: 1rem;
+      display: flex;
+      .dog-image-container {
+        img {
+          width: 150px;
+        }
+      }
+
+      .dog-container {
+        margin-left: 0.5rem;
+        flex: 1;
+
+        h2 {
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+}
