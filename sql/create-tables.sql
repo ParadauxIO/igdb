@@ -98,3 +98,28 @@ CREATE POLICY "Users can update their own profile"
   USING (
     auth.uid() = id
   );
+
+-- TEMPORARY POLICIES WHICH WILL NEED TO BE REPLACED WHEN ROLE TYPES EXIST
+CREATE POLICY "Users can update all dogs"
+  ON "public"."dogs"
+  FOR UPDATE
+  TO authenticated
+  USING (
+    true
+  );
+
+CREATE POLICY "Users can insert dogs"
+    ON "public"."dogs"
+    FOR INSERT
+    TO authenticated
+    WITH CHECK (
+        true
+    );
+
+CREATE POLICY "Users can delete dogs"
+    ON "public"."dogs"
+    FOR DELETE
+    TO authenticated
+    USING (
+        true
+    );

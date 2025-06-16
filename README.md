@@ -24,3 +24,4 @@ You will need to modify .env to point at your own supabase instance should that 
 
 There is a deployed demo of the application at https://igdb-portal.paradaux.io which uses my [Rían] development supabase instance.
 
+https://coolors.co/palette/264653-2a9d8f-e9c46a-f4a261-e76f51
