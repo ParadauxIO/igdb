@@ -85,11 +85,11 @@ export default function DogView() {
             footer: info => info.column.id,
         }),
 
-        columnHelper.accessor('dog_weight_kg', {
-            header: 'Weight (kg)',
-            cell: info => info.getValue() != null ? `${info.getValue()} kg` : 'N/A',
-            footer: info => info.column.id,
-        }),
+        // columnHelper.accessor('dog_weight_kg', {
+        //     header: 'Weight (kg)',
+        //     cell: info => info.getValue() != null ? `${info.getValue()} kg` : 'N/A',
+        //     footer: info => info.column.id,
+        // }),
 
         columnHelper.accessor('dog_current_owner', {
             header: 'Current Owner',
