@@ -1,0 +1,22 @@
+.card {
+  border-radius: 12px;
+  border: 1px solid #e5e7eb; // light gray border
+  background-color: #ffffff; // white card background
+  color: #111827; // dark text color
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  font-family: sans-serif;
+
+  .card-key {
+    font-size: 1.2rem; // 14px
+    font-weight: 500;
+    color: #6b7280; // muted gray text
+  }
+
+  .card-value {
+    font-size: 1.5rem; // 24px
+    font-weight: 700;
+  }
+}
