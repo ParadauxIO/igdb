@@ -1,0 +1,133 @@
+.carousel-container {
+    margin: 1rem 0;
+    max-width: 100%;
+
+
+    .carousel-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        background: #f8f9fa;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .carousel-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s ease;
+        z-index: 2;
+
+        &:hover {
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        &:focus {
+            outline: 2px solid #007bff;
+            outline-offset: 2px;
+        }
+    }
+
+    .carousel-btn-prev {
+        left: 10px;
+    }
+
+    .carousel-btn-next {
+        right: 10px;
+    }
+
+    .carousel-indicators {
+        position: absolute;
+        bottom: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 8px;
+        z-index: 2;
+    }
+
+    .carousel-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &.active {
+            background: white;
+            border-color: white;
+        }
+
+        &:hover {
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+    }
+
+    .carousel-counter {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        z-index: 2;
+    }
+
+    // Responsive design
+    @media (max-width: 768px) {
+        .carousel-image {
+            height: 300px;
+        }
+
+        .carousel-btn {
+            width: 35px;
+            height: 35px;
+            font-size: 18px;
+        }
+
+        .carousel-btn-prev {
+            left: 5px;
+        }
+
+        .carousel-btn-next {
+            right: 5px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .carousel-image {
+            height: 250px;
+        }
+
+        .carousel-btn {
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+        }
+    }
+}

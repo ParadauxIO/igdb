@@ -1,0 +1,10 @@
+.home {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2rem;
+    
+    .home-feed {
+        margin-block: 0.2rem;
+        margin-inline: 2rem;
+    }
+}
