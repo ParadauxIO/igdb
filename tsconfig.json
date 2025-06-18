@@ -3,5 +3,15 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "compilerOptions": {
+    "module": "NodeNext", // or "ESNext" or "node18"
+    "moduleResolution": "NodeNext", // required for ESM
+    "resolveJsonModule": true,
+    "target": "ES2022", // or later
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "allowImportingTsExtensions": true
+  },
 }
