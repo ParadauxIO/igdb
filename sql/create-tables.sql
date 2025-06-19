@@ -1,8 +1,11 @@
 -- Users table (extends Supabase auth.users)
 CREATE TABLE public.users (
     id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
-    role VARCHAR(64) NOT NULL DEFAULT 'viewer',
+    permission_role VARCHAR(64) NOT NULL DEFAULT 'viewer' CHECK ( users.permission_role in ('viewer', 'updater', 'admin') ),
+    functional_role VARCHAR(64)[] NOT NULL DEFAULT 'viewer' CHECK ( functional_role in ('boarder', 'raiser', 'trainer', 'admin') ),
+    role_description TEXT, -- Description of the role
     phone VARCHAR(32),
+    -- boarder, raiser, trainer,
     is_active BOOLEAN DEFAULT true,
     can_approve_updates BOOLEAN DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -23,7 +26,6 @@ CREATE TABLE public.dogs (
     dog_status TEXT, -- e.g., 'available', 'adopted', 'fostered', 'in_training'
     dog_weight_kg DECIMAL(5,2),
     dog_current_owner UUID REFERENCES public.users(id),
-    dog_initial_owner UUID REFERENCES public.users(id),
     dog_general_notes TEXT,
     dog_medical_notes TEXT,
     dog_is_active BOOLEAN DEFAULT true,
@@ -54,7 +56,14 @@ CREATE TABLE public.dog_updates (
 CREATE TABLE public.dog_following (
     user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
     dog_id UUID REFERENCES public.dogs(dog_id) ON DELETE CASCADE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_by UUID REFERENCES public.users(id) NOT NULL,
+    -- approved_by UUID REFERENCES public.users(id) DEFAULT ,
     PRIMARY KEY (user_id, dog_id)
+);
+
+CREATE TABLE public.dog_history (
+
 );
 
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
@@ -96,7 +105,7 @@ CREATE POLICY "Users can update their own profile"
   FOR UPDATE
   TO authenticated
   USING (
-    auth.uid() = id
+    auth.uid()
   );
 
 -- TEMPORARY POLICIES WHICH WILL NEED TO BE REPLACED WHEN ROLE TYPES EXIST

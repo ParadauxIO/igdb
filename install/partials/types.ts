@@ -43,3 +43,8 @@ export type SampleUpdate = {
     update_created_by: string; // user ID
     update_approved_by: string; // user ID
 };
+
+export type ImageUploadEntry = {
+    sourcePath: string; // relative path to the image file on the local filesystem
+    destinationPath: string; // path inside the bucket
+};

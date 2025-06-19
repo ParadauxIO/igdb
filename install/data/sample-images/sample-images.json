@@ -1,0 +1,28 @@
+[
+  { "sourcePath": "./install/data/sample-images/dogs/1.jpg", "destinationPath": "sample/dogs/1.jpg" },
+  { "sourcePath": "./install/data/sample-images/dogs/2.jpg", "destinationPath": "sample/dogs/2.jpg" },
+  { "sourcePath": "./install/data/sample-images/dogs/3.jpg", "destinationPath": "sample/dogs/3.jpg" },
+  { "sourcePath": "./install/data/sample-images/dogs/4.jpg", "destinationPath": "sample/dogs/4.jpg" },
+  { "sourcePath": "./install/data/sample-images/dogs/5.jpg", "destinationPath": "sample/dogs/5.jpg" },
+  { "sourcePath": "./install/data/sample-images/dogs/6.jpg", "destinationPath": "sample/dogs/6.jpg" },
+  { "sourcePath": "./install/data/sample-images/dogs/7.jpg", "destinationPath": "sample/dogs/7.jpg" },
+  { "sourcePath": "./install/data/sample-images/dogs/8.jpg", "destinationPath": "sample/dogs/8.jpg" },
+  { "sourcePath": "./install/data/sample-images/dogs/9.jpg", "destinationPath": "sample/dogs/9.jpg" },
+  { "sourcePath": "./install/data/sample-images/dogs/10.jpg", "destinationPath": "sample/dogs/10.jpg" },
+
+  { "sourcePath": "./install/data/sample-images/updates/1.jpg", "destinationPath": "sample/updates/1.jpg" },
+  { "sourcePath": "./install/data/sample-images/updates/2.jpg", "destinationPath": "sample/updates/2.jpg" },
+  { "sourcePath": "./install/data/sample-images/updates/3.jpg", "destinationPath": "sample/updates/3.jpg" },
+  { "sourcePath": "./install/data/sample-images/updates/4.jpg", "destinationPath": "sample/updates/4.jpg" },
+  { "sourcePath": "./install/data/sample-images/updates/5.jpg", "destinationPath": "sample/updates/5.jpg" },
+  { "sourcePath": "./install/data/sample-images/updates/6.jpg", "destinationPath": "sample/updates/6.jpg" },
+  { "sourcePath": "./install/data/sample-images/updates/7.jpg", "destinationPath": "sample/updates/7.jpg" },
+  { "sourcePath": "./install/data/sample-images/updates/8.jpg", "destinationPath": "sample/updates/8.jpg" },
+  { "sourcePath": "./install/data/sample-images/updates/9.jpg", "destinationPath": "sample/updates/9.jpg" },
+  { "sourcePath": "./install/data/sample-images/updates/10.jpg", "destinationPath": "sample/updates/10.jpg" },
+  { "sourcePath": "./install/data/sample-images/updates/11.jpg", "destinationPath": "sample/updates/11.jpg" },
+  { "sourcePath": "./install/data/sample-images/updates/12.jpg", "destinationPath": "sample/updates/12.jpg" },
+  { "sourcePath": "./install/data/sample-images/updates/13.jpg", "destinationPath": "sample/updates/13.jpg" },
+  { "sourcePath": "./install/data/sample-images/updates/14.jpg", "destinationPath": "sample/updates/14.jpg" },
+  { "sourcePath": "./install/data/sample-images/updates/15.jpg", "destinationPath": "sample/updates/15.jpg" }
+]

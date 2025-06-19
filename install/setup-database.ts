@@ -6,7 +6,14 @@ import {
     destroySupabaseUsers,
     runSqlFile
 } from "./partials/setup-utils.ts";
-import {createDogs, createUsers} from "./partials/data-utils.ts";
+import {
+    createBucket,
+    createDogs,
+    createUpdates,
+    createUsers,
+    destroyBucket,
+    uploadSampleImages
+} from "./partials/data-utils.ts";
 dotenv.config({path: './install/.env'});
 
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -34,6 +41,10 @@ const run = async () => {
             const sampleUsers = await createSupabaseUsers(supabase); // Create the users in Supabase
             await createUsers(supabase, sampleUsers); // Create the row in the users table
             await createDogs(supabase, sampleUsers); // Create the dogs in Supabase
+            await createUpdates(supabase, sampleUsers); // Create the updates in Supabase
+            await destroyBucket(supabase, "sample"); // Delete the sample bucket if it exists
+            await createBucket(supabase, "sample"); // Create the sample bucket
+            await uploadSampleImages(supabase); // Upload sample images to the newly created bucket
         }
     } catch (err) {
         console.error('Setup error:', err);
@@ -46,7 +57,6 @@ const run = async () => {
 const dropAndCreateTablesAndPolicies = async () => {
     await runSqlFile(db, "./sql/drop-tables.sql");
     await runSqlFile(db, "./sql/create-tables.sql");
-    // await runSqlFile(db, "./sql/seed-data.sql");
 }
 
 run();
