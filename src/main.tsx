@@ -13,6 +13,11 @@ import DogView from "./views/DogView.tsx";
 import DogEditView from "./views/DogEditView.tsx";
 import DogCreateView from "./views/DogCreateView.tsx";
 
+import UserView from "./views/UserView.tsx";
+import UserInviteView from "./views/UserInviteView.tsx";
+import UserProfileView from "./views/UserProfileView.tsx";
+import UserCreateView from "./views/UserCreateView.tsx";
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ProtectedView authView={<AuthView/>}> {/* This is the auth view that will be shown if the user is not authenticated */}
@@ -23,6 +28,10 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/dogs" element={<DogView/>} />
             <Route path="/dogs/edit/:dogId" element={<DogEditView/>} />
             <Route path="/dogs/create" element={<DogCreateView/>} />
+            <Route path="/users" element={<UserView/>} />
+            <Route path="/users/profile/:dogId" element={<UserProfileView/>} />
+            <Route path="/users/invite" element={<UserInviteView/>} />
+            <Route path="/users/create" element={<UserCreateView/>} />
         </Routes>
       </BrowserRouter>
     </ProtectedView>
