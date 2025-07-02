@@ -52,10 +52,11 @@ export default function UserInviteView() {
         console.log(form.email);
         // i think this is how we need to send an email invite
         // reference: https://supabase.com/docs/reference/javascript/auth-admin-generatelink
-        const { data, error } = await supabase.auth.admin.generateLink({
+        // https://github.com/J0/supabase_auth_testing_app/blob/d6a9336a8abcdb7c58289f5b8982702f2c35c5bb/app/admin/page.tsx#L38
+        const { data, error } = await supabase.auth.admin.inviteUserByEmail({
             type: 'invite',
             email: form.email
-        })
+        });
         setLoading(false);
         if (error) {
             setError("Failed to create user.");

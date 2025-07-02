@@ -15,8 +15,8 @@ const SYSTEM_FIELDS = [
 ];
 
 /**
- * Sends an initial email invitation to the user to register and then edit their profile.
- * @returns 
+ * 
+ * @returns
  */
 export default function UserCreateView() {
 
@@ -50,15 +50,28 @@ export default function UserCreateView() {
         setSuccess(false);
 
         // Remove system fields from insertion data
-        const insertData: Partial<User> = { ...form };
-        SYSTEM_FIELDS.forEach(f => delete insertData[f as keyof User]);
+        // const insertData: Partial<User> = { ...form };
+        // SYSTEM_FIELDS.forEach(f => delete insertData[f as keyof User]);
 
         // todo  - here i think we need to send an email invite
-        const { data, error } = await supabase.auth.admin.inviteUserByEmail('email@example.com')
-        const { error } = await supabase
-            .from("user")
-            .insert(insertData)
-            .select();
+        const { data, error } = await supabase.auth.admin.createUser({
+            email: form.email,
+            user_metadata: { name: "Yoda" },
+            app_metadata: { name: "other" },
+        });
+
+        if (error) {
+            setError("Failed to create user.");
+            console.error(error);
+        }
+        else {
+            console.log(data);
+        }
+
+        // const { error } = await supabase
+        //     .from("user")
+        //     .insert(insertData)
+        //     .select();
 
         setLoading(false);
         if (error) {
