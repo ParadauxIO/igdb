@@ -4,7 +4,8 @@
     "id": "NOT_YET_CREATED",
     "email": "igdb-admin1@example.com",
     "password": "igdb-admin-Pa$s.w0rd",
-    "role": "admin",
+    "permission_role": "admin",
+    "functional_role": "staff",
     "phone": "+353800000000",
     "isActive": true,
     "canApproveUpdates": true
@@ -14,7 +15,8 @@
     "id": "NOT_YET_CREATED",
     "email": "igdb-admin2@example.com",
     "password": "igdb-admin-Pa$s.w0rd",
-    "role": "admin",
+    "permission_role": "admin",
+    "functional_role": "staff",
     "phone": "+353800000001",
     "isActive": true,
     "canApproveUpdates": true
@@ -24,17 +26,19 @@
     "id": "NOT_YET_CREATED",
     "email": "igdb-updater1@example.com",
     "password": "igdb-updater-Pa$s.w0rd",
-    "role": "admin",
+    "permission_role": "updater",
+    "functional_role": "puppy raiser",
     "phone": "+353800000002",
     "isActive": true,
-    "canApproveUpdates": false
+    "canApproveUpdates": true
   },
   {
     "placeholderId": "UPDATER2",
     "id": "NOT_YET_CREATED",
     "email": "igdb-updater2@example.com",
     "password": "igdb-updater-Pa$s.w0rd",
-    "role": "admin",
+    "permission_role": "updater",
+    "functional_role": "trainer",
     "phone": "+353800000003",
     "isActive": true,
     "canApproveUpdates": false
@@ -44,7 +48,8 @@
     "id": "NOT_YET_CREATED",
     "email": "igdb-viewer1@example.com",
     "password": "igdb-viewer-Pa$s.w0rd",
-    "role": "admin",
+    "permission_role": "viewer",
+    "functional_role": "client",
     "phone": "+353800000004",
     "isActive": true,
     "canApproveUpdates": false
@@ -54,7 +59,8 @@
     "id": "NOT_YET_CREATED",
     "email": "igdb-viewer2@example.com",
     "password": "igdb-viewer-Pa$s.w0rd",
-    "role": "admin",
+    "permission_role": "viewer",
+    "functional_role": "volunteer",
     "phone": "+353800000005",
     "isActive": true,
     "canApproveUpdates": false
@@ -64,7 +70,8 @@
     "id": "NOT_YET_CREATED",
     "email": "igdb-viewer3@example.com",
     "password": "igdb-viewer-Pa$s.w0rd",
-    "role": "admin",
+    "permission_role": "viewer",
+    "functional_role": "volunteer",
     "phone": "+353800000006",
     "isActive": true,
     "canApproveUpdates": false
@@ -74,7 +81,8 @@
     "id": "NOT_YET_CREATED",
     "email": "igdb-viewer4@example.com",
     "password": "igdb-viewer-Pa$s.w0rd",
-    "role": "admin",
+    "permission_role": "viewer",
+    "functional_role": "volunteer",
     "phone": "+353800000007",
     "isActive": true,
     "canApproveUpdates": false
@@ -84,7 +92,8 @@
     "id": "NOT_YET_CREATED",
     "email": "igdb-viewer5@example.com",
     "password": "igdb-viewer-Pa$s.w0rd",
-    "role": "admin",
+    "permission_role": "viewer",
+    "functional_role": "client",
     "phone": "+353800000008",
     "isActive": false,
     "canApproveUpdates": false
@@ -94,7 +103,8 @@
     "id": "NOT_YET_CREATED",
     "email": "igdb-viewer6@example.com",
     "password": "igdb-viewer-Pa$s.w0rd",
-    "role": "admin",
+    "permission_role": "viewer",
+    "functional_role": "client",
     "phone": "+353800000009",
     "isActive": false,
     "canApproveUpdates": false
