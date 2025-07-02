@@ -17,7 +17,7 @@
     "dog_role": "Assistance Dog",
     "dog_yob": 2019,
     "dog_sex": "female",
-    "dog_picture": "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/dogs/2.jp",
+    "dog_picture": "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/dogs/2.jpg",
     "dog_status": "",
     "dog_current_handler": "{{UPDATER2_ID}}",
     "dog_general_notes": "Calm temperament, perfect for therapy work. Loves swimming.",

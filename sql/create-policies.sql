@@ -74,6 +74,18 @@ CREATE POLICY "Admins can delete dogs"
     )
     );
 
+CREATE POLICY "Admins can read dogs"
+    ON public.dogs
+    FOR SELECT
+                   TO authenticated
+                   USING (
+                   EXISTS (
+                   SELECT 1 FROM public.users u
+                   WHERE u.id = auth.uid()
+                   AND u.permission_role = 'admin'
+                   )
+                   );
+
 -- === DOG_UPDATES TABLE POLICIES ===
 
 -- Authenticated users can read public updates or ones they created
