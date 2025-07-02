@@ -1,10 +1,12 @@
 .feed {
     .feed-item {
         font-family: sans-serif;
-        background-color: #EEE;
-        margin-block: 0.2rem;
+        margin-block: 1rem;
         padding: 0.5rem;
         border-radius: 6px;
+        border: 1px solid #ddd;
+        border-bottom: 4px solid #84bd00;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
 
     .time {

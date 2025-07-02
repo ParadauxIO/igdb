@@ -4,7 +4,7 @@
     font-family: sans-serif;
     padding-block: 0.5rem;
     padding-inline: 1rem;
-    background-color: #264653;
+    background-color: #fff;
 
     .navbar_left {
         h2 {
@@ -30,11 +30,16 @@
 
         a {
             text-decoration: none;
-            color: white;
+            color: #000000;
+            font-size: 18px;
+            vertical-align: middle;
+            margin-left: 50px;
+            font-weight: bolder;
         }
 
         a:hover {
-            font-weight: bold;
+            font-weight: bolder;
+            color: #84bd00;
         }
     }
 }
