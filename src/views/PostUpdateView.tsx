@@ -101,27 +101,6 @@ const PostUpdateView = () => {
                             onChange={handleChange}
                         />
                     </div> */}
-                    <div className="form-row">
-                        <label>Location</label>
-                        <input
-                            name="update_location"
-                            value={form.update_location || ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Type</label>
-                        <select
-                            name="update_type"
-                            value={form.update_type || ""}
-                            onChange={handleChange}
-                        >
-                            <option value="">Select</option>
-                            <option value="training">Training</option>
-                            <option value="medical">Medical</option>
-                            <option value="Activity">Activity</option>
-                        </select>
-                    </div>
 
                     <div className="form-actions">
                         <button type="submit" disabled={loading}>Post</button>
