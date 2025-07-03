@@ -3,6 +3,7 @@ export type SampleUser = {
     id?: string;
     email: string;
     password: string;
+    name: string;
     permission_role: 'admin' | 'updater' | 'viewer';
     functional_role: 'staff' | 'volunteer' | 'puppy raiser' | 'trainer' | 'temporary boarder' | 'client' | 'adoptive family'
     phone: string;
