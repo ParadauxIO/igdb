@@ -3,7 +3,9 @@ export type SampleUser = {
     id?: string;
     email: string;
     password: string;
-    role: 'admin' | 'updater' | 'viewer';
+    name: string;
+    permission_role: 'admin' | 'updater' | 'viewer';
+    functional_role: 'staff' | 'volunteer' | 'puppy raiser' | 'trainer' | 'temporary boarder' | 'client' | 'adoptive family'
     phone: string;
     isActive: boolean;
     canApproveUpdates: boolean;
@@ -11,20 +13,14 @@ export type SampleUser = {
 
 export type SampleDog = {
     dog_id: string;
-    dog_microchip_number: string;
     dog_name: string;
-    dog_breed: string;
     dog_role: string;
-    dog_dob: string; // ISO date string
+    dog_yob: number;
     dog_sex: "male" | "female" | string; // assuming these are possible values
-    dog_color_markings: string;
     dog_picture: string; // URL string
     dog_status: string;
-    dog_weight_kg: number;
-    dog_current_owner: string; // probably a user ID
-    dog_initial_owner: string; // probably a user ID
+    dog_current_handler: string; // probably a user ID
     dog_general_notes: string;
-    dog_medical_notes: string;
     dog_created_by: string; // user ID
 };
 

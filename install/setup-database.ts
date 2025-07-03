@@ -57,6 +57,8 @@ const run = async () => {
 const dropAndCreateTablesAndPolicies = async () => {
     await runSqlFile(db, "./sql/drop-tables.sql");
     await runSqlFile(db, "./sql/create-tables.sql");
+    await runSqlFile(db, './sql/create-policies.sql');
+    // await runSqlFile(db, './sql/create-triggers.sql');
 }
 
 run();

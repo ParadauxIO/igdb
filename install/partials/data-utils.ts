@@ -13,13 +13,17 @@ const sampleImageData = sampleImageJson as ImageUploadEntry[];
 
 const createUsers = async (supabase: SupabaseClient, users: SampleUser[]) => {
     for (let sampleUser of users) {
-        await supabase.from("users").insert({
+        const {error} = await supabase.from("users").insert({
             id: sampleUser.id,
-            role: sampleUser.role,
+            permission_role: sampleUser.permission_role,
+            functional_role: sampleUser.functional_role,
+            name: sampleUser.name,
             phone: sampleUser.phone,
             is_active: sampleUser.isActive,
             can_approve_updates: sampleUser.canApproveUpdates
         });
+
+        if (error) console.error(error);
     }
 }
 
@@ -41,12 +45,13 @@ const createDogs = async (supabase: SupabaseClient, users: SampleUser[]) => {
     for (let sampleDog of sampleDogData) {
         const dogData = {
             ...sampleDog,
-            dog_current_owner: replacePlaceholder(sampleDog.dog_current_owner),
-            dog_initial_owner: replacePlaceholder(sampleDog.dog_initial_owner),
-            dog_created_by: replacePlaceholder(sampleDog.dog_created_by)
+            dog_current_handler: replacePlaceholder(sampleDog.dog_current_handler),
+            dog_created_by: replacePlaceholder(sampleDog.dog_created_by),
+            dog_last_edited_by: replacePlaceholder(sampleDog.dog_created_by)
         };
 
-        await supabase.from("dogs").insert(dogData);
+        const {error} = await supabase.from("dogs").insert(dogData);
+        if (error) console.error(error);
     }
 }
 
@@ -188,7 +193,8 @@ const createUpdates = async (supabase: SupabaseClient, users: SampleUser[]) => {
             update_approved_by: replacePlaceholder(sampleUpdate.update_approved_by)
         };
 
-        await supabase.from("dog_updates").insert(updateData);
+        const {error} = await supabase.from("dog_updates").insert(updateData);
+        if (error) console.error(error);
     }
 }
 
