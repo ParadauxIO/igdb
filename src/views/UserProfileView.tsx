@@ -18,7 +18,7 @@ const SYSTEM_FIELDS = [
  */
 export default function UserProfileView() {
 
-    const { userId } = useParams<{ userId: string }>();
+    const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [user, setUser] = useState<User | null>(null);
     const [form, setForm] = useState<Partial<User>>({});
@@ -27,12 +27,12 @@ export default function UserProfileView() {
     const [success, setSuccess] = useState(false);
 
     useEffect(() => {
-        if (!userId) return;
+        if (!id) return;
         setLoading(true);
         supabase
-            .from("user")
+            .from("users")
             .select("*")
-            .eq("user_id", userId)
+            .eq("id",id)
             .single()
             .then(({ data, error }) => {
                 if (error || !data) {
@@ -43,7 +43,7 @@ export default function UserProfileView() {
                 }
                 setLoading(false);
             });
-    }, [userId]);
+    }, [id]);
 
     type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
     type ChangeEventValues = {
@@ -68,15 +68,17 @@ export default function UserProfileView() {
 
         // Remove system fields from update
         const updateData: Partial<User> = { ...form };
-        SYSTEM_FIELDS.forEach(f => delete updateData[f as keyof User]);
+        console.log('updateData:{}',updateData);
+        //SYSTEM_FIELDS.forEach(f => delete updateData[f as keyof User]);
 
         const { error } = await supabase
-            .from("user")
+            .from("users")
             .update(updateData)
-            .eq("user_id", userId);
+            .eq("id", id);
 
         setLoading(false);
         if (error) {
+            console.log('Failed to update user:{}',error);
             setError("Failed to update user.");
         } else {
             setSuccess(true);
@@ -92,29 +94,29 @@ export default function UserProfileView() {
         <div className="dog-edit-view">
             <NavBar/>
             <div className="dog-edit-container">
-                <h1>Edit User Profile: {user.firstname}</h1>
+                <h1>Edit User Profile: {user.name}</h1>
                 <form className="dog-edit-form" onSubmit={handleSubmit}>
                     <div className="form-row">
-                        <label>First Name</label>
+                        <label>Name</label>
                         <input
-                            name="dog_name"
-                            value={form.firstname || ""}
+                            name="name"
+                            value={form.name || ""}
                             onChange={handleChange}
                             required
                         />
                     </div>
                     <div className="form-row">
-                        <label>Surname</label>
+                        <label>Email</label>
                         <input
-                            name="dog_microchip_number"
-                            value={form.surname || ""}
+                            name="email"
+                            value={form.email || ""}
                             onChange={handleChange}
                         />
                     </div>
                     <div className="form-row">
                         <label>Phone</label>
                         <input
-                            name="dog_breed"
+                            name="phone"
                             value={form.phone || ""}
                             onChange={handleChange}
                             required
@@ -123,8 +125,8 @@ export default function UserProfileView() {
                     <div className="form-row">
                         <label>Role</label>
                         <input
-                            name="dog_role"
-                            value={form.role || ""}
+                            name="functional_role"
+                            value={form.functional_role || ""}
                             onChange={handleChange}
                         />
                     </div>
@@ -133,7 +135,7 @@ export default function UserProfileView() {
                             <input
                                 name="user_is_active"
                                 type="checkbox"
-                                checked={!!form.isActive}
+                                checked={!!form.is_active}
                                 onChange={handleChange}
                             />
                             Active

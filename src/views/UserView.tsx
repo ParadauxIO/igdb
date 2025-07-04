@@ -6,6 +6,7 @@ import {supabase} from "../state/supabaseClient.ts";
 import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/react-table";
 import {FaEllipsisH, FaPlus} from "react-icons/fa";
 import {useNavigate} from "react-router";
+// import UserTable from "../components/UserTable.tsx";
 import Table from "../components/Table.tsx";
 import Card from "../components/Card.tsx";
 
@@ -40,20 +41,20 @@ export default function UserView() {
         }),
 
         // Fields from the user type
-        columnHelper.accessor('firstname', {
-            header: 'First Name',
+        columnHelper.accessor('name', {
+            header: 'Name',
             cell: info => info.getValue(),
             footer: info => info.column.id,
         }),
 
-        columnHelper.accessor('surname', {
-            header: 'Surname',
+        columnHelper.accessor('permission_role', {
+            header: 'Role',
             cell: info => info.getValue() ?? 'N/A',
             footer: info => info.column.id,
         }),
 
-        columnHelper.accessor('role', {
-            header: 'Role',
+        columnHelper.accessor('functional_role', {
+            header: 'Function',
             cell: info => info.getValue(),
             footer: info => info.column.id,
         }),
@@ -63,8 +64,7 @@ export default function UserView() {
             footer: info => info.column.id,
         }),
 
-
-        columnHelper.accessor('isActive', {
+        columnHelper.accessor('is_active', {
             header: 'Active',
             cell: info => info.getValue() ? 'Yes' : 'No',
             footer: info => info.column.id,
@@ -78,15 +78,15 @@ export default function UserView() {
                 const user = row.original;
                 return (
                     <div className="actions-cell">
-                        <div onClick={() => handleMenuClick(user.user_id)}>
+                        <div onClick={() => handleMenuClick(user.id)}>
                             <FaEllipsisH size={24} color="#6c757d" />
                         </div>
 
-                        {activeMenuId === user.user_id && (
+                        {activeMenuId === user.id && (
                             <div className="dropdown-menu">
-                                <button onClick={() => handleEdit(user.user_id)}>Edit</button>
-                                <button onClick={() => handleDelete(user.user_id)}>Delete</button>
-                                <button onClick={() => handleDisable(user.user_id)}>Disable</button>
+                                <button onClick={() => handleEdit(user.id)}>Edit</button>
+                                <button onClick={() => handleDelete(user.id)}>Delete</button>
+                                <button onClick={() => handleDisable(user.id)}>Disable</button>
                             </div>
                         )}
                     </div>
@@ -96,7 +96,7 @@ export default function UserView() {
     ];
 
     const filteredUsers = useMemo(
-        () => users.filter(u => u.isActive || showInactive),
+        () => users.filter(u => u.is_active || showInactive),
         [users, showInactive]
     );
 
@@ -104,47 +104,47 @@ export default function UserView() {
         data: filteredUsers,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        getRowId: originalRow => originalRow.user_id,
+        getRowId: originalRow => originalRow.id,
         enableRowSelection: true
     })
 
-    const handleEdit = (userId: string) => {
-        navigate(`/user/profile/${userId}`);
+    const handleEdit = (id: string) => {
+        navigate(`/users/profile/${id}`);
     };
 
-    const handleDisable = async (userId: string) => {
+    const handleDisable = async (id: string) => {
         const { error } = await supabase
             .from('users')
             .update({ is_active: false })
-            .eq('user_id', userId);
+            .eq('id', id);
 
         if (error) {
-            console.error("Failed to disable dog:", error);
+            console.error("Failed to disable user:", error);
             return;
         }
 
         fetchUsers();
     };
 
-    const handleDelete = async (userId: string) => {
+    const handleDelete = async (id: string) => {
         const confirmed = window.confirm("Are you sure you want to delete this user?");
         if (!confirmed) return;
 
         const { error } = await supabase
             .from('users')
             .delete()
-            .eq('user_id', userId);
+            .eq('id', id);
 
         if (error) {
             console.error("Failed to delete user:", error);
             return;
         }
 
-        setUsers(users.filter(u => u.user_id !== userId));
+        setUsers(users.filter(u => u.id !== id));
     };
 
-    const handleMenuClick = (userId: string) => {
-        setActiveMenuId(prev => (prev === userId ? null : userId));
+    const handleMenuClick = (id: string) => {
+        setActiveMenuId(prev => (prev === id ? null : id));
     };
 
     const handleUserInvitation = () => {
@@ -161,6 +161,7 @@ export default function UserView() {
             console.log("Error occurred while fetching dogs:", error);
             return;
         }
+        console.log('fetch users : {}', data.length);
         if (data) {
             setUsers(data);
         }
@@ -177,7 +178,7 @@ export default function UserView() {
             <NavBar/>
             <div className="user-container">
                 <div className="view-header">
-                    <h1>Dogs</h1>
+                    <h1>Users</h1>
                     <button className="create-btn" onClick={handleUserInvitation}>
                         <span>Invite New User</span>
                     </button>
@@ -186,7 +187,7 @@ export default function UserView() {
                     <Card title="Total Users" value={users.length} />
                 </div>
                 <Table loading={loading} table={table} />
-                <form>
+                {/* <form>
                     <label htmlFor="dog_is_enabled">Show inactive users?</label>
                     <input
                         type="checkbox"
@@ -195,7 +196,7 @@ export default function UserView() {
                         onChange={e => setShowInactive(e.target.checked)}
                         placeholder="Filter by status"
                     />
-                </form>
+                </form> */}
             </div>
         </div>
     )

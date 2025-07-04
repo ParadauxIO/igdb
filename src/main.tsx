@@ -29,7 +29,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/dogs/edit/:dogId" element={<DogEditView/>} />
             <Route path="/dogs/create" element={<DogCreateView/>} />
             <Route path="/users" element={<UserView/>} />
-            <Route path="/users/profile/:dogId" element={<UserProfileView/>} />
+            <Route path="/users/profile/:id" element={<UserProfileView/>} />
             <Route path="/users/invite" element={<UserInviteView/>} />
             <Route path="/users/create" element={<UserCreateView/>} />
         </Routes>
