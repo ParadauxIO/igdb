@@ -19,7 +19,7 @@ export default function DogView() {
     const [showInactive, setShowInactive] = useState<boolean>(false);
 
     const columns = [
-        // Multiselect checkbox for selecting rows
+        // Multiselect checkbox
         columnHelper.display({
             id: "select",
             header: ({ table }) => (
@@ -38,108 +38,94 @@ export default function DogView() {
             ),
         }),
 
-        // Fields from the Dog type
+        // Picture
         columnHelper.accessor('dog_picture', {
             header: 'Picture',
             cell: info => info.getValue() ? <img src={info.getValue()!} alt="Dog" width={250} /> : 'No Image',
             footer: info => info.column.id,
         }),
 
+        // Name
         columnHelper.accessor('dog_name', {
             header: 'Name',
             cell: info => info.getValue(),
             footer: info => info.column.id,
         }),
 
-        columnHelper.accessor('dog_microchip_number', {
-            header: 'Microchip Number',
-            cell: info => info.getValue() ?? 'N/A',
-            footer: info => info.column.id,
-        }),
-
-        columnHelper.accessor('dog_breed', {
-            header: 'Breed',
-            cell: info => info.getValue(),
-            footer: info => info.column.id,
-        }),
-
+        // Role
         columnHelper.accessor('dog_role', {
             header: 'Role',
             footer: info => info.column.id,
         }),
 
-        columnHelper.accessor('dog_dob', {
-            header: 'Date of Birth',
-            cell: info => info.getValue() ? new Date(info.getValue()!).toLocaleDateString() : 'N/A',
+        // Year of Birth (dog_yob)
+        columnHelper.accessor('dog_yob', {
+            header: 'Year of Birth',
+            cell: info => info.getValue() ? info.getValue().toString() : 'N/A',
             footer: info => info.column.id,
         }),
 
+        // Sex
         columnHelper.accessor('dog_sex', {
             header: 'Sex',
             cell: info => info.getValue() ?? 'Unknown',
             footer: info => info.column.id,
         }),
 
+        // Status
         columnHelper.accessor('dog_status', {
             header: 'Status',
             footer: info => info.column.id,
         }),
 
-        // columnHelper.accessor('dog_weight_kg', {
-        //     header: 'Weight (kg)',
-        //     cell: info => info.getValue() != null ? `${info.getValue()} kg` : 'N/A',
-        //     footer: info => info.column.id,
-        // }),
-
-        columnHelper.accessor('dog_current_owner', {
-            header: 'Current Owner',
+        // Current Handler
+        columnHelper.accessor('dog_current_handler', {
+            header: 'Current Handler',
+            cell: info => info.getValue() ?? 'N/A',
             footer: info => info.column.id,
         }),
 
-        columnHelper.accessor('dog_initial_owner', {
-            header: 'Initial Owner',
-            footer: info => info.column.id,
-        }),
-
+        // General Notes
         columnHelper.accessor('dog_general_notes', {
             header: 'General Notes',
+            cell: info => info.getValue() ?? '',
             footer: info => info.column.id,
         }),
 
-        columnHelper.accessor('dog_medical_notes', {
-            header: 'Medical Notes',
-            footer: info => info.column.id,
-        }),
-
+        // Active
         columnHelper.accessor('dog_is_active', {
             header: 'Active',
             cell: info => info.getValue() ? 'Yes' : 'No',
             footer: info => info.column.id,
         }),
 
+        // Created At
         columnHelper.accessor('dog_created_at', {
             header: 'Created At',
             cell: info => new Date(info.getValue()).toLocaleString(),
             footer: info => info.column.id,
         }),
 
+        // Updated At
         columnHelper.accessor('dog_updated_at', {
             header: 'Updated At',
             cell: info => new Date(info.getValue()).toLocaleString(),
             footer: info => info.column.id,
         }),
 
+        // Created By
         columnHelper.accessor('dog_created_by', {
             header: 'Created By',
             footer: info => info.column.id,
         }),
 
+        // Last Edited By
         columnHelper.accessor('dog_last_edited_by', {
             header: 'Last Edited By',
             footer: info => info.column.id,
         }),
 
-        // Kebab menu for actions
+        // Actions menu remains unchanged
         columnHelper.display({
             id: "actions",
             header: "Actions",

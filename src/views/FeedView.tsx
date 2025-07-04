@@ -15,6 +15,7 @@ export default function FeedView() {
         .from('dog_updates')
         .select('*')
         .order('update_created_at', { ascending: false });
+
       if (!error && data) setUpdates(data);
       setLoading(false);
     };
