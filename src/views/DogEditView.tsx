@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { supabase } from "../state/supabaseClient";
 import type { Dog } from "../types/Dog";
+import type { User } from "../types/User.ts";
 import "./DogEditView.scss";
 import NavBar from "../components/NavBar.tsx";
+import LookupInput from '../components/LookupInput.tsx';
 
 const SYSTEM_FIELDS = [
     "dog_created_at",
@@ -53,6 +55,20 @@ export default function DogEditView() {
         if (type === "checkbox") val = checked;
         if (type === "number") val = value === "" ? null : Number(value);
         setForm(f => ({ ...f, [name]: val }));
+    };
+
+    const searchUsers = async (query: string): Promise<User[]> => {
+        const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .ilike('name', `%${query}%`)
+        .limit(10);
+
+        if (error) {
+            console.error('Error searching users:', error.message);
+        return []; }
+
+        return data ?? [];
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -144,11 +160,14 @@ export default function DogEditView() {
                         />
                     </div>
                     <div className="form-row">
-                        <label>Current Owner</label>
-                        <input
-                            name="dog_current_owner"
-                            value={form.dog_current_handler || ""}
-                            onChange={handleChange}
+                        <LookupInput
+                            name="current_handler"
+                            label="Current Handler"
+                            value={form.dog_current_handler}
+                            onSelect={(user) =>
+                                setForm(prev => ({...prev, dog_current_handler: user ? user.name : null, }))}
+                            searchFunc={searchUsers}
+                            displayField="name"
                         />
                     </div>
                     <div className="form-row">
