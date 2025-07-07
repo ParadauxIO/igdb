@@ -106,7 +106,7 @@ export default function DogEditView() {
                 <h1>Edit Dog: {dog.dog_name}</h1>
                 <form className="dog-edit-form" onSubmit={handleSubmit}>
                     <div className="form-row">
-                        <label>Name</label>
+                        <label className="required-label">Name</label>
                         <input
                             name="dog_name"
                             value={form.dog_name || ""}
@@ -115,11 +115,12 @@ export default function DogEditView() {
                         />
                     </div>
                     <div className="form-row">
-                        <label>Role</label>
+                        <label className="required-label">Role</label>
                         <select
                             name="dog_role"
                             value={form.dog_role || ""}
                             onChange={handleChange}
+                            required
                         >
                             <option value="">Select</option>
                             <option value="Guide Dog">Guide Dog</option>
@@ -128,11 +129,12 @@ export default function DogEditView() {
                         </select>
                     </div>
                     <div className="form-row">
-                        <label>Sex</label>
+                        <label className="required-label">Sex</label>
                         <select
                             name="dog_sex"
                             value={form.dog_sex || ""}
                             onChange={handleChange}
+                            required
                         >
                             <option value="">Select</option>
                             <option value="male">Male</option>
@@ -153,11 +155,18 @@ export default function DogEditView() {
                     </div>
                     <div className="form-row">
                         <label>Status</label>
-                        <input
+                        <select
                             name="dog_status"
                             value={form.dog_status || ""}
                             onChange={handleChange}
-                        />
+                        >
+                            <option value="">Select</option>
+                            <option value="adopted">Adopted</option>
+                            <option value="available">Available</option>
+                            <option value="fostered">Fostered</option>
+                            <option value="in_training">In Training</option>
+                            <option value="other">Other</option>
+                        </select>
                     </div>
                     <div className="form-row">
                         <LookupInput
