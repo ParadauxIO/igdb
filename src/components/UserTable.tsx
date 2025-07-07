@@ -1,0 +1,49 @@
+import {flexRender, type Table} from "@tanstack/react-table";
+import type {User} from "../types/User.ts";
+
+import "./Table.scss"
+import type { Key } from "react";
+
+type TableProps = {
+    loading: boolean;
+    table: Table<User>;
+};
+
+export default function UserTable({loading, table}: TableProps) {
+    return (
+        <div className="table-container">
+            {!loading && (
+                <table>
+                    <thead>
+                    {table.getHeaderGroups().map((headerGroup: { id: Key | null | undefined; headers: any[]; }) => (
+                        <tr key={headerGroup.id}>
+                            {headerGroup.headers.map(header => (
+                                <th key={header.id}>
+                                    {header.isPlaceholder
+                                        ? null
+                                        : flexRender(
+                                            header.column.columnDef.header,
+                                            header.getContext()
+                                        )}
+                                </th>
+                            ))}
+                        </tr>
+                    ))}
+                    </thead>
+                    <tbody>
+                    {table.getRowModel().rows.map((row: { id: Key | null | undefined; getVisibleCells: () => any[]; }) => (
+                        <tr key={row.id}>
+                            {row.getVisibleCells().map(cell => (
+                                <td key={cell.id}>
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                </td>
+                            ))}
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            )}
+        </div>
+    );
+}
+
