@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { supabase } from "../state/supabaseClient";
 import type { Dog } from "../types/Dog";
+import type { User } from "../types/User.ts";
 import "./DogCreateView.scss";
 import NavBar from "../components/NavBar.tsx";
+import LookupInput from '../components/LookupInput.tsx';
 
 // Define system fields that should not be manually set during creation
 const SYSTEM_FIELDS = [
@@ -36,6 +38,20 @@ export default function DogCreateView() {
         if (type === "checkbox") val = checked;
         if (type === "number") val = value === "" ? null : Number(value);
         setForm(f => ({ ...f, [name]: val }));
+    };
+
+    const searchUsers = async (query: string): Promise<User[]> => {
+        const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .ilike('name', `%${query}%`)
+        .limit(10);
+
+        if (error) {
+            console.error('Error searching users:', error.message);
+        return []; }
+
+        return data ?? [];
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -79,38 +95,17 @@ export default function DogCreateView() {
                         />
                     </div>
                     <div className="form-row">
-                        <label>Microchip Number</label>
-                        <input
-                            name="dog_microchip_number"
-                            value={form.dog_microchip_number || ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Breed</label>
-                        <input
-                            name="dog_breed"
-                            value={form.dog_breed || ""}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="form-row">
                         <label>Role</label>
-                        <input
+                        <select
                             name="dog_role"
                             value={form.dog_role || ""}
                             onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Date of Birth</label>
-                        <input
-                            name="dog_dob"
-                            type="date"
-                            value={form.dog_dob ? form.dog_dob.substring(0, 10) : ""}
-                            onChange={handleChange}
-                        />
+                        >
+                            <option value="">Select</option>
+                            <option value="Guide Dog">Guide Dog</option>
+                            <option value="Assistance Dog">Assistance Dog</option>
+                            <option value="Community Ambassador Dog">Community Ambassador Dog</option>
+                        </select>
                     </div>
                     <div className="form-row">
                         <label>Sex</label>
@@ -123,14 +118,6 @@ export default function DogCreateView() {
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                         </select>
-                    </div>
-                    <div className="form-row">
-                        <label>Color/Markings</label>
-                        <input
-                            name="dog_color_markings"
-                            value={form.dog_color_markings || ""}
-                            onChange={handleChange}
-                        />
                     </div>
                     <div className="form-row">
                         <label>Picture URL</label>
@@ -155,29 +142,14 @@ export default function DogCreateView() {
                         />
                     </div>
                     <div className="form-row">
-                        <label>Weight (kg)</label>
-                        <input
-                            name="dog_weight_kg"
-                            type="number"
-                            step="0.1"
-                            value={form.dog_weight_kg ?? ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Current Owner</label>{ /* TODO: REMOVE DEFAULT VALUE */ }
-                        <input
-                            name="dog_current_owner"
-                            value={form.dog_current_owner || "d9018bea-6537-443c-a61c-779e2db58a92"}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Initial Owner</label>
-                        <input
-                            name="dog_initial_owner"
-                            value={form.dog_initial_owner || "d9018bea-6537-443c-a61c-779e2db58a92"}
-                            onChange={handleChange}
+                        <LookupInput
+                            name="current_handler"
+                            label="Current Handler"
+                            value={form.dog_current_handler}
+                            onSelect={(user) =>
+                                setForm(prev => ({...prev, dog_current_handler: user ? user.name : null, }))}
+                            searchFunc={searchUsers}
+                            displayField="name"
                         />
                     </div>
                     <div className="form-row">
@@ -185,14 +157,6 @@ export default function DogCreateView() {
                         <textarea
                             name="dog_general_notes"
                             value={form.dog_general_notes || ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Medical Notes</label>
-                        <textarea
-                            name="dog_medical_notes"
-                            value={form.dog_medical_notes || ""}
                             onChange={handleChange}
                         />
                     </div>

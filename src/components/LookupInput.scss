@@ -1,0 +1,18 @@
+.suggestions{
+    position: absolute; 
+    background: white; 
+    border: 1px solid #ccc; 
+    max-height: 150px;
+    overflow-y: auto;
+    width: 100%; 
+    z-index: 1000; 
+
+    li {
+        padding: 8px; 
+        cursor: pointer;
+    }
+}
+
+.suggestions:empty {
+  display: none;
+}

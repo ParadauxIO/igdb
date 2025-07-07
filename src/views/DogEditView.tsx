@@ -99,38 +99,17 @@ export default function DogEditView() {
                         />
                     </div>
                     <div className="form-row">
-                        <label>Microchip Number</label>
-                        <input
-                            name="dog_microchip_number"
-                            value={form.dog_microchip_number || ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Breed</label>
-                        <input
-                            name="dog_breed"
-                            value={form.dog_breed || ""}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="form-row">
                         <label>Role</label>
-                        <input
+                        <select
                             name="dog_role"
                             value={form.dog_role || ""}
                             onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Date of Birth</label>
-                        <input
-                            name="dog_dob"
-                            type="date"
-                            value={form.dog_dob ? form.dog_dob.substring(0, 10) : ""}
-                            onChange={handleChange}
-                        />
+                        >
+                            <option value="">Select</option>
+                            <option value="Guide Dog">Guide Dog</option>
+                            <option value="Assistance Dog">Assistance Dog</option>
+                            <option value="Community Ambassador Dog">Community Ambassador Dog</option>
+                        </select>
                     </div>
                     <div className="form-row">
                         <label>Sex</label>
@@ -143,14 +122,6 @@ export default function DogEditView() {
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                         </select>
-                    </div>
-                    <div className="form-row">
-                        <label>Color/Markings</label>
-                        <input
-                            name="dog_color_markings"
-                            value={form.dog_color_markings || ""}
-                            onChange={handleChange}
-                        />
                     </div>
                     <div className="form-row">
                         <label>Picture URL</label>
@@ -173,28 +144,10 @@ export default function DogEditView() {
                         />
                     </div>
                     <div className="form-row">
-                        <label>Weight (kg)</label>
-                        <input
-                            name="dog_weight_kg"
-                            type="number"
-                            step="0.1"
-                            value={form.dog_weight_kg ?? ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row">
                         <label>Current Owner</label>
                         <input
                             name="dog_current_owner"
-                            value={form.dog_current_owner || ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Initial Owner</label>
-                        <input
-                            name="dog_initial_owner"
-                            value={form.dog_initial_owner || ""}
+                            value={form.dog_current_handler || ""}
                             onChange={handleChange}
                         />
                     </div>
@@ -203,14 +156,6 @@ export default function DogEditView() {
                         <textarea
                             name="dog_general_notes"
                             value={form.dog_general_notes || ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Medical Notes</label>
-                        <textarea
-                            name="dog_medical_notes"
-                            value={form.dog_medical_notes || ""}
                             onChange={handleChange}
                         />
                     </div>
