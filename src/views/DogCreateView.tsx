@@ -42,7 +42,7 @@ export default function DogCreateView() {
 
     const searchUsers = async (query: string): Promise<User[]> => {
         const { data, error } = await supabase
-        .from('users')
+        .from('user_basic_view')
         .select('*')
         .ilike('name', `%${query}%`)
         .limit(10);
