@@ -1,13 +1,13 @@
 .suggestions {
   position: absolute;
-  top: 100%; /* Position right below the input */
+  top: 100%;
   left: 0;
   right: 0;
-  margin-top: 4px; /* Small space below the input */
+  margin-top: 4px;
   background: white;
   border: 1px solid #ccc;
   border-radius: 4px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* subtle shadow */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   max-height: 150px;
   overflow-y: auto;
   z-index: 1000;

@@ -6,6 +6,7 @@ interface LookupInputProps {
   label: string;
   name: string;
   value: string | undefined | null;
+  placeholder: string;
   onSelect: (user: User | null) => void;
   searchFunc: (query: string) => Promise<User[]>;
   displayField?: keyof User;
@@ -15,6 +16,7 @@ const LookupInput: React.FC<LookupInputProps> = ({
   label,
   name,
   value,
+  placeholder,
   onSelect,
   searchFunc,
   displayField = 'name',
@@ -36,7 +38,6 @@ const LookupInput: React.FC<LookupInputProps> = ({
       searchFunc(query).then(users => {
         console.log("Search results:", users);
         setResults(users);
-        // Update cache with fresh results
         setUserCache(prevCache => {
           const newCache = new Map(prevCache);
           users.forEach(user => newCache.set(user.id, user));
@@ -59,6 +60,7 @@ const LookupInput: React.FC<LookupInputProps> = ({
         ref={inputRef}
         name={name}
         value={displayText}
+        placeholder={placeholder}
         onChange={e => {
           setQuery(e.target.value);
           onSelect(null);

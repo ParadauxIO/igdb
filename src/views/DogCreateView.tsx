@@ -155,6 +155,7 @@ export default function DogCreateView() {
                             name="current_handler"
                             label="Current Handler"
                             value={form.dog_current_handler}
+                            placeholder="Search for a handler..."
                             onSelect={(user) =>
                                 setForm(prev => ({...prev, dog_current_handler: user ? user.name : null, }))}
                             searchFunc={searchUsers}
