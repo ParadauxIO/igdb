@@ -6,8 +6,6 @@ export const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-//     "Content-Type": "application/json"
-//    "XAccess-Control-Allow-HeadersX": "authorization, x-client-info, apikey, content-type","Content-Type": "application/json",
 
 // https://stackoverflow.com/questions/74696640/supabase-edge-function-says-no-body-was-passed
 serve(async (req) => {
@@ -28,13 +26,11 @@ serve(async (req) => {
       console.log('functional_role', functional_role);
 
       const authHeader = req.headers.get('Authorization')!
-      console.log('authHeader', authHeader);
       const supabaseClient = createClient(
         Deno.env.get('SUPABASE_URL') ?? '',
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
         { global: { headers: { Authorization: authHeader } } }
       )
-      console.log('supabaseclient: ', supabaseClient)
       
       let new_user_id = '';
       const userMetadata = {
@@ -42,24 +38,21 @@ serve(async (req) => {
       };
 
       // add partner connection if partner
-      // https://github.com/bwship/support-dev/blob/2d7014970ffa5c6655834bd7089a1c85bb46a6d2/backend/supabase/functions/_shared/profile/createProfile.ts#L51
+      // https://supabase.com/docs/reference/javascript/auth-admin-inviteuserbyemail
+      // https://github.com/NathanRignall/oscar-ox/blob/2aae3ac94beb2cea14bfe0bf9ce497c533b4d236/supabase/functions/invite-add-user/index.ts
       const { data, error } = await supabaseClient.auth.admin.inviteUserByEmail(
           email,
           {
-            data: userMetadata
+            redirectTo: globalThis.location.origin,
+            data: { 
+              functional_role: functional_role
+            }
           }
         );
-          // optional field: redirectTo : do we want to set the redirect url?
-          // optional field: data: - we could save this form input details to the options.data object which is stored to 'auth.users.user_metadata'.
-          //   options: {
-          //     data: {
-          //         functional_role: functional_role
-          //     },
-          //   }
-
 
       if(error) {
         console.error(error);
+        throw new Error(error.message);
       } else {
         new_user_id = data?.user?.id;
         console.log("new user id {}",new_user_id);
@@ -71,7 +64,7 @@ serve(async (req) => {
         if (error) {
             console.error("update user error .{}",error);
         } else {
-            console.log("update user {}",error);
+            console.log("invited user created {}",new_user_id);
         }      
       }
       return new Response('success', { headers: corsHeaders })
@@ -80,8 +73,7 @@ serve(async (req) => {
       return new Response('no function call', { headers: corsHeaders })
     }
   } catch (error) {
-    console.error(error)
-    console.error(corsHeaders)
+    console.error(error.message)
     return new Response('failure', { headers: corsHeaders })
   }
 });
