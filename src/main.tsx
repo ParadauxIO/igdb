@@ -12,6 +12,7 @@ import LogoutView from './views/LogoutView.tsx';
 import DogView from "./views/DogView.tsx";
 import DogEditView from "./views/DogEditView.tsx";
 import DogCreateView from "./views/DogCreateView.tsx";
+import PostUpdateView from './views/PostUpdateView';
 
 import UserView from "./views/UserView.tsx";
 import UserInviteView from "./views/UserInviteView.tsx";
@@ -25,6 +26,7 @@ createRoot(document.getElementById('root')!).render(
         <Routes>
             <Route path="/" element={<HomeView/>} />
             <Route path="/logout" element={<LogoutView/>} />
+            <Route path="/post-update" element={<PostUpdateView/>} />
             <Route path="/dogs" element={<DogView/>} />
             <Route path="/dogs/edit/:dogId" element={<DogEditView/>} />
             <Route path="/dogs/create" element={<DogCreateView/>} />
