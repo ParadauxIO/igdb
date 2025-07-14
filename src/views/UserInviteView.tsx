@@ -21,9 +21,7 @@ const SYSTEM_FIELDS = [
 export default function UserInviteView() {
 
     const navigate = useNavigate();
-    const [form, setForm] = useState<Partial<User>>({
-        isActive: true,
-    });
+    const [form, setForm] = useState<Partial<User>>({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
@@ -49,7 +47,7 @@ export default function UserInviteView() {
         setError(null);
         setSuccess(false);
        
-        console.log(form.email);
+        //console.log(form.email);
         // i think this is how we need to send an email invite
         // reference: https://supabase.com/docs/reference/javascript/auth-admin-generatelink
         // https://github.com/J0/supabase_auth_testing_app/blob/d6a9336a8abcdb7c58289f5b8982702f2c35c5bb/app/admin/page.tsx#L38
@@ -57,7 +55,8 @@ export default function UserInviteView() {
             'invite-user',
             {
                 body: {
-                    email: form.email
+                    email: form.email,
+                    functional_role: form.functional_role
                 }
             }
         );
@@ -86,6 +85,14 @@ export default function UserInviteView() {
                             value={form.email || ""}
                             onChange={handleChange}
                             required
+                        />
+                    </div>
+                    <div className="form-row">
+                        <label>Functional Role - make as a dropdown.</label>
+                        <input
+                            name="functional_role"
+                            value={form.functional_role || ""}
+                            onChange={handleChange}
                         />
                     </div>
                     <div className="form-actions">

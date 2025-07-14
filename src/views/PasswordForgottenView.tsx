@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import { Link } from "react-router";
-import { signInWithEmail } from '../partials/auth.ts';
-import "./AuthView.scss";
+import {useState} from "react";
+import {supabase} from "../state/supabaseClient.ts";
 
-export default function AuthView() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+/**
+ * https://supabase.com/docs/reference/javascript/auth-resetpasswordforemail
+ */
+export default function ForgottenView() {
+
+    const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   interface HandleSubmitEvent extends React.MouseEvent<HTMLButtonElement, MouseEvent> {
@@ -17,7 +18,7 @@ export default function AuthView() {
     setIsLoading(true);
 
     try {
-      await signInWithEmail(email, password);
+        await supabase.auth.updateUser({ password: 'new_password' })
     } catch (error: unknown) {
       console.error('Login failed:', error);
     } finally {
@@ -26,11 +27,11 @@ export default function AuthView() {
   };
 
   return (
-    <div className='auth'>
+    <div className='forgotten-password'>
       <div className='container'>
         <div className='form-wrapper'>
           <h2 className='title'>guidedogs.ie portal</h2>
-          <p className='subtitle'>Sign in to your account</p>
+          <p className='subtitle'>What is your email address?</p>
 
           <div className='form'>
             <div className='input-group'>
@@ -45,20 +46,6 @@ export default function AuthView() {
                 placeholder="Enter your email"
               />
             </div>
-
-            <div className='input-group'>
-              <label htmlFor="password" className='label'>Password</label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className='input'
-                placeholder="Enter your password"
-              />
-            </div>
-
             <button
               type="submit"
               disabled={isLoading}
@@ -69,13 +56,8 @@ export default function AuthView() {
                 cursor: isLoading ? 'not-allowed' : 'pointer'
               }}
             >
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? 'Sending Password Reset Email...' : 'Sending Password Reset Email'}
             </button>
-          </div>
-
-          <div className='footer'>
-            {/* <li><Link to="/forgotten">Forgot your password?</Link></li> */}
-            <a href="/forgotten" className='link'>Forgot your password?</a>
           </div>
         </div>
       </div>

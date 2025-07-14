@@ -5,15 +5,16 @@ import type { User } from "../types/User";
 //import "./DogEditView.scss";
 import NavBar from "../components/NavBar.tsx";
 
-const SYSTEM_FIELDS = [
-    "user_created_at",
-    "user_created_by",
-    "user_updated_at",
-    "user_updated_by"
-];
+// const SYSTEM_FIELDS = [
+//     "user_created_at",
+//     "user_created_by",
+//     "user_updated_at",
+//     "user_updated_by"
+// ];
 
 /**
  * The User Profile/Edit page.
+ * Can change their name, phone & password
  * @returns
  */
 export default function UserProfileView() {
@@ -26,24 +27,32 @@ export default function UserProfileView() {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
-    useEffect(() => {
-        if (!id) return;
+    const fetchUser = async () => {
         setLoading(true);
-        supabase
-            .from("users")
-            .select("*")
-            .eq("id",id)
-            .single()
-            .then(({ data, error }) => {
-                if (error || !data) {
-                    setError("Dog not found.");
-                } else {
-                    setUser(data);
-                    setForm(data);
-                }
-                setLoading(false);
-            });
-    }, [id]);
+
+        const userResponse = await supabase.auth.getUser()
+        if (userResponse.data.user) {
+
+
+            // load the user id
+            const {data, error} = await supabase
+                .from('users')
+                .select("*")
+                .eq('dog_id', userResponse.data.user.id);
+            if (error) {
+                console.log("Error occurred while fetching dogs:", error);
+                return;
+            }
+            if (data) {
+                setUser(data);
+            }
+        }
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        fetchUser();
+    });
 
     type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
     type ChangeEventValues = {
@@ -121,25 +130,6 @@ export default function UserProfileView() {
                             onChange={handleChange}
                             required
                         />
-                    </div>
-                    <div className="form-row">
-                        <label>Role</label>
-                        <input
-                            name="functional_role"
-                            value={form.functional_role || ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row checkbox-row">
-                        <label>
-                            <input
-                                name="user_is_active"
-                                type="checkbox"
-                                checked={!!form.is_active}
-                                onChange={handleChange}
-                            />
-                            Active
-                        </label>
                     </div>
                     <div className="form-actions">
                         <button type="submit" disabled={loading}>Save</button>

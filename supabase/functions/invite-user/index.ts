@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js";
-console.log("idg.invite-user function 10.11");
+console.log("idg.invite-user function 2025.07.14-11:08");
 
 export const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -11,7 +11,6 @@ export const corsHeaders = {
 serve(async (req) => {
   // This is needed if you're planning to invoke your function from a browser.
   if (req.method === 'OPTIONS') {
-    console.log("OPTIONS {}",corsHeaders);
     return new Response('ok', { headers: corsHeaders })
   }
   try {
@@ -33,9 +32,6 @@ serve(async (req) => {
       )
       
       let new_user_id = '';
-      const userMetadata = {
-        invitedBy: 'adminUser'
-      };
 
       // add partner connection if partner
       // https://supabase.com/docs/reference/javascript/auth-admin-inviteuserbyemail
@@ -43,7 +39,7 @@ serve(async (req) => {
       const { data, error } = await supabaseClient.auth.admin.inviteUserByEmail(
           email,
           {
-            redirectTo: globalThis.location.origin,
+            //redirectTo: globalThis.location.origin,
             data: { 
               functional_role: functional_role
             }
