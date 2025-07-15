@@ -122,6 +122,24 @@ export default function DogCreateView() {
                         </select>
                     </div>
                     <div className="form-row">
+                        <label htmlFor="dog_yob">Year of Birth</label>
+                        <select
+                            name="dog_yob"
+                            value={form.dog_yob || ""}
+                            onChange={handleChange}
+                        >
+                            <option value="">Select</option>
+                            {Array.from({ length: 20 }, (_, i) => {
+                                const year = new Date().getFullYear() - i;
+                                return (
+                                    <option key={year} value={year}>
+                                        {year}
+                                    </option>
+                                );
+                            })}
+                        </select>
+                    </div>
+                    <div className="form-row">
                         <label>Picture URL</label>
                         <input
                             name="dog_picture"
@@ -143,11 +161,13 @@ export default function DogCreateView() {
                             onChange={handleChange}
                         >
                             <option value="">Select</option>
-                            <option value="adopted">Adopted</option>
-                            <option value="available">Available</option>
-                            <option value="fostered">Fostered</option>
-                            <option value="in_training">In Training</option>
-                            <option value="other">Other</option>
+                            <option value="Active Service">Active Service</option>
+                            <option value="Assistance Dog">Assistance Dog</option>
+                            <option value="Guide Dog Training">Guide Dog Training</option>
+                            <option value="Initial Training">Initial Training</option>
+                            <option value="Puppy Raising">Puppy Raising</option>
+                            <option value="Retired">Retired</option>
+                            <option value="Training">Training</option>
                         </select>
                     </div>
                     <div className="form-row">
