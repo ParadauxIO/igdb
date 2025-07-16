@@ -1,5 +1,5 @@
 import { useState } from "react";
-import NavBar from "../components/NavBar";
+import Header from "../components/Header.tsx";
 import { useNavigate } from "react-router";
 import type {DogUpdate} from "../types/DogUpdate";
 import { supabase } from "../state/supabaseClient";
@@ -9,7 +9,7 @@ import { useUserProfile } from "../hooks/useUserProfile";
 const PostUpdateView = () => {
 
     const navigate = useNavigate();
-    const {user} = useUserProfile(); // TODO: move it to context 
+    const {user} = useUserProfile(); // TODO: move it to context
     const [form, setForm] = useState<Partial<DogUpdate>>({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -57,7 +57,7 @@ const PostUpdateView = () => {
 
     return (
             <div className="post-update-view">
-                <NavBar/>
+                <Header/>
                 <div className="post-update-container">
                 <form className="post-update-form" onSubmit={handleSubmit}>
                     {success && <div className="success-msg"> Updated posted!</div>}
@@ -89,8 +89,8 @@ const PostUpdateView = () => {
                             name="update_description"
                             value={form.update_description || ""}
                             onChange={handleChange}
-                            placeholder="What's the update today?" 
-                            rows={3} 
+                            placeholder="What's the update today?"
+                            rows={3}
                         />
                     </div>
                     {/* <div className="form-row">
@@ -107,7 +107,7 @@ const PostUpdateView = () => {
                         <button type="button" onClick={() => navigate("/")}>Cancel</button>
                     </div>
                 </form>
-                
+
                 </div>
             </div>
     );

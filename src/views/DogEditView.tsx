@@ -4,7 +4,7 @@ import { supabase } from "../state/supabaseClient";
 import type { Dog } from "../types/Dog";
 import type { User } from "../types/User.ts";
 import "./DogEditView.scss";
-import NavBar from "../components/NavBar.tsx";
+import Header from "../components/Header.tsx";
 import LookupInput from '../components/LookupInput.tsx';
 
 const SYSTEM_FIELDS = [
@@ -101,7 +101,7 @@ export default function DogEditView() {
 
     return (
         <div className="dog-edit-view">
-            <NavBar/>
+            <Header/>
             <div className="dog-edit-container">
                 <h1>Edit Dog: {dog.dog_name}</h1>
                 <form className="dog-edit-form" onSubmit={handleSubmit}>

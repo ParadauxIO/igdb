@@ -1,4 +1,4 @@
-import NavBar from "../components/NavBar.tsx";
+import Header from "../components/Header.tsx";
 import {useEffect, useMemo, useState} from "react";
 import type {User} from "../types/User.ts";
 import {supabase} from "../state/supabaseClient.ts";
@@ -175,7 +175,7 @@ export default function UserView() {
 
     return (
         <div className="user-view">
-            <NavBar/>
+            <Header/>
             <div className="user-container">
                 <div className="view-header">
                     <h1>Users</h1>

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router";
 import { supabase } from "../state/supabaseClient";
 import type { User } from "../types/User";
 //import "./DogEditView.scss";
-import NavBar from "../components/NavBar.tsx";
+import Header from "../components/Header.tsx";
 
 // const SYSTEM_FIELDS = [
 //     "user_created_at",
@@ -101,7 +101,7 @@ export default function UserProfileView() {
 
     return (
         <div className="dog-edit-view">
-            <NavBar/>
+            <Header/>
             <div className="dog-edit-container">
                 <h1>Edit User Profile: {user.name}</h1>
                 <form className="dog-edit-form" onSubmit={handleSubmit}>

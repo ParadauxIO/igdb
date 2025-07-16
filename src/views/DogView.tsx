@@ -1,4 +1,4 @@
-import NavBar from "../components/NavBar.tsx";
+import Header from "../components/Header.tsx";
 import {useEffect, useMemo, useState} from "react";
 import type {Dog} from "../types/Dog.ts";
 import {supabase} from "../state/supabaseClient.ts";
@@ -232,7 +232,7 @@ export default function DogView() {
 
     return (
         <div className="dog-view">
-            <NavBar/>
+            <Header/>
             <div className="dog-container">
                 <div className="view-header">
                     <h1>Dogs</h1>

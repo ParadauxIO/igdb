@@ -1,10 +1,10 @@
-import NavBar from "../components/NavBar";
+import Header from "../components/Header.tsx";
 import FeedView from "./FeedView";
 import "./HomeView.scss"
 export default function HomeView() {
     return (
         <div className="home">
-            <NavBar/>
+            <Header/>
             <div className="home-feed">
                 <FeedView/>
             </div>

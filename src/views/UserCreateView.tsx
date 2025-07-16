@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { supabase } from "../state/supabaseClient";
 import type { User } from "../types/User";
 //import "./UserCreateView.scss";
-import NavBar from "../components/NavBar.tsx";
+import Header from "../components/Header.tsx";
 
 // Define system fields that should not be manually set during creation
 const SYSTEM_FIELDS = [
@@ -15,7 +15,7 @@ const SYSTEM_FIELDS = [
 ];
 
 /**
- * 
+ *
  * @returns
  */
 export default function UserCreateView() {
@@ -85,7 +85,7 @@ export default function UserCreateView() {
 
     return (
         <div className="user-create-view">
-            <NavBar/>
+            <Header/>
             <div className="user-create-container">
                 <h1>Add New User</h1>
                 <form className="user-create-form" onSubmit={handleSubmit}>

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { supabase } from "../state/supabaseClient.ts";
 import type { User } from "../types/User.ts";
 //import "./UserCreateView.scss";
-import NavBar from "../components/NavBar.tsx";
+import Header from "../components/Header.tsx";
 
 // Define system fields that should not be manually set during creation
 const SYSTEM_FIELDS = [
@@ -16,7 +16,7 @@ const SYSTEM_FIELDS = [
 
 /**
  * Sends an initial email invitation to the user to register and then edit their profile.
- * @returns 
+ * @returns
  */
 export default function UserInviteView() {
 
@@ -46,7 +46,7 @@ export default function UserInviteView() {
         setLoading(true);
         setError(null);
         setSuccess(false);
-       
+
         //console.log(form.email);
         // i think this is how we need to send an email invite
         // reference: https://supabase.com/docs/reference/javascript/auth-admin-generatelink
@@ -73,7 +73,7 @@ export default function UserInviteView() {
 
     return (
         <div className="user-create-view">
-            <NavBar/>
+            <Header/>
             <div className="user-create-container">
                 <h1>Invite New User</h1>
                 <h2>Just need their email. they fill out the rest.</h2>

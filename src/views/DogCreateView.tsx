@@ -4,7 +4,7 @@ import { supabase } from "../state/supabaseClient";
 import type { Dog } from "../types/Dog";
 import type { User } from "../types/User.ts";
 import "./DogCreateView.scss";
-import NavBar from "../components/NavBar.tsx";
+import Header from "../components/Header.tsx";
 import LookupInput from '../components/LookupInput.tsx';
 
 // Define system fields that should not be manually set during creation
@@ -81,7 +81,7 @@ export default function DogCreateView() {
 
     return (
         <div className="dog-create-view">
-            <NavBar/>
+            <Header/>
             <div className="dog-create-container">
                 <h1>Add New Dog</h1>
                 <form className="dog-create-form" onSubmit={handleSubmit}>

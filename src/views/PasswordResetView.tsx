@@ -1,4 +1,4 @@
-import NavBar from "../components/NavBar.tsx";
+import Header from "../components/Header.tsx";
 import {useEffect, useMemo, useState} from "react";
 import type {User} from "../types/User.ts";
 import {supabase} from "../state/supabaseClient.ts";
@@ -13,18 +13,18 @@ import Card from "../components/Card.tsx";
 const columnHelper = createColumnHelper<User>()
 
 /**
- * 
- * 
+ *
+ *
  * https://github.com/JMaylor/vuepabase/tree/5e5668af6b4430a0c6dc7f6b72b38f885de2d2de/src/views/auth
- * 
- * @returns 
+ *
+ * @returns
  * const handleSubmit = async (e: React.FormEvent) => {
         const { error, data } = await supabase.auth.api.updateUser(resetToken, {
             password: password.value,
         });
         console.log(error, data);
     };
- * 
+ *
  */
 export default function PasswordResetView() {
 
@@ -68,7 +68,7 @@ export default function PasswordResetView() {
                 placeholder="Enter your password"
               />
             </div>
-            
+
             <button
               type="submit"
               disabled={isLoading}
