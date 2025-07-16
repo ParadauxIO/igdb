@@ -4,7 +4,6 @@ import { supabase } from "../../state/supabaseClient.ts";
 import type { User } from "../../types/User.ts";
 import "./UserProfileView.scss";
 import Header from "../../components/Header.tsx";
-import LookupInput from '../../components/LookupInput.tsx';
 
 const SYSTEM_FIELDS = [
     "created_at",
