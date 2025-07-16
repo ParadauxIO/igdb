@@ -1,12 +1,10 @@
 export interface User {
     id: string;
-    name: string | null;
-    email: string | null;
-    phone: string | null;
-    permission_role: string | null; 
-    functional_role: string | null; // should we have enum types here?
+    name: string;
+    role: 'viewer' | 'admin' | 'updater';
+    phone: string;
     is_active: boolean;
-    //createdAt: number;
-    //updateAt: number;
-    // add created_by number etc
+    can_approve_updates: boolean;
+    created_at: string;
+    updated_at: string;
 }
