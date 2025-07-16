@@ -36,7 +36,7 @@ export default function Header() {
                     <li><Link to="/dogs">Our Dogs</Link></li>
                     <li><Link to="/post-update">Post Update</Link></li>
                     <li><Link to="/users">Our Users</Link></li>
-                    <li><Link to="/profile">User Profile</Link></li>
+                    <li><Link to="/users/profile">User Profile</Link></li>
                     <li><Link to="/logout">Logout</Link></li>
                 </ul>
             </nav>

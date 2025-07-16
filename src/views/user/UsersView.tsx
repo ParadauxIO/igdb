@@ -10,7 +10,7 @@ import Card from "../../components/Card.tsx";
 
 const columnHelper = createColumnHelper<User>()
 
-export default function UserView() {
+export default function UsersView() {
 
     const navigate = useNavigate();
     const [users, setUsers] = useState<User[]>([])

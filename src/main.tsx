@@ -16,7 +16,7 @@ import DogEditView from "./views/dogs/DogEditView.tsx";
 import DogCreateView from "./views/dogs/DogCreateView.tsx";
 import PostUpdateView from './views/updates/PostUpdateView';
 
-import UserView from "./views/user/UserView.tsx";
+import UsersView from "./views/user/UsersView.tsx";
 import UserInviteView from "./views/user/UserInviteView.tsx";
 import UserProfileView from "./views/user/UserProfileView.tsx";
 
@@ -33,8 +33,9 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/dogs" element={<DogView/>} />
             <Route path="/dogs/edit/:dogId" element={<DogEditView/>} />
             <Route path="/dogs/create" element={<DogCreateView/>} />
-            <Route path="/users" element={<UserView/>} />
-            <Route path="/profile" element={<UserProfileView/>} />
+            <Route path="/users" element={<UsersView/>} />
+            <Route path="/users/profile" element={<UserProfileView/>} />
+            <Route path="/users/profile/:userId" element={<UserProfileView/>} />
             <Route path="/users/invite" element={<UserInviteView/>} />
         </Routes>
       </BrowserRouter>
