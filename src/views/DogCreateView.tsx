@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { supabase } from "../state/supabaseClient";
 import type { Dog } from "../types/Dog";
+import type { User } from "../types/User.ts";
 import "./DogCreateView.scss";
 import NavBar from "../components/NavBar.tsx";
+import LookupInput from '../components/LookupInput.tsx';
 
 // Define system fields that should not be manually set during creation
 const SYSTEM_FIELDS = [
@@ -38,6 +40,20 @@ export default function DogCreateView() {
         setForm(f => ({ ...f, [name]: val }));
     };
 
+    const searchUsers = async (query: string): Promise<User[]> => {
+        const { data, error } = await supabase
+        .from('user_basic_view')
+        .select('*')
+        .ilike('name', `%${query}%`)
+        .limit(10);
+
+        if (error) {
+            console.error('Error searching users:', error.message);
+        return []; }
+
+        return data ?? [];
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -70,7 +86,7 @@ export default function DogCreateView() {
                 <h1>Add New Dog</h1>
                 <form className="dog-create-form" onSubmit={handleSubmit}>
                     <div className="form-row">
-                        <label>Name</label>
+                        <label className="required-label">Name</label>
                         <input
                             name="dog_name"
                             value={form.dog_name || ""}
@@ -79,45 +95,26 @@ export default function DogCreateView() {
                         />
                     </div>
                     <div className="form-row">
-                        <label>Microchip Number</label>
-                        <input
-                            name="dog_microchip_number"
-                            value={form.dog_microchip_number || ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Breed</label>
-                        <input
-                            name="dog_breed"
-                            value={form.dog_breed || ""}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Role</label>
-                        <input
+                        <label className="required-label">Role</label>
+                        <select
                             name="dog_role"
                             value={form.dog_role || ""}
                             onChange={handleChange}
-                        />
+                            required
+                        >
+                            <option value="">Select</option>
+                            <option value="Guide Dog">Guide Dog</option>
+                            <option value="Assistance Dog">Assistance Dog</option>
+                            <option value="Community Ambassador Dog">Community Ambassador Dog</option>
+                        </select>
                     </div>
                     <div className="form-row">
-                        <label>Date of Birth</label>
-                        <input
-                            name="dog_dob"
-                            type="date"
-                            value={form.dog_dob ? form.dog_dob.substring(0, 10) : ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Sex</label>
+                        <label className="required-label">Sex</label>
                         <select
                             name="dog_sex"
                             value={form.dog_sex || ""}
                             onChange={handleChange}
+                            required
                         >
                             <option value="">Select</option>
                             <option value="male">Male</option>
@@ -125,12 +122,22 @@ export default function DogCreateView() {
                         </select>
                     </div>
                     <div className="form-row">
-                        <label>Color/Markings</label>
-                        <input
-                            name="dog_color_markings"
-                            value={form.dog_color_markings || ""}
+                        <label htmlFor="dog_yob">Year of Birth</label>
+                        <select
+                            name="dog_yob"
+                            value={form.dog_yob || ""}
                             onChange={handleChange}
-                        />
+                        >
+                            <option value="">Select</option>
+                            {Array.from({ length: 20 }, (_, i) => {
+                                const year = new Date().getFullYear() - i;
+                                return (
+                                    <option key={year} value={year}>
+                                        {year}
+                                    </option>
+                                );
+                            })}
+                        </select>
                     </div>
                     <div className="form-row">
                         <label>Picture URL</label>
@@ -148,36 +155,31 @@ export default function DogCreateView() {
                     )}
                     <div className="form-row">
                         <label>Status</label>
-                        <input
+                        <select
                             name="dog_status"
                             value={form.dog_status || ""}
                             onChange={handleChange}
-                        />
+                        >
+                            <option value="">Select</option>
+                            <option value="Active Service">Active Service</option>
+                            <option value="Assistance Dog">Assistance Dog</option>
+                            <option value="Guide Dog Training">Guide Dog Training</option>
+                            <option value="Initial Training">Initial Training</option>
+                            <option value="Puppy Raising">Puppy Raising</option>
+                            <option value="Retired">Retired</option>
+                            <option value="Training">Training</option>
+                        </select>
                     </div>
                     <div className="form-row">
-                        <label>Weight (kg)</label>
-                        <input
-                            name="dog_weight_kg"
-                            type="number"
-                            step="0.1"
-                            value={form.dog_weight_kg ?? ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Current Owner</label>{ /* TODO: REMOVE DEFAULT VALUE */ }
-                        <input
-                            name="dog_current_owner"
-                            value={form.dog_current_owner || "d9018bea-6537-443c-a61c-779e2db58a92"}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Initial Owner</label>
-                        <input
-                            name="dog_initial_owner"
-                            value={form.dog_initial_owner || "d9018bea-6537-443c-a61c-779e2db58a92"}
-                            onChange={handleChange}
+                        <LookupInput
+                            name="current_handler"
+                            label="Current Handler"
+                            value={form.dog_current_handler}
+                            placeholder="Search for a handler..."
+                            onSelect={(user) =>
+                                setForm(prev => ({...prev, dog_current_handler: user ? user.name : null, }))}
+                            searchFunc={searchUsers}
+                            displayField="name"
                         />
                     </div>
                     <div className="form-row">
@@ -185,14 +187,6 @@ export default function DogCreateView() {
                         <textarea
                             name="dog_general_notes"
                             value={form.dog_general_notes || ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Medical Notes</label>
-                        <textarea
-                            name="dog_medical_notes"
-                            value={form.dog_medical_notes || ""}
                             onChange={handleChange}
                         />
                     </div>
