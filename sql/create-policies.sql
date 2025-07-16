@@ -1,12 +1,21 @@
 -- Enable RLS before defining policies
-ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.dogs ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.dog_updates ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.dog_following ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.dog_history ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.users
+    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.dogs
+    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.dog_updates
+    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.dog_following
+    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.dog_history
+    ENABLE ROW LEVEL SECURITY;
+
+-- Generic functions
+CREATE FUNCTION is_admin(uid uuid) RETURNS boolean AS $$
+SELECT permission_role = 'admin' FROM public.users WHERE id = uid;
+$$ LANGUAGE sql STABLE;
 
 -- === USERS TABLE POLICIES ===
-
 -- Users can read their own profile only
 CREATE POLICY "Users can read their own profile"
     ON public.users
@@ -27,10 +36,31 @@ CREATE POLICY "Admins can delete users"
     FOR DELETE
     TO authenticated
     USING (
-    EXISTS (
-        SELECT 1 FROM public.users u
-        WHERE u.id = auth.uid() AND u.permission_role = 'admin'
+    EXISTS (SELECT 1
+            FROM public.users u
+            WHERE u.id = auth.uid()
+              AND u.permission_role = 'admin')
+    );
+
+-- Admins can read all users
+CREATE POLICY "Admins can select users"
+    ON public.users
+    FOR SELECT
+    TO authenticated
+    USING (
+    is_admin(auth.uid())
+    );
+
+-- Admins cna update users
+CREATE POLICY "Admins can update users"
+    ON public.users
+    FOR UPDATE
+    TO authenticated
+    USING (
+    is_admin(auth.uid())
     )
+    WITH CHECK (
+    is_admin(auth.uid())
     );
 
 -- === DOGS TABLE POLICIES ===
@@ -41,11 +71,10 @@ CREATE POLICY "Admins can insert dogs"
     FOR INSERT
     TO authenticated
     WITH CHECK (
-    EXISTS (
-        SELECT 1 FROM public.users u
-        WHERE u.id = auth.uid()
-          AND u.permission_role = 'admin'
-    )
+    EXISTS (SELECT 1
+            FROM public.users u
+            WHERE u.id = auth.uid()
+              AND u.permission_role = 'admin')
     );
 
 -- Allow users with role 'admin' to update dogs
@@ -54,11 +83,10 @@ CREATE POLICY "Admins can update dogs"
     FOR UPDATE
     TO authenticated
     USING (
-    EXISTS (
-        SELECT 1 FROM public.users u
-        WHERE u.id = auth.uid()
-          AND u.permission_role = 'admin'
-    )
+    EXISTS (SELECT 1
+            FROM public.users u
+            WHERE u.id = auth.uid()
+              AND u.permission_role = 'admin')
     );
 
 -- Allow only admins to delete dogs
@@ -67,24 +95,22 @@ CREATE POLICY "Admins can delete dogs"
     FOR DELETE
     TO authenticated
     USING (
-    EXISTS (
-        SELECT 1 FROM public.users u
-        WHERE u.id = auth.uid()
-          AND u.permission_role = 'admin'
-    )
+    EXISTS (SELECT 1
+            FROM public.users u
+            WHERE u.id = auth.uid()
+              AND u.permission_role = 'admin')
     );
 
 CREATE POLICY "Admins can read dogs"
     ON public.dogs
     FOR SELECT
-                   TO authenticated
-                   USING (
-                   EXISTS (
-                   SELECT 1 FROM public.users u
-                   WHERE u.id = auth.uid()
-                   AND u.permission_role = 'admin'
-                   )
-                   );
+    TO authenticated
+    USING (
+    EXISTS (SELECT 1
+            FROM public.users u
+            WHERE u.id = auth.uid()
+              AND u.permission_role = 'admin')
+    );
 
 -- === DOG_UPDATES TABLE POLICIES ===
 
@@ -104,14 +130,12 @@ CREATE POLICY "Updaters can insert updates on dogs they handle"
     FOR INSERT
     TO authenticated
     WITH CHECK (
-    EXISTS (
-        SELECT 1
-        FROM public.users u
-                 JOIN public.dogs d ON d.dog_id = dog_id
-        WHERE u.id = auth.uid()
-          AND u.permission_role = 'updater'
-          AND d.dog_current_handler = auth.uid()
-    )
+    EXISTS (SELECT 1
+            FROM public.users u
+                     JOIN public.dogs d ON d.dog_id = dog_id
+            WHERE u.id = auth.uid()
+              AND u.permission_role = 'updater'
+              AND d.dog_current_handler = auth.uid())
     );
 
 -- === DOG_FOLLOWING TABLE POLICIES (if needed) ===
@@ -151,11 +175,10 @@ CREATE POLICY "Admins can insert dog history"
     FOR INSERT
     TO authenticated
     WITH CHECK (
-    EXISTS (
-        SELECT 1 FROM public.users u
-        WHERE u.id = auth.uid()
-          AND u.permission_role = 'admin'
-    )
+    EXISTS (SELECT 1
+            FROM public.users u
+            WHERE u.id = auth.uid()
+              AND u.permission_role = 'admin')
     );
 
 -- Admins can view dog history
@@ -164,9 +187,8 @@ CREATE POLICY "Admins can view dog history"
     FOR SELECT
     TO authenticated
     USING (
-    EXISTS (
-        SELECT 1 FROM public.users u
-        WHERE u.id = auth.uid()
-          AND u.permission_role = 'admin'
-    )
+    EXISTS (SELECT 1
+            FROM public.users u
+            WHERE u.id = auth.uid()
+              AND u.permission_role = 'admin')
     );
