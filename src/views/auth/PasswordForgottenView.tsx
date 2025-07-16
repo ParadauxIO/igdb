@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {supabase} from "../state/supabaseClient.ts";
+import {supabase} from "../../state/supabaseClient.ts";
 
 /**
  * https://supabase.com/docs/reference/javascript/auth-resetpasswordforemail

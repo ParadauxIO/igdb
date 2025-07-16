@@ -3,23 +3,22 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from "react-router";
 
 import './style/reset.scss';
-import './main.scss';
-import ProtectedView from './views/ProtectedView.tsx';
-import AuthView from './views/AuthView.tsx';
+import ProtectedView from './views/auth/ProtectedView.tsx';
+import AuthView from './views/auth/AuthView.tsx';
 import HomeView from './views/HomeView.tsx';
 
-import LogoutView from './views/LogoutView.tsx';
-import PasswordForgottenView from './views/PasswordForgottenView.tsx';
-import PasswordResetView from './views/PasswordResetView.tsx';
+import LogoutView from './views/auth/LogoutView.tsx';
+import PasswordForgottenView from './views/auth/PasswordForgottenView.tsx';
+import PasswordResetView from './views/auth/PasswordResetView.tsx';
 
-import DogView from "./views/DogView.tsx";
-import DogEditView from "./views/DogEditView.tsx";
-import DogCreateView from "./views/DogCreateView.tsx";
-import PostUpdateView from './views/PostUpdateView';
+import DogView from "./views/dogs/DogView.tsx";
+import DogEditView from "./views/dogs/DogEditView.tsx";
+import DogCreateView from "./views/dogs/DogCreateView.tsx";
+import PostUpdateView from './views/updates/PostUpdateView';
 
-import UserView from "./views/UserView.tsx";
-import UserInviteView from "./views/UserInviteView.tsx";
-import UserProfileView from "./views/UserProfileView.tsx";
+import UserView from "./views/user/UserView.tsx";
+import UserInviteView from "./views/user/UserInviteView.tsx";
+import UserProfileView from "./views/user/UserProfileView.tsx";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -29,7 +28,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/" element={<HomeView/>} />
             <Route path="/logout" element={<LogoutView/>} />
             <Route path="/reset" element={<PasswordResetView/>} />
-            <Route path="/forgotten" element={<PasswordForgottenView/>} /> { /* should this be in a non-protected space? */} 
+            <Route path="/forgotten" element={<PasswordForgottenView/>} /> { /* should this be in a non-protected space? */}
             <Route path="/post-update" element={<PostUpdateView/>} />
             <Route path="/dogs" element={<DogView/>} />
             <Route path="/dogs/edit/:dogId" element={<DogEditView/>} />

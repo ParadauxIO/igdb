@@ -1,14 +1,7 @@
-import Header from "../components/Header.tsx";
-import {useEffect, useMemo, useState} from "react";
-import type {User} from "../types/User.ts";
-import {supabase} from "../state/supabaseClient.ts";
-//import "./DogView.scss";
-import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/react-table";
-import {FaEllipsisH, FaPlus} from "react-icons/fa";
-import {useNavigate} from "react-router";
-// import UserTable from "../components/UserTable.tsx";
-import Table from "../components/Table.tsx";
-import Card from "../components/Card.tsx";
+import {useState} from "react";
+import type {User} from "../../types/User.ts";
+import {supabase} from "../../state/supabaseClient.ts";
+import {createColumnHelper} from "@tanstack/react-table";
 
 const columnHelper = createColumnHelper<User>()
 

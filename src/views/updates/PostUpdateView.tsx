@@ -1,10 +1,10 @@
 import { useState } from "react";
-import Header from "../components/Header.tsx";
+import Header from "../../components/Header.tsx";
 import { useNavigate } from "react-router";
-import type {DogUpdate} from "../types/DogUpdate";
-import { supabase } from "../state/supabaseClient";
+import type {DogUpdate} from "../../types/DogUpdate";
+import { supabase } from "../../state/supabaseClient";
 import "./PostUpdateView.scss";
-import { useUserProfile } from "../hooks/useUserProfile";
+import { useUserProfile } from "../../hooks/useUserProfile";
 
 const PostUpdateView = () => {
 

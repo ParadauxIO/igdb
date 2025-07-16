@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { supabase } from "../state/supabaseClient.ts";
-import type { User } from "../types/User.ts";
+import { supabase } from "../../state/supabaseClient.ts";
+import type { User } from "../../types/User.ts";
 //import "./UserCreateView.scss";
-import Header from "../components/Header.tsx";
+import Header from "../../components/Header.tsx";
 
 // Define system fields that should not be manually set during creation
 const SYSTEM_FIELDS = [

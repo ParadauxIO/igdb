@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { supabase } from "../state/supabaseClient";
-import type { User } from "../types/User";
+import { supabase } from "../../state/supabaseClient.ts";
+import type { User } from "../../types/User.ts";
 //import "./DogEditView.scss";
-import Header from "../components/Header.tsx";
+import Header from "../../components/Header.tsx";
 
 // const SYSTEM_FIELDS = [
 //     "user_created_at",

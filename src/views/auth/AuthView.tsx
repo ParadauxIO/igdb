@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Link } from "react-router";
-import { signInWithEmail } from '../partials/auth.ts';
+import { signInWithEmail } from '../../partials/auth.ts';
 import "./AuthView.scss";
 
 export default function AuthView() {

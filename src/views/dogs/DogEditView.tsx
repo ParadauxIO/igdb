@@ -1,29 +1,46 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import { supabase } from "../state/supabaseClient";
-import type { Dog } from "../types/Dog";
-import type { User } from "../types/User.ts";
-import "./DogCreateView.scss";
-import Header from "../components/Header.tsx";
-import LookupInput from '../components/LookupInput.tsx';
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router";
+import { supabase } from "../../state/supabaseClient.ts";
+import type { Dog } from "../../types/Dog.ts";
+import type { User } from "../../types/User.ts";
+import "./DogEditView.scss";
+import Header from "../../components/Header.tsx";
+import LookupInput from '../../components/LookupInput.tsx';
 
-// Define system fields that should not be manually set during creation
 const SYSTEM_FIELDS = [
-    "dog_id",
     "dog_created_at",
     "dog_updated_at",
     "dog_created_by",
     "dog_last_edited_by"
 ];
 
-export default function DogCreateView() {
+export default function DogEditView() {
+    const { dogId } = useParams<{ dogId: string }>();
     const navigate = useNavigate();
-    const [form, setForm] = useState<Partial<Dog>>({
-        dog_is_active: true,
-    });
+    const [dog, setDog] = useState<Dog | null>(null);
+    const [form, setForm] = useState<Partial<Dog>>({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
+
+    useEffect(() => {
+        if (!dogId) return;
+        setLoading(true);
+        supabase
+            .from("dogs")
+            .select("*")
+            .eq("dog_id", dogId)
+            .single()
+            .then(({ data, error }) => {
+                if (error || !data) {
+                    setError("Dog not found.");
+                } else {
+                    setDog(data);
+                    setForm(data);
+                }
+                setLoading(false);
+            });
+    }, [dogId]);
 
     type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
     type ChangeEventValues = {
@@ -60,31 +77,34 @@ export default function DogCreateView() {
         setError(null);
         setSuccess(false);
 
-        // Remove system fields from insertion data
-        const insertData: Partial<Dog> = { ...form };
-        SYSTEM_FIELDS.forEach(f => delete insertData[f as keyof Dog]);
+        // Remove system fields from update
+        const updateData: Partial<Dog> = { ...form };
+        SYSTEM_FIELDS.forEach(f => delete updateData[f as keyof Dog]);
 
         const { error } = await supabase
             .from("dogs")
-            .insert(insertData)
-            .select();
+            .update(updateData)
+            .eq("dog_id", dogId);
 
         setLoading(false);
         if (error) {
-            setError("Failed to create dog.");
-            console.error(error);
+            setError("Failed to update dog.");
         } else {
             setSuccess(true);
             setTimeout(() => navigate("/dogs"), 1200);
         }
     };
 
+    if (loading && !dog) return <div className="dog-edit-view">Loading...</div>;
+    if (error) return <div className="dog-edit-view error">{error}</div>;
+    if (!dog) return null;
+
     return (
-        <div className="dog-create-view">
+        <div className="dog-edit-view">
             <Header/>
-            <div className="dog-create-container">
-                <h1>Add New Dog</h1>
-                <form className="dog-create-form" onSubmit={handleSubmit}>
+            <div className="dog-edit-container">
+                <h1>Edit Dog: {dog.dog_name}</h1>
+                <form className="dog-edit-form" onSubmit={handleSubmit}>
                     <div className="form-row">
                         <label className="required-label">Name</label>
                         <input
@@ -147,12 +167,10 @@ export default function DogCreateView() {
                             onChange={handleChange}
                         />
                     </div>
-                    {form.dog_picture && (
-                        <div className="picture-preview">
-                            <label>Picture Preview</label>
-                            <img src={form.dog_picture} alt="Picture Preview of Dog"/>
-                        </div>
-                    )}
+                    <div className="picture-preview">
+                        <label>Picture Preview</label>
+                        <img src={form.dog_picture ?? ""} alt="Picture Preview of Dog"/>
+                    </div>
                     <div className="form-row">
                         <label>Status</label>
                         <select
@@ -202,10 +220,10 @@ export default function DogCreateView() {
                         </label>
                     </div>
                     <div className="form-actions">
-                        <button type="submit" disabled={loading}>Create</button>
+                        <button type="submit" disabled={loading}>Save</button>
                         <button type="button" onClick={() => navigate("/dogs")}>Cancel</button>
                     </div>
-                    {success && <div className="success-msg">Dog created successfully!</div>}
+                    {success && <div className="success-msg">Dog updated!</div>}
                     {error && <div className="error-msg">{error}</div>}
                 </form>
             </div>

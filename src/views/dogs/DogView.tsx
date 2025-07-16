@@ -1,13 +1,13 @@
-import Header from "../components/Header.tsx";
+import Header from "../../components/Header.tsx";
 import {useEffect, useMemo, useState} from "react";
-import type {Dog} from "../types/Dog.ts";
-import {supabase} from "../state/supabaseClient.ts";
+import type {Dog} from "../../types/Dog.ts";
+import {supabase} from "../../state/supabaseClient.ts";
 import "./DogView.scss";
 import {FaEllipsisH, FaPlus} from "react-icons/fa";
 import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/react-table";
 import { useNavigate } from "react-router";
-import Table from "../components/Table.tsx";
-import Card from "../components/Card.tsx";
+import Table from "../../components/Table.tsx";
+import Card from "../../components/Card.tsx";
 
 const columnHelper = createColumnHelper<Dog>()
 
