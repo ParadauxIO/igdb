@@ -2,9 +2,11 @@ import {Link} from "react-router";
 import {useState} from "react";
 
 import "./Header.scss";
+import {useAuth} from "../hooks/useAuth.ts";
 
 export default function Header() {
     let [navOpen, setNavOpen] = useState(false);
+    const {user} = useAuth();
 
     return (
         <header className="primary-header flex">
@@ -39,6 +41,7 @@ export default function Header() {
                     <li><Link to="/users/profile">User Profile</Link></li>
                     <li><Link to="/logout">Logout</Link></li>
                 </ul>
+                <span>{user?.name}</span>
             </nav>
         </header>
     )
