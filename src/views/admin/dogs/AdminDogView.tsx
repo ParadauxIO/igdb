@@ -163,7 +163,7 @@ export default function AdminDogView() {
     })
 
     const handleEdit = (dogId: string) => {
-        navigate(`/dogs/edit/${dogId}`);
+        navigate(`/admin/dogs/edit/${dogId}`);
     };
 
     const handleDisable = async (dogId: string) => {
@@ -202,7 +202,7 @@ export default function AdminDogView() {
     };
 
     const handleCreateNew = () => {
-        navigate('/dogs/create');
+        navigate('/admin/dogs/create');
     };
 
     const fetchDogs = async () => {

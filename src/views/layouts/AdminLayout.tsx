@@ -1,10 +1,10 @@
-import Header from "../../components/Header.tsx";
 import {Outlet} from "react-router";
+import AdminHeader from "../../components/admin/AdminHeader.tsx";
 
 export default function AdminLayout() {
     return (
         <div className="admin-layout">
-            <Header/>
+            <AdminHeader/>
             <Outlet/>
         </div>
     );

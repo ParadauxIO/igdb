@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useState } from "react";
+import { useNavigate } from "react-router";
 import { supabase } from "../../state/supabaseClient.ts";
 import type { User } from "../../types/User.ts";
 import "./UserProfileView.scss";
-import Header from "../../components/Header.tsx";
+import type {ChangeEvent, ChangeEventValues} from "../../types/events.ts";
+import {useAuth} from "../../state/hooks/useAuth.ts";
 
 const SYSTEM_FIELDS = [
     "created_at",
@@ -11,37 +12,18 @@ const SYSTEM_FIELDS = [
 ];
 
 export default function UserProfileView() {
-    const { initialUserId } = useParams<{ userId: string }>();
-    const [userId, setUserId] = useState(initialUserId);
+    const {user} = useAuth();
+    if (!user) {
+        return <div className="user-profile-view error">You must be logged in to view this page.</div>;
+    }
+
     const navigate = useNavigate();
-    const [form, setForm] = useState<Partial<User>>({});
+    const [form, setForm] = useState<Partial<User>>(user);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
     const [password, setPassword] = useState<string>("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
-
-    useEffect(() => {
-        async function loadUser() {
-            if (!userId) {
-                const {data: {user}} = await supabase.auth.getUser();
-                setUserId(user.id);
-                return;
-            }
-            console.log(userId);
-
-            setLoading(true);
-
-            const {data} = await supabase.from("users")
-                .select("*")
-                .eq("id", userId)
-                .single();
-
-            setForm(data);
-            setLoading(false);
-        }
-        loadUser();
-    }, [userId]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -55,14 +37,15 @@ export default function UserProfileView() {
         const { error } = await supabase
             .from("users")
             .update(updateData)
-            .eq("id", userId);
+            .eq("id", user.id);
 
         if (password) {
             const { error: passwordError } = await supabase.auth.updateUser({
                 password: password
             });
+
             if (passwordError) {
-                setError("Failed to update password.", passwordError);
+                setError("Failed to update password: " + passwordError);
             }
         }
 
@@ -71,7 +54,6 @@ export default function UserProfileView() {
             setError("Failed to update user.");
         } else {
             setSuccess(true);
-            // setTimeout(() => navigate("/"), 3000);
         }
     };
 
@@ -90,7 +72,7 @@ export default function UserProfileView() {
     return (
         <div className="dog-edit-view">
             <div className="dog-edit-container">
-                <h1>Edit User: {form.name}</h1>
+                <h1>Your profile</h1>
                 <form className="dog-edit-form" onSubmit={handleSubmit}>
                     <div className="form-row">
                         <label className="required-label">Name</label>
@@ -113,7 +95,7 @@ export default function UserProfileView() {
                     </div>
 
                     <div className="form-row">
-                        <label className="required-label">Password</label>
+                        <label className="required-label">Change Password</label>
                         <input
                             type={showPassword ? 'text' : 'password'}
                             name="password"

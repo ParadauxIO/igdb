@@ -92,7 +92,7 @@ export default function AdminEditDogView() {
             setError("Failed to update dog.");
         } else {
             setSuccess(true);
-            setTimeout(() => navigate("/dogs"), 1200);
+            setTimeout(() => navigate("/admin/dogs"), 1200);
         }
     };
 
@@ -221,7 +221,7 @@ export default function AdminEditDogView() {
                     </div>
                     <div className="form-actions">
                         <button type="submit" disabled={loading}>Save</button>
-                        <button type="button" onClick={() => navigate("/dogs")}>Cancel</button>
+                        <button type="button" onClick={() => navigate("/admin/dogs")}>Cancel</button>
                     </div>
                     {success && <div className="success-msg">Dog updated!</div>}
                     {error && <div className="error-msg">{error}</div>}

@@ -1,12 +1,11 @@
-import Header from "../../components/Header.tsx";
 import {useEffect, useMemo, useState} from "react";
-import type {User} from "../../types/User.ts";
-import {supabase} from "../../state/supabaseClient.ts";
+import type {User} from "../../../types/User.ts";
+import {supabase} from "../../../state/supabaseClient.ts";
 import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/react-table";
 import {FaEllipsisH } from "react-icons/fa";
 import {useNavigate} from "react-router";
-import Table from "../../components/Table.tsx";
-import Card from "../../components/Card.tsx";
+import Table from "../../../components/Table.tsx";
+import Card from "../../../components/Card.tsx";
 
 const columnHelper = createColumnHelper<User>()
 
@@ -16,7 +15,7 @@ export default function UsersView() {
     const [users, setUsers] = useState<User[]>([])
     const [loading, setLoading] = useState<boolean>(false);
     const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
-    const [showInactive, setShowInactive] = useState<boolean>(false);
+    const [showInactive] = useState<boolean>(false);
 
     const columns = [
         // Multiselect checkbox for selecting rows
@@ -107,7 +106,7 @@ export default function UsersView() {
     })
 
     const handleEdit = (id: string) => {
-        navigate(`/users/profile/${id}`);
+        navigate(`/admin/users/profile/${id}`);
     };
 
     const handleDisable = async (id: string) => {
@@ -146,7 +145,7 @@ export default function UsersView() {
     };
 
     const handleUserInvitation = () => {
-        navigate('/users/invite');
+        navigate('/admin/users/invite');
     };
 
     const fetchUsers = async () => {
@@ -173,7 +172,6 @@ export default function UsersView() {
 
     return (
         <div className="user-view">
-            <Header/>
             <div className="user-container">
                 <div className="view-header">
                     <h1>Users</h1>
