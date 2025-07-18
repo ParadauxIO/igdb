@@ -1,4 +1,4 @@
-import {useAuth} from "../../hooks/useAuth.ts";
+import {useAuth} from "../../../hooks/useAuth.ts";
 import {useLocation} from "react-router";
 import {type JSX} from "react";
 

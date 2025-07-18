@@ -1,7 +1,8 @@
 export interface User {
     id: string;
     name: string;
-    role: 'viewer' | 'admin' | 'updater';
+    permission_role: 'viewer' | 'admin' | 'updater';
+    functional_role: string;
     phone: string;
     is_active: boolean;
     can_approve_updates: boolean;

@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { supabase } from "../../state/supabaseClient.ts";
-import type { Dog } from "../../types/Dog.ts";
-import type { User } from "../../types/User.ts";
-import "./DogEditView.scss";
-import Header from "../../components/Header.tsx";
-import LookupInput from '../../components/LookupInput.tsx';
+
+import "./AdminEditDogView.scss";
+import type {Dog} from "../../../types/Dog.ts";
+import {supabase} from "../../../state/supabaseClient.ts";
+import Header from "../../../components/Header.tsx";
+import LookupInput from "../../../components/LookupInput.tsx";
+import type {User} from "../../../types/User.ts";
+
 
 const SYSTEM_FIELDS = [
     "dog_created_at",
@@ -14,7 +16,7 @@ const SYSTEM_FIELDS = [
     "dog_last_edited_by"
 ];
 
-export default function DogEditView() {
+export default function AdminEditDogView() {
     const { dogId } = useParams<{ dogId: string }>();
     const navigate = useNavigate();
     const [dog, setDog] = useState<Dog | null>(null);

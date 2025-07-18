@@ -1,6 +1,4 @@
 import {flexRender, type Table} from "@tanstack/react-table";
-// import type {Dog} from "../types/Dog.ts";
-import type {User} from "../types/User.ts";
 
 import "./Table.scss"
 import type { Key } from "react";
@@ -8,7 +6,7 @@ import type { Key } from "react";
 type TableProps = {
     loading: boolean;
     // can this table be made generic to support listing Users as well?
-    table: Table<User>;
+    table: Table<any>;
 };
 
 export default function Table({loading, table}: TableProps) {
