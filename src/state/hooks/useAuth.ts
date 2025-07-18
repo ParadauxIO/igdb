@@ -2,7 +2,7 @@
 
 
 import {useContext} from "react";
-import {AuthContext} from "../state/context/AuthContext";
+import {AuthContext} from "../context/AuthContext.tsx";
 /**
  * This hook retrieves the current Supabase auth session and listens for changes.
  * @author Rían Errity

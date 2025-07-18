@@ -1,18 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { supabase } from "../../state/supabaseClient.ts";
-import type { User } from "../../types/User.ts";
-//import "./UserCreateView.scss";
-import Header from "../../components/Header.tsx";
+import { supabase } from "../../../state/supabaseClient.ts";
 
-// Define system fields that should not be manually set during creation
-const SYSTEM_FIELDS = [
-    "user_id",
-    "createdAt",
-    "updatedAt",
-    //"user_created_by",
-    //"user_last_edited_by"
-];
+type InvitedUser = {
+    email: string;
+    functional_role?: string;
+}
 
 /**
  * Sends an initial email invitation to the user to register and then edit their profile.
@@ -21,7 +14,7 @@ const SYSTEM_FIELDS = [
 export default function UserInviteView() {
 
     const navigate = useNavigate();
-    const [form, setForm] = useState<Partial<User>>({});
+    const [form, setForm] = useState<Partial<InvitedUser>>({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
@@ -73,7 +66,6 @@ export default function UserInviteView() {
 
     return (
         <div className="user-create-view">
-            <Header/>
             <div className="user-create-container">
                 <h1>Invite New User</h1>
                 <h2>Just need their email. they fill out the rest.</h2>

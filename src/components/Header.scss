@@ -24,11 +24,11 @@ $nav-text-color: black;
         }
     }
 
-    //@media (min-width: 45.01em) {
-    //    .hamburger {
-    //        display: none;
-    //    }
-    //}
+    @media (min-width: 45.01em) {
+        .hamburger {
+            display: none;
+        }
+    }
 
     @media (max-width: 45em) {
         .primary-navigation {

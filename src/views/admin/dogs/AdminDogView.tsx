@@ -7,8 +7,6 @@ import type {Dog} from "../../../types/Dog.ts";
 import {supabase} from "../../../state/supabaseClient.ts";
 import Card from "../../../components/Card.tsx";
 import Table from "../../../components/Table.tsx";
-import Header from "../../../components/Header.tsx";
-
 
 const columnHelper = createColumnHelper<Dog>()
 
@@ -233,7 +231,6 @@ export default function AdminDogView() {
 
     return (
         <div className="dog-view">
-            <Header/>
             <div className="dog-container">
                 <div className="view-header">
                     <h1>Dogs</h1>

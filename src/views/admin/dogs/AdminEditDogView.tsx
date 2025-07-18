@@ -4,7 +4,6 @@ import { useParams, useNavigate } from "react-router";
 import "./AdminEditDogView.scss";
 import type {Dog} from "../../../types/Dog.ts";
 import {supabase} from "../../../state/supabaseClient.ts";
-import Header from "../../../components/Header.tsx";
 import LookupInput from "../../../components/LookupInput.tsx";
 import type {User} from "../../../types/User.ts";
 
@@ -103,7 +102,6 @@ export default function AdminEditDogView() {
 
     return (
         <div className="dog-edit-view">
-            <Header/>
             <div className="dog-edit-container">
                 <h1>Edit Dog: {dog.dog_name}</h1>
                 <form className="dog-edit-form" onSubmit={handleSubmit}>

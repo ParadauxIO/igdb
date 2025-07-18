@@ -89,7 +89,6 @@ export default function UserProfileView() {
 
     return (
         <div className="dog-edit-view">
-            <Header/>
             <div className="dog-edit-container">
                 <h1>Edit User: {form.name}</h1>
                 <form className="dog-edit-form" onSubmit={handleSubmit}>

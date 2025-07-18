@@ -5,9 +5,7 @@ import "./AdminCreateDogView.scss";
 import type {User} from "../../../types/User.ts";
 import {supabase} from "../../../state/supabaseClient.ts";
 import type {Dog} from "../../../types/Dog.ts";
-import Header from "../../../components/Header.tsx";
 import LookupInput from "../../../components/LookupInput.tsx";
-
 
 // Define system fields that should not be manually set during creation
 const SYSTEM_FIELDS = [
@@ -83,7 +81,6 @@ export default function AdminCreateDogView() {
 
     return (
         <div className="dog-create-view">
-            <Header/>
             <div className="dog-create-container">
                 <h1>Add New Dog</h1>
                 <form className="dog-create-form" onSubmit={handleSubmit}>

@@ -1,5 +1,5 @@
 
-import { useAuth } from "../../../hooks/useAuth.ts";
+import { useAuth } from "../../../state/hooks/useAuth.ts";
 import type {ReactNode} from "react";
 import {Outlet} from "react-router";
 

@@ -2,11 +2,13 @@ import {Link} from "react-router";
 import {useState} from "react";
 
 import "./Header.scss";
-import {useAuth} from "../hooks/useAuth.ts";
+import {useAuth} from "../state/hooks/useAuth.ts";
 
 export default function Header() {
     let [navOpen, setNavOpen] = useState(false);
     const {user} = useAuth();
+    const isAdmin = user && user.permission_role === "admin";
+    const isUpdater = user && (isAdmin || user.permission_role === "updater");
 
     return (
         <header className="primary-header flex">
@@ -35,9 +37,9 @@ export default function Header() {
                     data-visable={`${navOpen}`}
                 >
                     <li><Link to="/">Home</Link></li>
-                    <li><Link to="/dogs">Our Dogs</Link></li>
-                    <li><Link to="/post-update">Post Update</Link></li>
-                    <li><Link to="/users">Our Users</Link></li>
+                    <li><Link to="/dogs">Dogs</Link></li>
+                    {isUpdater && <li><Link to="/update/post">Post Update</Link></li>}
+                    {isAdmin && <li><Link to="/admin">Admin</Link></li>}
                     { user && (
                         <li><Link to="/users/profile">{user.name ? user.name : "Your profile"}</Link></li>
                     )}
