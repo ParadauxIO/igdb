@@ -80,3 +80,8 @@ h6 {
 #__next {
     isolation: isolate;
 }
+
+.flex {
+    display: flex;
+    gap: var(--gap, 1rem);
+}

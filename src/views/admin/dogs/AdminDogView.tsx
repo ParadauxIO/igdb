@@ -1,17 +1,16 @@
-import NavBar from "../components/NavBar.tsx";
 import {useEffect, useMemo, useState} from "react";
-import type {Dog} from "../types/Dog.ts";
-import {supabase} from "../state/supabaseClient.ts";
-import "./DogView.scss";
+import "./AdminDogView.scss";
 import {FaEllipsisH, FaPlus} from "react-icons/fa";
 import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/react-table";
 import { useNavigate } from "react-router";
-import Table from "../components/Table.tsx";
-import Card from "../components/Card.tsx";
+import type {Dog} from "../../../types/Dog.ts";
+import {supabase} from "../../../state/supabaseClient.ts";
+import Card from "../../../components/Card.tsx";
+import Table from "../../../components/Table.tsx";
 
 const columnHelper = createColumnHelper<Dog>()
 
-export default function DogView() {
+export default function AdminDogView() {
     const [dogs, setDogs] = useState<Dog[]>([])
     const [loading, setLoading] = useState<boolean>(false);
     const navigate = useNavigate();
@@ -164,7 +163,7 @@ export default function DogView() {
     })
 
     const handleEdit = (dogId: string) => {
-        navigate(`/dogs/edit/${dogId}`);
+        navigate(`/admin/dogs/edit/${dogId}`);
     };
 
     const handleDisable = async (dogId: string) => {
@@ -203,7 +202,7 @@ export default function DogView() {
     };
 
     const handleCreateNew = () => {
-        navigate('/dogs/create');
+        navigate('/admin/dogs/create');
     };
 
     const fetchDogs = async () => {
@@ -232,7 +231,6 @@ export default function DogView() {
 
     return (
         <div className="dog-view">
-            <NavBar/>
             <div className="dog-container">
                 <div className="view-header">
                     <h1>Dogs</h1>

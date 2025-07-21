@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { supabase } from "../state/supabaseClient";
+import { supabase } from "../../state/supabaseClient.ts";
 
 export default function LogoutView() {
     useEffect(() => {

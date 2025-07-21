@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { signInWithEmail } from '../partials/auth.ts';
+import { signInWithEmail } from '../../partials/auth.ts';
 import "./AuthView.scss";
+
 export default function AuthView() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -72,7 +73,8 @@ export default function AuthView() {
           </div>
 
           <div className='footer'>
-            <a href="#" className='link'>Forgot your password?</a>
+            {/* <li><Link to="/forgotten">Forgot your password?</Link></li> */}
+            <a href="/forgotten" className='link'>Forgot your password?</a>
           </div>
         </div>
       </div>

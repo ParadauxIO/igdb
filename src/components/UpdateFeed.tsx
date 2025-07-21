@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../state/supabaseClient.ts';
-import "./FeedView.scss";
-import ImageCarousel from '../components/ImageCarousel.tsx';
+import "./UpdateFeed.scss";
+import ImageCarousel from './ImageCarousel.tsx';
 import type {DogUpdate} from "../types/DogUpdate.ts";
 
-export default function FeedView() {
+export default function UpdateFeed() {
   const [updates, setUpdates] = useState<DogUpdate[]>([]);
   const [loading, setLoading] = useState(true);
 

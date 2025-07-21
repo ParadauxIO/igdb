@@ -1,0 +1,115 @@
+$nav-text-color: black;
+
+.primary-header {
+    padding: 1rem;
+    background-color: #FFF;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Open Sans', sans-serif;
+    max-height: 20dvh;
+    overflow-y: hidden;
+
+    .logo {
+        padding-left: 1.25rem;
+        display: flex;
+        align-items: center;
+        img {
+            width: 100px;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-left: 1.5rem;
+            color: $nav-text-color;
+        }
+    }
+
+    @supports (backdrop-filter: blur(1rem)) {
+        .primary-navigation {
+            //background: hsla(0, 0%, 14%, 0.4);
+            backdrop-filter: blur(1rem);
+        }
+    }
+
+    @media (min-width: 45.01em) {
+        .hamburger {
+            display: none;
+        }
+    }
+
+    @media (max-width: 45em) {
+        .primary-navigation {
+            position: fixed;
+            inset: 0 0 0 30%;
+            flex-direction: column;
+            padding: min(30vh, 10rem) 2rem;
+            transform: translateX(100%);
+            transition: transform 500ms ease-out;
+        }
+
+        .primary-navigation[data-visable="true"] {
+            transform: translateX(0%);
+        }
+
+        .hamburger {
+            position: absolute;
+            display: block;
+            width: 35px;
+            aspect-ratio: 1;
+            cursor: pointer;
+            margin-right: 15px;
+            margin-bottom: 10px;
+            appearance: none;
+            background: red;
+            background: none;
+            outline: none;
+            border: none;
+            z-index: 9999;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .hamburger.is-active:before {
+            transform: rotate(-45deg) translate(-8px, 6px);
+        }
+
+        .hamburger.is-active:after {
+            transform: rotate(45deg) translate(-9px, -8px);
+        }
+
+        .hamburger.is-active .bar {
+            opacity: 0;
+        }
+
+        .hamburger .bar, .hamburger:after, .hamburger:before {
+            display: block;
+            content: '';
+            width: 100%;
+            height: 5px;
+            background-color: black;
+            margin: 6px 0px;
+            transition: transform 0.4s;
+        }
+    }
+}
+
+.admin-header {
+    background: #ff8b8b;
+}
+
+.primary-navigation {
+    --gap: 2.5rem;
+
+    list-style: none;
+    color: $nav-text-color;
+    z-index: 100;
+
+    //background: hsl(0 0% 0% / .8);
+
+    a {
+        font-size: 1.35rem;
+        color: inherit;
+        text-decoration: none;
+    }
+}
+

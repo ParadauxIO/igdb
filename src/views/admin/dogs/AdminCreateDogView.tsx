@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { supabase } from "../state/supabaseClient";
-import type { Dog } from "../types/Dog";
-import type { User } from "../types/User.ts";
-import "./DogCreateView.scss";
-import NavBar from "../components/NavBar.tsx";
-import LookupInput from '../components/LookupInput.tsx';
+
+import "./AdminCreateDogView.scss";
+import type {User} from "../../../types/User.ts";
+import {supabase} from "../../../state/supabaseClient.ts";
+import type {Dog} from "../../../types/Dog.ts";
+import LookupInput from "../../../components/LookupInput.tsx";
 
 // Define system fields that should not be manually set during creation
 const SYSTEM_FIELDS = [
@@ -16,7 +16,7 @@ const SYSTEM_FIELDS = [
     "dog_last_edited_by"
 ];
 
-export default function DogCreateView() {
+export default function AdminCreateDogView() {
     const navigate = useNavigate();
     const [form, setForm] = useState<Partial<Dog>>({
         dog_is_active: true,
@@ -81,7 +81,6 @@ export default function DogCreateView() {
 
     return (
         <div className="dog-create-view">
-            <NavBar/>
             <div className="dog-create-container">
                 <h1>Add New Dog</h1>
                 <form className="dog-create-form" onSubmit={handleSubmit}>

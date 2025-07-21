@@ -1,32 +1,58 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Route, Routes } from "react-router";
-
+import {StrictMode} from 'react'
+import {createRoot} from 'react-dom/client'
+import {BrowserRouter, Route, Routes} from "react-router";
 import './style/reset.scss';
-import './main.scss';
-import ProtectedView from './views/ProtectedView.tsx';
-import AuthView from './views/AuthView.tsx';
 import HomeView from './views/HomeView.tsx';
-
-import LogoutView from './views/LogoutView.tsx';
-import DogView from "./views/DogView.tsx";
-import DogEditView from "./views/DogEditView.tsx";
-import DogCreateView from "./views/DogCreateView.tsx";
-import PostUpdateView from './views/PostUpdateView';
+import LogoutView from './views/auth/LogoutView.tsx';
+import PostUpdateView from './views/updates/PostUpdateView';
+import UsersView from "./views/admin/user/UsersView.tsx";
+import UserInviteView from "./views/admin/user/UserInviteView.tsx";
+import UserProfileView from "./views/user/UserProfileView.tsx";
+import {AuthProvider} from "./state/context/AuthContext.tsx";
+import AuthGuard from "./views/auth/guards/AuthGuard.tsx";
+import AuthView from "./views/auth/AuthView.tsx";
+import DogView from "./views/dogs/DogView.tsx";
+import RoleGuard from "./views/auth/guards/RoleGuard.tsx";
+import NotAuthorisedView from "./views/errors/NotAuthorisedView.tsx";
+import AdminEditDogView from "./views/admin/dogs/AdminEditDogView.tsx";
+import AdminCreateDogView from "./views/admin/dogs/AdminCreateDogView.tsx";
+import AdminDogView from "./views/admin/dogs/AdminDogView.tsx";
+import AuthenticatedLayout from "./views/layouts/AuthenticatedLayout.tsx";
+import AdminLayout from "./views/layouts/AdminLayout.tsx";
+import AdminDashboardView from "./views/admin/AdminDashboardView.tsx";
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ProtectedView authView={<AuthView/>}> {/* This is the auth view that will be shown if the user is not authenticated */}
-      <BrowserRouter> {/* This is the router that maps endpoints to particular components */}
-        <Routes>
-            <Route path="/" element={<HomeView/>} />
-            <Route path="/logout" element={<LogoutView/>} />
-            <Route path="/post-update" element={<PostUpdateView/>} />
-            <Route path="/dogs" element={<DogView/>} />
-            <Route path="/dogs/edit/:dogId" element={<DogEditView/>} />
-            <Route path="/dogs/create" element={<DogCreateView/>} />
-        </Routes>
-      </BrowserRouter>
-    </ProtectedView>
-  </StrictMode>,
+    <StrictMode>
+        <AuthProvider>
+            <BrowserRouter>
+                <AuthGuard fallback={<AuthView/>} publicRoutes={[]}>
+                    <Routes>
+                        {/* Authenticated Routes: requires valid session */}
+                        <Route path="/" element={<AuthenticatedLayout/>}>
+                            <Route path="" element={<HomeView/>}/>
+                            <Route path="users/profile" element={<UserProfileView/>}/>
+                            <Route path="logout" element={<LogoutView/>}/>
+                            <Route path="dogs" element={<DogView/>}/>
+
+                            {/* Updater Routes: requires updater or admin permission */}
+                            <Route path="/update" element={<RoleGuard fallback={<NotAuthorisedView />} requiredRoles={["admin", "updater"]}/>}>
+                                <Route path="post" element={<PostUpdateView/>}/>
+                            </Route>
+                        </Route>
+
+                        {/* Admin Routes: requires admin role */}
+                        <Route path="/admin" element={<AdminLayout/>}>
+                            <Route path="" element={<AdminDashboardView/>}/>
+                            <Route path="dogs" element={<AdminDogView/>}/>
+                            <Route path="dogs/edit/:dogId" element={<AdminEditDogView />} />
+                            <Route path="dogs/create" element={<AdminCreateDogView />} />
+                            <Route path="users" element={<UsersView/>}/>
+                            <Route path="users/profile/:userId" element={<UserProfileView/>}/>
+                            <Route path="users/invite" element={<UserInviteView/>}/>
+                        </Route>
+                    </Routes>
+                </AuthGuard>
+            </BrowserRouter>
+        </AuthProvider>
+    </StrictMode>
 )

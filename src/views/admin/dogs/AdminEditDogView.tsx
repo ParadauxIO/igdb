@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { supabase } from "../state/supabaseClient";
-import type { Dog } from "../types/Dog";
-import type { User } from "../types/User.ts";
-import "./DogEditView.scss";
-import NavBar from "../components/NavBar.tsx";
-import LookupInput from '../components/LookupInput.tsx';
+
+import "./AdminEditDogView.scss";
+import type {Dog} from "../../../types/Dog.ts";
+import {supabase} from "../../../state/supabaseClient.ts";
+import LookupInput from "../../../components/LookupInput.tsx";
+import type {User} from "../../../types/User.ts";
+
 
 const SYSTEM_FIELDS = [
     "dog_created_at",
@@ -14,7 +15,7 @@ const SYSTEM_FIELDS = [
     "dog_last_edited_by"
 ];
 
-export default function DogEditView() {
+export default function AdminEditDogView() {
     const { dogId } = useParams<{ dogId: string }>();
     const navigate = useNavigate();
     const [dog, setDog] = useState<Dog | null>(null);
@@ -91,7 +92,7 @@ export default function DogEditView() {
             setError("Failed to update dog.");
         } else {
             setSuccess(true);
-            setTimeout(() => navigate("/dogs"), 1200);
+            setTimeout(() => navigate("/admin/dogs"), 1200);
         }
     };
 
@@ -101,7 +102,6 @@ export default function DogEditView() {
 
     return (
         <div className="dog-edit-view">
-            <NavBar/>
             <div className="dog-edit-container">
                 <h1>Edit Dog: {dog.dog_name}</h1>
                 <form className="dog-edit-form" onSubmit={handleSubmit}>
@@ -221,7 +221,7 @@ export default function DogEditView() {
                     </div>
                     <div className="form-actions">
                         <button type="submit" disabled={loading}>Save</button>
-                        <button type="button" onClick={() => navigate("/dogs")}>Cancel</button>
+                        <button type="button" onClick={() => navigate("/admin/dogs")}>Cancel</button>
                     </div>
                     {success && <div className="success-msg">Dog updated!</div>}
                     {error && <div className="error-msg">{error}</div>}
