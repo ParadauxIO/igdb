@@ -1,10 +1,16 @@
-import {Link} from "react-router";
-import {useState} from "react";
+import {Link, useLocation} from "react-router";
+import {useEffect, useState} from "react";
 
 import "./../Header.scss";
 
 export default function AdminHeader() {
     let [navOpen, setNavOpen] = useState(false);
+    const location = useLocation();
+
+    // 👇 Reset navOpen on route change
+    useEffect(() => {
+        setNavOpen(false);
+    }, [location.pathname]);
 
     return (
         <header className="primary-header flex admin-header">

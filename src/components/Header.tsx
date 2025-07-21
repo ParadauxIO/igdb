@@ -1,5 +1,5 @@
-import {Link} from "react-router";
-import {useState} from "react";
+import {Link, useLocation} from "react-router";
+import {useEffect, useState} from "react";
 
 import "./Header.scss";
 import {useAuth} from "../state/hooks/useAuth.ts";
@@ -7,8 +7,14 @@ import {useAuth} from "../state/hooks/useAuth.ts";
 export default function Header() {
     let [navOpen, setNavOpen] = useState(false);
     const {user} = useAuth();
+    const location = useLocation();
     const isAdmin = user && user.permission_role === "admin";
     const isUpdater = user && (isAdmin || user.permission_role === "updater");
+
+    // 👇 Reset navOpen on route change
+    useEffect(() => {
+        setNavOpen(false);
+    }, [location.pathname]);
 
     return (
         <header className="primary-header flex">
