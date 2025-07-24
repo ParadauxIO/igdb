@@ -49,7 +49,7 @@ const LookupInput: React.FC<LookupInputProps> = ({
     }
   }, [query, searchFunc]);
 
-  const displayText = value && userCache.has(value)
+  const selectedDisplayText = value && userCache.has(value)
     ? String(userCache.get(value)?.[displayField])
     : query;
 
@@ -59,13 +59,13 @@ const LookupInput: React.FC<LookupInputProps> = ({
       <input
         ref={inputRef}
         name={name}
-        value={displayText}
+        value={selectedDisplayText}
         placeholder={placeholder}
         onChange={e => {
           setQuery(e.target.value);
-          onSelect(null);
+          onSelect(null); // Clear current selection if typing again
         }}
-        autoComplete="on"
+        autoComplete="off"
       />
       {results.length > 0 && (
         <ul className="suggestions">
@@ -75,7 +75,7 @@ const LookupInput: React.FC<LookupInputProps> = ({
               onClick={() => {
                 skipNextSearch.current = true;
                 onSelect(user);
-                setQuery(String(user[displayField]));
+                setQuery("");
                 setResults([]);
                 inputRef.current?.blur();
               }}
