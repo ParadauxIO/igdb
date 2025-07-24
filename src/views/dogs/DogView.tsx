@@ -1,10 +1,11 @@
-import {useEffect, useState} from "react";
-import {supabase} from "../../state/supabaseClient.ts";
-import type {Dog} from "../../types/Dog.ts";
+import { useEffect, useState } from "react";
+import { supabase } from "../../state/supabaseClient.ts";
+import type { Dog } from "../../types/Dog.ts";
 import "./DogView.scss";
 
 export default function DogView() {
     const [dogs, setDogs] = useState<Dog[]>([]);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         async function fetchDogs() {
@@ -23,8 +24,23 @@ export default function DogView() {
         fetchDogs();
     }, []);
 
+    // 🔎 Filter dogs by search term
+    const filteredDogs = dogs.filter(dog =>
+        dog.dog_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
-        <div className="user-dog-view">
+        <div className="user-dog-view p-4">
+            <div className="search-box">
+                <input
+                    type="text"
+                    placeholder="Search by dog name..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="p-2 border border-gray-300 rounded w-full max-w-md"
+                />
+            </div>
+
             <table className="dog-table w-full border-collapse">
                 <thead>
                 <tr className="bg-gray-100 text-left">
@@ -38,7 +54,7 @@ export default function DogView() {
                 </thead>
                 <tbody>
                 {
-                    dogs.map((dog, index) => (
+                    filteredDogs.map((dog, index) => (
                         <tr key={index} className="hover:bg-gray-50">
                             <td className="p-2 border">
                                 <img
