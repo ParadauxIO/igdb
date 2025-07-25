@@ -88,5 +88,10 @@ $colorBtnPrimary:#84bd00;
       text-align: center;
       font-weight: bold;
     }
+
+    .required-label::after {
+      content: " *";
+      color: red;
+  }
   }
   

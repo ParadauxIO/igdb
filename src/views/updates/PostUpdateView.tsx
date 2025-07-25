@@ -89,7 +89,7 @@ const PostUpdateView = () => {
                     {success && <div className="success-msg"> Updated posted!</div>}
                     {error && <div className="error-msg">{error}</div>}
                     <div className="form-row">
-                        <label>Dog Name</label>
+                        <label className="required-label">Dog Name</label>
                         <select
                             name="dog_id"
                             value={form.dog_id || ""}
@@ -110,7 +110,7 @@ const PostUpdateView = () => {
                         </select>
                     </div>
                     <div className="form-row">
-                        <label>Title</label>
+                        <label className="required-label">Title</label>
                         <input
                             name="update_title"
                             value={form.update_title || ""}
