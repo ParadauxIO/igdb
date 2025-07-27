@@ -6,8 +6,9 @@
   border: 1px solid #ddd;
 
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-
-
+  width: 100%;
+  max-width: 46rem;
+  box-sizing: border-box;
 
   .time {
     margin-left: auto;
@@ -16,10 +17,10 @@
   }
 }
 
-.approved {
+.update-item.approved {
   border-bottom: 4px solid #84bd00;
 }
 
-.unapproved {
+.update-item.unapproved {
   border-bottom: 4px solid #f44336;
 }
