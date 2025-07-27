@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import {useAuth} from "../../../state/hooks/useAuth.ts";
 
 import "./AdminCreateDogView.scss";
 import type {User} from "../../../types/User.ts";
@@ -24,6 +25,8 @@ export default function AdminCreateDogView() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
+    const { user } = useAuth();
+
 
     type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
     type ChangeEventValues = {
@@ -60,9 +63,18 @@ export default function AdminCreateDogView() {
         setError(null);
         setSuccess(false);
 
+        if (!user) {
+        setError("You must be logged in to create a dog.");
+        return;}
+
+        //SYSTEM_FIELDS.forEach(f => delete insertData[f as keyof Dog]);
+
         // Remove system fields from insertion data
-        const insertData: Partial<Dog> = { ...form };
-        SYSTEM_FIELDS.forEach(f => delete insertData[f as keyof Dog]);
+        const insertData: Partial<Dog> = { 
+            ...form,
+            dog_created_by: user.id,
+            dog_last_edited_by: user.id, 
+        };
 
         const { error } = await supabase
             .from("dogs")
@@ -176,7 +188,7 @@ export default function AdminCreateDogView() {
                             value={form.dog_current_handler}
                             placeholder="Search for a handler..."
                             onSelect={(user) =>
-                                setForm(prev => ({...prev, dog_current_handler: user ? user.name : null, }))}
+                                setForm(prev => ({...prev, dog_current_handler: user ? user.id : null, }))}
                             searchFunc={searchUsers}
                             displayField="name"
                         />
