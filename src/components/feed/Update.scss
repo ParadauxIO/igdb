@@ -1,0 +1,25 @@
+.update-item {
+  font-family: sans-serif;
+  margin-block: 1rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+
+
+
+  .time {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: #555;
+  }
+}
+
+.approved {
+  border-bottom: 4px solid #84bd00;
+}
+
+.unapproved {
+  border-bottom: 4px solid #f44336;
+}

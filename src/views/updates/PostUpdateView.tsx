@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import {useState, useEffect} from "react";
+import {useNavigate} from "react-router";
 import type {DogUpdate} from "../../types/DogUpdate";
-import { supabase } from "../../state/supabaseClient";
+import {supabase} from "../../state/supabaseClient";
 import "./PostUpdateView.scss";
 import {useAuth} from "../../state/hooks/useAuth.ts";
 
@@ -25,7 +25,7 @@ const PostUpdateView = () => {
             setDogsLoading(true);
             setDogsError(null);
 
-            const { data, error } = await supabase
+            const {data, error} = await supabase
                 .from("dogs")
                 .select("dog_id, dog_name")
                 .eq("dog_current_handler", user.id)
@@ -51,11 +51,11 @@ const PostUpdateView = () => {
         checked?: boolean;
     }
     const handleChange = (e: ChangeEvent) => {
-        const { name, value, type, checked }: ChangeEventValues = e.target;
+        const {name, value, type, checked}: ChangeEventValues = e.target;
         let val: any = value;
         if (type === "checkbox") val = checked;
         if (type === "number") val = value === "" ? null : Number(value);
-        setForm(f => ({ ...f, [name]: val }));
+        setForm(f => ({...f, [name]: val}));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -65,9 +65,9 @@ const PostUpdateView = () => {
         setSuccess(false);
 
         // Remove system fields from insertion data
-        const insertData: Partial<DogUpdate> = { ...form, update_created_by: user.id };
+        const insertData: Partial<DogUpdate> = {...form, update_created_by: user.id};
 
-        const { error } = await supabase
+        const {error} = await supabase
             .from("dog_updates")
             .insert(insertData)
             .select();
@@ -83,8 +83,8 @@ const PostUpdateView = () => {
     };
 
     return (
-            <div className="post-update-view">
-                <div className="post-update-container">
+        <div className="post-update-view">
+            <div className="post-update-container">
                 <form className="post-update-form" onSubmit={handleSubmit}>
                     {success && <div className="success-msg"> Updated posted!</div>}
                     {error && <div className="error-msg">{error}</div>}
@@ -128,23 +128,13 @@ const PostUpdateView = () => {
                             rows={3}
                         />
                     </div>
-                    {/* <div className="form-row">
-                        <label>Picture URL</label>
-                        <input
-                            name="update_media_urls"
-                            value={form.update_media_urls || []}
-                            onChange={handleChange}
-                        />
-                    </div> */}
-
                     <div className="form-actions">
                         <button type="submit" disabled={loading}>Post</button>
                         <button type="button" onClick={() => navigate("/")}>Cancel</button>
                     </div>
                 </form>
-
-                </div>
             </div>
+        </div>
     );
 };
 
