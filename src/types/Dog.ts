@@ -12,5 +12,7 @@ export interface Dog {
     dog_created_at: string;
     dog_updated_at: string;
     dog_created_by: string;
+    dog_created_by_name?: string;
     dog_last_edited_by: string;
+    dog_last_edited_by_name?: string;
 }

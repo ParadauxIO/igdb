@@ -92,7 +92,7 @@ export default function AdminDogView() {
         }),
 
         // Active
-        columnHelper.accessor('dog_is_active', {
+        columnHelper.accessor('dog_is_archived', {
             header: 'Active',
             cell: info => info.getValue() ? 'Yes' : 'No',
             footer: info => info.column.id,
@@ -113,13 +113,13 @@ export default function AdminDogView() {
         }),
 
         // Created By
-        columnHelper.accessor('dog_created_by', {
+        columnHelper.accessor('dog_created_by_name', {
             header: 'Created By',
             footer: info => info.column.id,
         }),
 
         // Last Edited By
-        columnHelper.accessor('dog_last_edited_by', {
+        columnHelper.accessor('dog_last_edited_by_name', {
             header: 'Last Edited By',
             footer: info => info.column.id,
         }),
@@ -148,7 +148,7 @@ export default function AdminDogView() {
     ];
 
     const filteredDogs = useMemo(
-        () => dogs.filter(dog => dog.dog_is_active || showInactive),
+        () => dogs.filter(dog => dog.dog_is_archived|| showInactive),
         [dogs, showInactive]
     );
 
@@ -203,10 +203,18 @@ export default function AdminDogView() {
 
     const fetchDogs = async () => {
         setLoading(true);
-        const {data, error} = await supabase
+        const { data, error } = await supabase
             .from('dogs')
-            .select("*")
-            .order("dog_created_at", {ascending: false});
+            .select(`
+        *,
+        dog_created_by_user:users!dogs_dog_created_by_fkey (
+            name
+        ),
+        dog_last_edited_by_user:users!dogs_dog_last_edited_by_fkey (
+            name
+        )
+    `)
+            .order('dog_created_at', { ascending: false });
 
         if (error) {
             console.log("Error occurred while fetching dogs:", error);
@@ -214,11 +222,17 @@ export default function AdminDogView() {
         }
 
         if (data) {
-            setDogs(data);
+            const flattenedData: Dog[] = data.map(dog => ({
+                ...dog,
+                dog_created_by_name: dog.dog_created_by_user?.name,
+                dog_last_edited_by_name: dog.dog_last_edited_by_user?.name,
+            }));
+            console.log(flattenedData);
+            setDogs(flattenedData);
         }
 
         setLoading(false);
-    }
+    };
 
     useEffect(() => {
         fetchDogs();
