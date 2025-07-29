@@ -76,7 +76,7 @@ CREATE TABLE public.dog_following
 CREATE TABLE public.dog_history
 (
     history_id        UUID PRIMARY KEY         DEFAULT uuid_generate_v4(),
-    dog_id            UUID NOT NULL REFERENCES public.dogs (dog_id),
+    dog_id            UUID REFERENCES public.dogs (dog_id) ON DELETE SET NULL,
     changed_by        UUID NOT NULL REFERENCES public.users (id),
     changed_at        TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     old_name          TEXT,
