@@ -1,3 +1,40 @@
+CREATE OR REPLACE FUNCTION public.is_admin(user_uuid UUID)
+    RETURNS BOOLEAN
+    LANGUAGE sql
+    SECURITY DEFINER
+AS
+$$
+SELECT EXISTS (SELECT 1
+               FROM public.users
+               WHERE id = user_uuid
+                 AND permission_role = 'admin');
+$$;
+
+CREATE OR REPLACE FUNCTION public.is_updater(user_uuid UUID)
+    RETURNS BOOLEAN
+    LANGUAGE sql
+    SECURITY DEFINER
+AS
+$$
+SELECT EXISTS (SELECT 1
+               FROM public.users
+               WHERE id = user_uuid
+                 AND permission_role = 'updater');
+$$;
+
+CREATE OR REPLACE FUNCTION public.is_privileged_user(user_uuid UUID)
+    RETURNS BOOLEAN
+    LANGUAGE sql
+    SECURITY DEFINER
+AS
+$$
+SELECT EXISTS (SELECT 1
+               FROM public.users
+               WHERE id = user_uuid
+                 AND permission_role in ('updater', 'admin'));
+$$;
+
+
 -- ===============================  USERS TABLE  =============================== --
 -- 1. Authenticated users can CRUD their own profile.
 -- 2. Admins can CRUD all users.
@@ -9,18 +46,12 @@ CREATE POLICY users_manage_own_or_admin
     USING (
     -- SELECT, UPDATE, DELETE condition
     auth.uid() = id
-        OR EXISTS (SELECT 1
-                   FROM public.users AS u
-                   WHERE u.id = auth.uid()
-                     AND u.permission_role = 'admin')
+        OR public.is_admin(auth.uid())
     )
     WITH CHECK (
     -- INSERT, UPDATE condition
     auth.uid() = id
-        OR EXISTS (SELECT 1
-                   FROM public.users AS u
-                   WHERE u.id = auth.uid()
-                     AND u.permission_role = 'admin')
+        OR public.is_admin(auth.uid())
     );
 -- ===============================  END USERS TABLE  =============================== --
 
@@ -31,18 +62,8 @@ ALTER TABLE public.dogs
     ENABLE ROW LEVEL SECURITY;
 CREATE POLICY dogs_admin_full_access ON public.dogs
     FOR ALL
-    USING (
-    EXISTS (SELECT 1
-            FROM public.users
-            WHERE public.users.id = auth.uid()
-              AND public.users.permission_role = 'admin')
-    )
-    WITH CHECK (
-    EXISTS (SELECT 1
-            FROM public.users
-            WHERE public.users.id = auth.uid()
-              AND public.users.permission_role = 'admin')
-    );
+    USING (public.is_admin(auth.uid()))
+    WITH CHECK (public.is_admin(auth.uid()));
 -- ===============================  END DOGS TABLE  =============================== --
 
 
@@ -54,32 +75,14 @@ ALTER TABLE public.dog_updates
 CREATE POLICY dog_updates_admin_or_owner_crud ON public.dog_updates
     FOR ALL
     USING (
-    EXISTS (SELECT 1
-            FROM public.users
-            WHERE public.users.id = auth.uid()
-              AND public.users.permission_role = 'admin')
+    public.is_admin(auth.uid())
         OR
-    (
-        EXISTS (SELECT 1
-                FROM public.users
-                WHERE public.users.id = auth.uid()
-                  AND public.users.permission_role = 'updater')
-            AND update_created_by = auth.uid()
-        )
+    (public.is_updater(auth.uid()) AND update_created_by = auth.uid())
     )
     WITH CHECK (
-    EXISTS (SELECT 1
-            FROM public.users
-            WHERE public.users.id = auth.uid()
-              AND public.users.permission_role = 'admin')
+    public.is_admin(auth.uid())
         OR
-    (
-        EXISTS (SELECT 1
-                FROM public.users
-                WHERE public.users.id = auth.uid()
-                  AND public.users.permission_role = 'updater')
-            AND update_created_by = auth.uid()
-        )
+    (public.is_updater(auth.uid()) AND update_created_by = auth.uid())
     );
 -- ===============================  END DOG_UPDATES TABLE  =============================== --
 
@@ -96,23 +99,14 @@ CREATE POLICY dog_following_own_crud ON public.dog_following
 -- ===============================  END DOG_FOLLOWING TABLE  =============================== --
 
 -- ===============================  DOG_HISTORY TABLE  =============================== --
-ALTER TABLE public.dog_history ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.dog_history
+    ENABLE ROW LEVEL SECURITY;
 CREATE POLICY dog_history_admin_select ON public.dog_history
     FOR SELECT
-    USING (
-    EXISTS (
-        SELECT 1 FROM public.users
-        WHERE id = auth.uid() AND permission_role = 'admin'
-    )
-    );
+    USING (public.is_admin(auth.uid()));
 
 -- Policy 2: Admins can INSERT
 CREATE POLICY dog_history_admin_insert ON public.dog_history
     FOR INSERT
-    WITH CHECK (
-    EXISTS (
-        SELECT 1 FROM public.users
-        WHERE id = auth.uid() AND permission_role = 'admin'
-    )
-    );
+    WITH CHECK (public.is_admin(auth.uid()));
 -- ===============================  END DOG_HISTORY TABLE  =============================== --
