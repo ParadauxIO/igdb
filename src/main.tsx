@@ -43,7 +43,7 @@ createRoot(document.getElementById('root')!).render(
                         </Route>
 
                         {/* Admin Routes: requires admin role */}
-                        <Route path="/admin" element={<AdminLayout/>}>
+                        <Route path="/admin" element={<RoleGuard fallback={<NotAuthorisedView />} requiredRoles={["admin"]} layout={<AdminLayout/>}/>}>
                             <Route path="" element={<AdminDashboardView/>}/>
                             <Route path="dogs" element={<AdminDogView/>}/>
                             <Route path="dogs/edit/:dogId" element={<AdminEditDogView />} />

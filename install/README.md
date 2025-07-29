@@ -44,11 +44,13 @@ This will start the development server on `http://localhost:5173`.
 # Install steps:
 
 Create project, grabbing db password, service role
+Setup SMTP Authentication - Emails  - Smtp settings
 Change install .env
 Run setup-database with sample data or not. 
 
 Run policies
 Run triggers
+Update callback uri in edge functions/email templates
 Deploy functions
 Run migrations
 Grab anon key and URL from Supabase dashboard

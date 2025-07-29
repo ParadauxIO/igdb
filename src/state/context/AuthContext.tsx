@@ -7,6 +7,8 @@ interface AuthContextType {
     supabaseUser: SupabaseUser | null;
     session: Session | null;
     user: User | null;
+    isAdmin: boolean | null;
+    isUpdater: boolean | null;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,6 +17,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null);
     const [session, setSession] = useState<Session | null>(null);
     const [user, setUser] = useState<User | null>(null);
+    const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+    const [isUpdater, setIsUpdater] = useState<boolean | null>(null);
 
     // Fetch profile from users table
     const fetchProfile = async (userId: string) => {
@@ -23,6 +27,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             .select('*')
             .eq('id', userId)
             .single();
+
+        setIsAdmin(data.permission_role === 'admin');
+        setIsUpdater(data.permission_role === 'updater' || data.permission_role === 'admin');
 
         if (error) {
             console.error('Error fetching profile:', error.message);
@@ -67,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ supabaseUser, session, user }}>
+        <AuthContext.Provider value={{ supabaseUser, session, user, isAdmin, isUpdater }}>
             {children}
         </AuthContext.Provider>
     );
