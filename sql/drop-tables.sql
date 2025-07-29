@@ -1,5 +1,3 @@
-DROP VIEW IF EXISTS public.public_dogs_view;
-DROP VIEW IF EXISTS public.user_basic_view;
 DROP TABLE IF EXISTS public.dog_history;
 DROP TABLE IF EXISTS public.dog_following;
 DROP TABLE IF EXISTS public.dog_updates;

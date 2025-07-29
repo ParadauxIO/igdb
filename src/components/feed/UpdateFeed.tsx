@@ -11,6 +11,19 @@ export default function UpdateFeed() {
   const [loading, setLoading] = useState(true);
   let {isAdmin} = useAuth();
 
+  const removeUpdate = async (id: string) => {
+    console.log(id);
+    const confirmed = window.confirm("Are you sure you want to remove this update? This action cannot be undone.");
+    if (!confirmed) return;
+
+    const {error} = await supabase.from("dog_updates").delete().eq("update_id", id);
+
+    if (error) {
+      console.error("Error removing update:", error);
+      return;
+    }
+  }
+
   useEffect(() => {
     const fetchUpdates = async () => {
       setLoading(true);
@@ -28,7 +41,7 @@ export default function UpdateFeed() {
   return (
     <div className="feed">
       {updates.map(update => (
-        <Update update={update} isAdmin={isAdmin}/>
+        <Update update={update} isAdmin={isAdmin} removeUpdate={(id) => removeUpdate(id)}/>
       ))}
     </div>
   );

@@ -1,12 +1,13 @@
 import {useEffect, useMemo, useState} from "react";
 import "./AdminDogView.scss";
-import {FaEllipsisH, FaPlus} from "react-icons/fa";
+import {FaPlus} from "react-icons/fa";
 import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/react-table";
-import { useNavigate } from "react-router";
+import {useNavigate} from "react-router";
 import type {Dog} from "../../../types/Dog.ts";
 import {supabase} from "../../../state/supabaseClient.ts";
 import Card from "../../../components/info/Card.tsx";
 import Table from "../../../components/info/Table.tsx";
+import ActionsDropdown from "../../../components/general/ActionsDropdown.tsx";
 
 const columnHelper = createColumnHelper<Dog>()
 
@@ -14,7 +15,6 @@ export default function AdminDogView() {
     const [dogs, setDogs] = useState<Dog[]>([])
     const [loading, setLoading] = useState<boolean>(false);
     const navigate = useNavigate();
-    const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
     const [showInactive, setShowInactive] = useState<boolean>(false);
 
     const columns = [
@@ -130,22 +130,20 @@ export default function AdminDogView() {
             header: "Actions",
             cell: ({ row }) => {
                 const dog = row.original;
-                return (
-                    <div className="actions-cell">
-                        <div onClick={() => handleMenuClick(dog.dog_id)}>
-                            <FaEllipsisH size={24} color="#6c757d" />
-                        </div>
 
-                        {activeMenuId === dog.dog_id && (
-                            <div className="dropdown-menu">
-                                <button onClick={() => handleEdit(dog.dog_id)}>Edit</button>
-                                <button onClick={() => handleDelete(dog.dog_id)}>Delete</button>
-                                <button onClick={() => handleDisable(dog.dog_id)}>Disable</button>
-                            </div>
-                        )}
-                    </div>
+                const actions = useMemo(() => [
+                    { label: "Edit", action: handleEdit },
+                    { label: "Delete", action: handleDelete },
+                    { label: "Archive", action: handleDisable }
+                ], []);
+
+                return (
+                    <ActionsDropdown
+                        id={dog.dog_id}
+                        actions={actions}
+                    />
                 );
-            },
+            }
         }),
     ];
 
@@ -197,9 +195,7 @@ export default function AdminDogView() {
         setDogs(dogs.filter(d => d.dog_id !== dogId));
     };
 
-    const handleMenuClick = (dogId: string) => {
-        setActiveMenuId(prev => (prev === dogId ? null : dogId));
-    };
+
 
     const handleCreateNew = () => {
         navigate('/admin/dogs/create');
@@ -247,7 +243,7 @@ export default function AdminDogView() {
                 </div>
                 <Table loading={loading} table={table} />
                 <form>
-                    <label htmlFor="dog_is_enabled">Show inactive dogs?</label>
+                    <label htmlFor="dog_is_enabled">Show archived dogs?</label>
                     <input
                         type="checkbox"
                         id="dog_is_enabled"

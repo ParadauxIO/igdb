@@ -7,7 +7,6 @@ export interface DogUpdate {
     update_media_urls: string[];
     update_location: string;
     update_tags: string[];
-    update_is_public: boolean;
     update_created_at: string;
     update_date_approved: string | null;
     update_created_by: string;
