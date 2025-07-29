@@ -8,15 +8,6 @@ import {supabase} from "../../../state/supabaseClient.ts";
 import type {Dog} from "../../../types/Dog.ts";
 import LookupInput from "../../../components/LookupInput.tsx";
 
-// Define system fields that should not be manually set during creation
-const SYSTEM_FIELDS = [
-    "dog_id",
-    "dog_created_at",
-    "dog_updated_at",
-    "dog_created_by",
-    "dog_last_edited_by"
-];
-
 export default function AdminCreateDogView() {
     const navigate = useNavigate();
     const [form, setForm] = useState<Partial<Dog>>({
@@ -70,10 +61,10 @@ export default function AdminCreateDogView() {
         //SYSTEM_FIELDS.forEach(f => delete insertData[f as keyof Dog]);
 
         // Remove system fields from insertion data
-        const insertData: Partial<Dog> = { 
+        const insertData: Partial<Dog> = {
             ...form,
             dog_created_by: user.id,
-            dog_last_edited_by: user.id, 
+            dog_last_edited_by: user.id,
         };
 
         const { error } = await supabase

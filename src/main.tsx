@@ -20,7 +20,6 @@ import AdminDogView from "./views/admin/dogs/AdminDogView.tsx";
 import AuthenticatedLayout from "./views/layouts/AuthenticatedLayout.tsx";
 import AdminLayout from "./views/layouts/AdminLayout.tsx";
 import AdminDashboardView from "./views/admin/AdminDashboardView.tsx";
-import {TestPage} from "./components/form/IGDBForm.tsx";
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -40,7 +39,7 @@ createRoot(document.getElementById('root')!).render(
                                 <Route path="post" element={<PostUpdateView/>}/>
                             </Route>
 
-                            <Route path="/test" element={<TestPage/>}/>
+                            {/*<Route path="/test" element={<TestPage/>}/>*/}
                         </Route>
 
                         {/* Admin Routes: requires admin role */}

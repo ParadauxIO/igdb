@@ -80,7 +80,7 @@ const LookupInput: React.FC<LookupInputProps> = ({
                 inputRef.current?.blur();
               }}
             >
-              {user[displayField]}
+              {<>{user[displayField]}</>}
             </li>
           ))}
         </ul>
