@@ -2,7 +2,7 @@ import {Link, useLocation} from "react-router";
 import {useEffect, useState} from "react";
 
 import "./Header.scss";
-import {useAuth} from "../state/hooks/useAuth.ts";
+import {useAuth} from "../../state/hooks/useAuth.ts";
 
 export default function Header() {
     let [navOpen, setNavOpen] = useState(false);
@@ -19,7 +19,7 @@ export default function Header() {
     return (
         <header className="primary-header flex">
             <h1 className="logo">
-                <a href="/">
+                <a href="/public">
                     <img src="/logo.svg" alt="Irish Guide Dogs for the Blind Logo"/>
                 </a>
             </h1>

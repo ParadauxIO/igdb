@@ -4,8 +4,8 @@ import {supabase} from "../../../state/supabaseClient.ts";
 import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/react-table";
 import {FaEllipsisH } from "react-icons/fa";
 import {useNavigate} from "react-router";
-import Table from "../../../components/Table.tsx";
-import Card from "../../../components/Card.tsx";
+import Table from "../../../components/info/Table.tsx";
+import Card from "../../../components/info/Card.tsx";
 
 const columnHelper = createColumnHelper<User>()
 

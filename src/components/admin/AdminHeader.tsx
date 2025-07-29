@@ -1,7 +1,7 @@
 import {Link, useLocation} from "react-router";
 import {useEffect, useState} from "react";
 
-import "./../Header.scss";
+import "../nav/Header.scss";
 
 export default function AdminHeader() {
     let [navOpen, setNavOpen] = useState(false);

@@ -5,8 +5,8 @@ import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/reac
 import { useNavigate } from "react-router";
 import type {Dog} from "../../../types/Dog.ts";
 import {supabase} from "../../../state/supabaseClient.ts";
-import Card from "../../../components/Card.tsx";
-import Table from "../../../components/Table.tsx";
+import Card from "../../../components/info/Card.tsx";
+import Table from "../../../components/info/Table.tsx";
 
 const columnHelper = createColumnHelper<Dog>()
 

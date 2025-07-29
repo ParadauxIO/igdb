@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import type { User } from "../types/User.ts";
+import type { User } from "../../types/User.ts";
 import "./LookupInput.scss";
 
 interface LookupInputProps {

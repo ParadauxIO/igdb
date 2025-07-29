@@ -6,7 +6,7 @@ import "./AdminCreateDogView.scss";
 import type {User} from "../../../types/User.ts";
 import {supabase} from "../../../state/supabaseClient.ts";
 import type {Dog} from "../../../types/Dog.ts";
-import LookupInput from "../../../components/LookupInput.tsx";
+import LookupInput from "../../../components/form/LookupInput.tsx";
 
 export default function AdminCreateDogView() {
     const navigate = useNavigate();

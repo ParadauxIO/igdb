@@ -10,10 +10,22 @@
   max-width: 46rem;
   box-sizing: border-box;
 
-  .time {
-    margin-left: auto;
-    font-size: 0.8rem;
-    color: #555;
+
+
+  .update-footer {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+    .time {
+      font-size: 0.8rem;
+      color: #555;
+    }
+
+    .actions:hover {
+      opacity: 0.3;
+      cursor: pointer;
+    }
   }
 }
 

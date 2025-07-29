@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router";
 import "./AdminEditDogView.scss";
 import type {Dog} from "../../../types/Dog.ts";
 import {supabase} from "../../../state/supabaseClient.ts";
-import LookupInput from "../../../components/LookupInput.tsx";
+import LookupInput from "../../../components/form/LookupInput.tsx";
 import type {User} from "../../../types/User.ts";
 
 

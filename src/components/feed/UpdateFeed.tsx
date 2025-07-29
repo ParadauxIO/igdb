@@ -4,10 +4,12 @@ import "./UpdateFeed.scss";
 
 import type {DogUpdate} from "../../types/DogUpdate.ts";
 import Update from "./Update.tsx";
+import {useAuth} from "../../state/hooks/useAuth.ts";
 
 export default function UpdateFeed() {
   const [updates, setUpdates] = useState<DogUpdate[]>([]);
   const [loading, setLoading] = useState(true);
+  let {isAdmin} = useAuth();
 
   useEffect(() => {
     const fetchUpdates = async () => {
@@ -26,7 +28,7 @@ export default function UpdateFeed() {
   return (
     <div className="feed">
       {updates.map(update => (
-        <Update update={update}/>
+        <Update update={update} isAdmin={isAdmin}/>
       ))}
     </div>
   );
