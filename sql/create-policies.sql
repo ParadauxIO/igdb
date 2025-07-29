@@ -11,7 +11,7 @@ ALTER TABLE public.dog_history
     ENABLE ROW LEVEL SECURITY;
 
 -- Generic functions
-CREATE FUNCTION is_admin(uid uuid) RETURNS boolean AS $$
+CREATE OR REPLACE FUNCTION is_admin(uid uuid) RETURNS boolean AS $$
 SELECT permission_role = 'admin' FROM public.users WHERE id = uid;
 $$ LANGUAGE sql STABLE;
 

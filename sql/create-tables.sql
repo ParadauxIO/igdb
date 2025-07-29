@@ -14,11 +14,10 @@ CREATE TABLE public.users
     updated_at          TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE VIEW public.user_basic_view AS
-SELECT id, name
-FROM public.users;
-REVOKE ALL ON public.user_basic_view FROM anon;
-GRANT SELECT ON public.user_basic_view TO authenticated;
+create view public.user_basic_view with (security_invoker = on) as
+SELECT id,
+       name
+FROM users;
 
 -- Dogs table
 CREATE TABLE public.dogs

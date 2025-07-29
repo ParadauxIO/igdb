@@ -25,4 +25,4 @@ dist-ssr
 
 # Configurations
 .env
-install/.env
+install/.env.dev

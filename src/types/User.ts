@@ -6,6 +6,8 @@ export interface User {
     phone: string;
     is_active: boolean;
     can_approve_updates: boolean;
-    created_at: string;
-    updated_at: string;
+    created_at: Date;
+    updated_at: Date;
 }
+
+

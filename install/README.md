@@ -40,3 +40,16 @@ npm run dev
 ```
 
 This will start the development server on `http://localhost:5173`.
+
+# Install steps:
+
+Create project, grabbing db password, service role
+Change install .env
+Run setup-database with sample data or not. 
+
+Run policies
+Run triggers
+Deploy functions
+Run migrations
+Grab anon key and URL from Supabase dashboard
+Change .env in frontend 
