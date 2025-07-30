@@ -28,15 +28,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             .eq('id', userId)
             .single();
 
-        setIsAdmin(data.permission_role === 'admin');
-        setIsUpdater(data.permission_role === 'updater' || data.permission_role === 'admin');
-
         if (error) {
             console.error('Error fetching profile:', error.message);
-            setUser(null);
-        } else {
-            setUser(data);
+            return;
         }
+
+        setUser((prev) => (prev?.id === data.id ? prev : data));
+        setIsAdmin((prev) => (prev === (data.permission_role === 'admin') ? prev : data.permission_role === 'admin'));
+        setIsUpdater((prev) => (prev === (data.permission_role === 'updater' || data.permission_role === 'admin')
+            ? prev
+            : data.permission_role === 'updater' || data.permission_role === 'admin'));
     };
 
     useEffect(() => {

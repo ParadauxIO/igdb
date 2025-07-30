@@ -158,7 +158,6 @@ export default function UsersView() {
             console.log("Error occurred while fetching dogs:", error);
             return;
         }
-        console.log('fetch users : {}', data.length);
         if (data) {
             setUsers(data);
         }

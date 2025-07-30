@@ -6,8 +6,10 @@ const priviligedSupabaseClient = createClient(Deno.env.get('SUPABASE_URL') ?? ''
 // ---------  BEGIN SETTINGS ---------
 const redirectTo = Deno.env.get('REDIRECT_URI') ?? 'http://localhost:5173';
 const allowedOrigins = [
-    "http://localhost:5173",
-    "https://portal.guidedogs.ie"
+    "https://dogs.guidedogs.ie", // Production
+    "http://localhost:5173", // Local
+    "https://igdb-demo.paradaux.io", // IGDB sandbox alt domain
+    "https://igdb.pages.dev"  // IGDB sandbox
 ];
 
 const functionalRoles = ['staff', 'volunteer', 'puppy raiser', 'trainer', 'temporary boarder',

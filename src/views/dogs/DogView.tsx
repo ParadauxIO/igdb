@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../state/supabaseClient.ts";
 import type { Dog } from "../../types/Dog.ts";
 import "./DogView.scss";
+import {getDogsPublic} from "../../partials/dog.ts";
 
 export default function DogView() {
     const [dogs, setDogs] = useState<Dog[]>([]);
@@ -9,17 +10,8 @@ export default function DogView() {
 
     useEffect(() => {
         async function fetchDogs() {
-            const {data, error} = await supabase
-                .from('public_dogs_view')
-                .select('*');
-            if (error) {
-                console.error("Error fetching dogs:", error);
-                return;
-            }
-
-            if (data) {
-                setDogs(data);
-            }
+            const dogs = await getDogsPublic();
+            setDogs(dogs);
         }
         fetchDogs();
     }, []);

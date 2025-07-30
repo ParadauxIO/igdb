@@ -84,6 +84,12 @@ CREATE POLICY dog_updates_admin_or_owner_crud ON public.dog_updates
         OR
     (public.is_updater(auth.uid()) AND update_created_by = auth.uid())
     );
+
+CREATE POLICY dog_updates_public ON public.dog_updates
+    FOR
+    SELECT TO authenticated
+    USING (update_date_approved IS NOT NULL);
+
 -- ===============================  END DOG_UPDATES TABLE  =============================== --
 
 

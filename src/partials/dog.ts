@@ -1,6 +1,12 @@
 import {supabase} from "../state/supabaseClient.ts";
 import type {Dog} from "../types/Dog.ts";
 
+export const getDogsPublic = async () => {
+    const {data} = await supabase.functions.invoke("views", {body: {view: "dogs"}})
+    console.log(data);
+    return data;
+}
+
 export const getDogsWithNames = async () => {
     const {data, error} = await supabase
         .from('dogs')
@@ -30,7 +36,6 @@ export const getDogsWithNames = async () => {
             dog_last_edited_by_name: dog.dog_last_edited_by_user?.name,
             dog_current_handler_name: dog.dog_current_handler_user?.name,
         }));
-        console.log(flattenedData);
         return flattenedData;
     }
 };

@@ -26,7 +26,7 @@ CREATE TABLE public.dogs
     dog_status          TEXT,                                                           -- e.g., 'available', 'adopted', 'fostered', 'in_training'
     dog_current_handler UUID REFERENCES public.users (id),
     dog_general_notes   TEXT,
-    dog_is_archived     BOOLEAN                  DEFAULT true,
+    dog_is_archived     BOOLEAN                  DEFAULT false,
     dog_created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()                NOT NULL,
     dog_updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()                NOT NULL,
     dog_created_by      UUID                                                  NOT NULL REFERENCES public.users (id),
