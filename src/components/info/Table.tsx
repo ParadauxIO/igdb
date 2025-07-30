@@ -5,7 +5,6 @@ import type { Key } from "react";
 
 type TableProps = {
     loading: boolean;
-    // can this table be made generic to support listing Users as well?
     table: Table<any>;
 };
 

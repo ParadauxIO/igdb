@@ -1,231 +1,140 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router";
-
-import "./AdminEditDogView.scss";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router";
 import type {Dog} from "../../../types/Dog.ts";
-import {supabase} from "../../../state/supabaseClient.ts";
-import LookupInput from "../../../components/LookupInput.tsx";
-import type {User} from "../../../types/User.ts";
-
-
-const SYSTEM_FIELDS = [
-    "dog_created_at",
-    "dog_updated_at",
-    "dog_created_by",
-    "dog_last_edited_by"
-];
+import IGDBForm, {type FormField} from "../../../components/form/IGDBForm.tsx";
+import {useAuth} from "../../../state/hooks/useAuth.ts";
+import {createDog, getDogById, updateDog} from "../../../partials/dog.ts";
+import "./AdminEditDogView.scss";
 
 export default function AdminEditDogView() {
-    const { dogId } = useParams<{ dogId: string }>();
-    const navigate = useNavigate();
-    const [dog, setDog] = useState<Dog | null>(null);
+    const { dogId } = useParams<{ dogId?: string }>();
+    const isEditMode = Boolean(dogId);
+
     const [form, setForm] = useState<Partial<Dog>>({});
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState(false);
+    const [message, setMessage] = useState<string|null>(null);
+    const [isError, setIsError] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(isEditMode);
+    const {user} = useAuth();
 
+    // Load existing dog data for edit mode
     useEffect(() => {
-        if (!dogId) return;
-        setLoading(true);
-        supabase
-            .from("dogs")
-            .select("*")
-            .eq("dog_id", dogId)
-            .single()
-            .then(({ data, error }) => {
-                if (error || !data) {
-                    setError("Dog not found.");
-                } else {
-                    setDog(data);
-                    setForm(data);
+        if (isEditMode && dogId) {
+            const loadDog = async () => {
+                try {
+                    setIsLoading(true);
+                    const dog = await getDogById(dogId);
+                    setForm(dog);
+                } catch (error) {
+                    setMessage("Failed to load dog data. Please try again later.");
+                    setIsError(true);
+                } finally {
+                    setIsLoading(false);
                 }
-                setLoading(false);
-            });
-    }, [dogId]);
-
-    type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
-    type ChangeEventValues = {
-        name: string;
-        value: string;
-        type: string;
-        checked?: boolean;
-    }
-    const handleChange = (e: ChangeEvent) => {
-        const { name, value, type, checked }: ChangeEventValues = e.target;
-        let val: any = value;
-        if (type === "checkbox") val = checked;
-        if (type === "number") val = value === "" ? null : Number(value);
-        setForm(f => ({ ...f, [name]: val }));
-    };
-
-    const searchUsers = async (query: string): Promise<User[]> => {
-        const { data, error } = await supabase
-        .from('user_basic_view')
-        .select('*')
-        .ilike('name', `%${query}%`)
-        .limit(10);
-
-        if (error) {
-            console.error('Error searching users:', error.message);
-        return []; }
-
-        return data ?? [];
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
-        setSuccess(false);
-
-        // Remove system fields from update
-        const updateData: Partial<Dog> = { ...form };
-        SYSTEM_FIELDS.forEach(f => delete updateData[f as keyof Dog]);
-
-        const { error } = await supabase
-            .from("dogs")
-            .update(updateData)
-            .eq("dog_id", dogId);
-
-        setLoading(false);
-        if (error) {
-            setError("Failed to update dog.");
-        } else {
-            setSuccess(true);
-            setTimeout(() => navigate("/admin/dogs"), 1200);
+            };
+            loadDog();
         }
-    };
+    }, [dogId, isEditMode]);
 
-    if (loading && !dog) return <div className="dog-edit-view">Loading...</div>;
-    if (error) return <div className="dog-edit-view error">{error}</div>;
-    if (!dog) return null;
+    const handleSubmit = async (dog: Partial<Dog>) => {
+        try {
+            dog.dog_created_by = user?.id;
+
+            if (isEditMode) {
+                await updateDog(dog);
+                setMessage(`Dog has been successfully updated.`);
+            } else {
+                await createDog(dog);
+                setMessage(`Dog has been successfully created.`);
+            }
+
+            setIsError(false);
+        } catch (error) {
+            const action = isEditMode ? "update" : "create";
+            setMessage(`Failed to ${action} dog. Please try again later.`);
+            setIsError(true);
+        }
+    }
+
+    const dogFormFields: FormField[] = [
+        {
+            name: "dog_name",
+            label: "Dog Name",
+            type: "text",
+            required: true,
+        },
+        {
+            name: "dog_role",
+            label: "Role",
+            type: "select",
+            options: ["Guide Dog", "Assistance Dog", "Community Ambassador Dog"],
+            required: true,
+        },
+        {
+            name: "dog_yob",
+            label: "Year of Birth",
+            type: "text",
+            required: true,
+        },
+        {
+            name: "dog_sex",
+            label: "Sex",
+            type: "select",
+            options: ["male", "female", "unknown"],
+            required: true,
+        },
+        {
+            name: "dog_picture",
+            label: "Picture URL",
+            type: "text",
+        },
+        {
+            name: "dog_status",
+            label: "Status",
+            type: "text",
+        },
+        {
+            name: "dog_current_handler",
+            label: "Current Handler",
+            type: "user-select",
+        },
+        {
+            name: "dog_general_notes",
+            label: "General Notes",
+            type: "textarea",
+        },
+        {
+            name: "dog_is_archived",
+            label: "Archived",
+            type: "checkbox",
+        }
+    ];
+
+    if (isLoading) {
+        return (
+            <div className="dog-create-view">
+                <div className="dog-create-container">
+                    <p>Loading dog data...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="dog-edit-view">
-            <div className="dog-edit-container">
-                <h1>Edit Dog: {dog.dog_name}</h1>
-                <form className="dog-edit-form" onSubmit={handleSubmit}>
-                    <div className="form-row">
-                        <label className="required-label">Name</label>
-                        <input
-                            name="dog_name"
-                            value={form.dog_name || ""}
-                            onChange={handleChange}
-                            required
-                        />
+        <div className="dog-create-view">
+            <div className="dog-create-container">
+                <h1>{isEditMode ? "Edit Dog" : "Add New Dog"}</h1>
+                {message && (
+                    <div className={"status-message-card " + (isError ? "error" : "success")}>
+                        <h3>{isError ? "Failure" : "Success!"}</h3>
+                        <p>{message}</p>
                     </div>
-                    <div className="form-row">
-                        <label className="required-label">Role</label>
-                        <select
-                            name="dog_role"
-                            value={form.dog_role || ""}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">Select</option>
-                            <option value="Guide Dog">Guide Dog</option>
-                            <option value="Assistance Dog">Assistance Dog</option>
-                            <option value="Community Ambassador Dog">Community Ambassador Dog</option>
-                        </select>
-                    </div>
-                    <div className="form-row">
-                        <label className="required-label">Sex</label>
-                        <select
-                            name="dog_sex"
-                            value={form.dog_sex || ""}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">Select</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                        </select>
-                    </div>
-                    <div className="form-row">
-                        <label htmlFor="dog_yob">Year of Birth</label>
-                        <select
-                            name="dog_yob"
-                            value={form.dog_yob || ""}
-                            onChange={handleChange}
-                        >
-                            <option value="">Select</option>
-                            {Array.from({ length: 20 }, (_, i) => {
-                                const year = new Date().getFullYear() - i;
-                                return (
-                                    <option key={year} value={year}>
-                                        {year}
-                                    </option>
-                                );
-                            })}
-                        </select>
-                    </div>
-                    <div className="form-row">
-                        <label>Picture URL</label>
-                        <input
-                            name="dog_picture"
-                            value={form.dog_picture || ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="picture-preview">
-                        <label>Picture Preview</label>
-                        <img src={form.dog_picture ?? ""} alt="Picture Preview of Dog"/>
-                    </div>
-                    <div className="form-row">
-                        <label>Status</label>
-                        <select
-                            name="dog_status"
-                            value={form.dog_status || ""}
-                            onChange={handleChange}
-                        >
-                            <option value="">Select</option>
-                            <option value="Active Service">Active Service</option>
-                            <option value="Assistance Dog">Assistance Dog</option>
-                            <option value="Guide Dog Training">Guide Dog Training</option>
-                            <option value="Initial Training">Initial Training</option>
-                            <option value="Puppy Raising">Puppy Raising</option>
-                            <option value="Retired">Retired</option>
-                            <option value="Training">Training</option>
-                        </select>
-                    </div>
-                    <div className="form-row">
-                        <LookupInput
-                            name="current_handler"
-                            label="Current Handler"
-                            value={form.dog_current_handler}
-                            placeholder="Search for a handler..."
-                            onSelect={(user) =>
-                                setForm(prev => ({...prev, dog_current_handler: user ? user.name : null, }))}
-                            searchFunc={searchUsers}
-                            displayField="name"
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>General Notes</label>
-                        <textarea
-                            name="dog_general_notes"
-                            value={form.dog_general_notes || ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-row checkbox-row">
-                        <label>
-                            <input
-                                name="dog_is_active"
-                                type="checkbox"
-                                checked={!!form.dog_is_active}
-                                onChange={handleChange}
-                            />
-                            Active
-                        </label>
-                    </div>
-                    <div className="form-actions">
-                        <button type="submit" disabled={loading}>Save</button>
-                        <button type="button" onClick={() => navigate("/admin/dogs")}>Cancel</button>
-                    </div>
-                    {success && <div className="success-msg">Dog updated!</div>}
-                    {error && <div className="error-msg">{error}</div>}
-                </form>
+                )}
+                <IGDBForm
+                    form={form}
+                    setForm={setForm}
+                    fields={dogFormFields}
+                    onSubmit={(dog) => handleSubmit(dog)}
+                />
             </div>
         </div>
     );

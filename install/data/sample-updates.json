@@ -8,7 +8,6 @@
       "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/1.jpg",
       "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/2.jpg"
     ],
-    "update_is_public": true,
     "update_created_at": "2024-01-15T14:30:00+00:00",
     "update_date_approved": "2024-01-15T16:00:00+00:00",
     "update_created_by": "{{UPDATER2_ID}}",
@@ -22,7 +21,6 @@
     "update_media_urls": [
       "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/3.jpg"
     ],
-    "update_is_public": false,
     "update_created_at": "2024-02-20T09:15:00+00:00",
     "update_date_approved": "2024-02-20T10:00:00+00:00",
     "update_created_by": "{{UPDATER1_ID}}",
@@ -37,7 +35,6 @@
       "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/4.jpg",
       "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/5.jpg"
     ],
-    "update_is_public": true,
     "update_created_at": "2024-03-18T12:30:00+00:00",
     "update_date_approved": "2024-03-18T13:45:00+00:00",
     "update_created_by": "{{UPDATER1_ID}}",
@@ -52,7 +49,6 @@
       "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/6.jpg",
       "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/7.jpg"
     ],
-    "update_is_public": true,
     "update_created_at": "2024-04-02T09:30:00+00:00",
     "update_date_approved": "2024-04-02T11:00:00+00:00",
     "update_created_by": "{{UPDATER1_ID}}",
@@ -66,7 +62,6 @@
     "update_media_urls": [
       "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/8.jpg"
     ],
-    "update_is_public": true,
     "update_created_at": "2024-01-28T11:00:00+00:00",
     "update_date_approved": "2024-01-28T12:30:00+00:00",
     "update_created_by": "{{UPDATER1_ID}}",
@@ -80,7 +75,6 @@
     "update_media_urls": [
       "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/9.jpg"
     ],
-    "update_is_public": false,
     "update_created_at": "2024-03-05T15:45:00+00:00",
     "update_date_approved": null,
     "update_created_by": "{{UPDATER2_ID}}",
@@ -94,7 +88,6 @@
     "update_media_urls": [
       "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/10.jpg"
     ],
-    "update_is_public": false,
     "update_created_at": "2024-03-22T10:00:00+00:00",
     "update_date_approved": null,
     "update_created_by": "{{UPDATER2_ID}}",
@@ -108,7 +101,6 @@
     "update_media_urls": [
       "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/11.jpg"
     ],
-    "update_is_public": true,
     "update_created_at": "2024-04-08T11:15:00+00:00",
     "update_date_approved": "2024-04-08T12:00:00+00:00",
     "update_created_by": "{{UPDATER1_ID}}",
@@ -122,7 +114,6 @@
     "update_media_urls": [
       "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/12.jpg"
     ],
-    "update_is_public": true,
     "update_created_at": "2024-02-12T16:20:00+00:00",
     "update_date_approved": "2024-02-12T17:00:00+00:00",
     "update_created_by": "{{UPDATER1_ID}}",
@@ -136,7 +127,6 @@
     "update_media_urls": [
       "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/13.jpg"
     ],
-    "update_is_public": false,
     "update_created_at": "2024-03-10T13:00:00+00:00",
     "update_date_approved": "2024-03-10T14:15:00+00:00",
     "update_created_by": "{{UPDATER2_ID}}",
@@ -150,7 +140,6 @@
     "update_media_urls": [
       "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/14.jpg"
     ],
-    "update_is_public": false,
     "update_created_at": "2024-03-25T14:00:00+00:00",
     "update_date_approved": "2024-03-25T15:30:00+00:00",
     "update_created_by": "{{UPDATER2_ID}}",
@@ -164,7 +153,6 @@
     "update_media_urls": [
       "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/15.jpg"
     ],
-    "update_is_public": false,
     "update_created_at": "2024-04-15T08:00:00+00:00",
     "update_date_approved": null,
     "update_created_by": "{{UPDATER1_ID}}",

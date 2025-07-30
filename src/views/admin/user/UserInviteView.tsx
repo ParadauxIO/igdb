@@ -40,11 +40,7 @@ export default function UserInviteView() {
         setError(null);
         setSuccess(false);
 
-        //console.log(form.email);
-        // i think this is how we need to send an email invite
-        // reference: https://supabase.com/docs/reference/javascript/auth-admin-generatelink
-        // https://github.com/J0/supabase_auth_testing_app/blob/d6a9336a8abcdb7c58289f5b8982702f2c35c5bb/app/admin/page.tsx#L38
-        const { data, error } = await supabase.functions.invoke(
+        const { error } = await supabase.functions.invoke(
             'invite-user',
             {
                 body: {
@@ -59,7 +55,6 @@ export default function UserInviteView() {
             console.error(error);
         } else {
             setSuccess(true);
-            console.log(data);
             setTimeout(() => navigate("/users"), 1200);
         }
     };
