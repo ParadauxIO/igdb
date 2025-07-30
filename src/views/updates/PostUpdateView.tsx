@@ -28,8 +28,7 @@ const PostUpdateView = () => {
             const {data, error} = await supabase
                 .from("dogs")
                 .select("dog_id, dog_name")
-                .eq("dog_current_handler", user.id)
-                .eq("dog_is_active", true);
+                .eq("dog_current_handler", user.id);
 
             if (error) {
                 console.error("Error fetching dogs for user:", error);

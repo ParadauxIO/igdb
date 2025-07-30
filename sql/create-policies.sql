@@ -58,12 +58,20 @@ CREATE POLICY users_manage_own_or_admin
 
 -- ===============================  DOGS TABLE  =============================== --
 -- 1. Admins can CRUD all dogs.
+-- 2. Updaters can READ dogs they are assigned to.
 ALTER TABLE public.dogs
     ENABLE ROW LEVEL SECURITY;
 CREATE POLICY dogs_admin_full_access ON public.dogs
     FOR ALL
     USING (public.is_admin(auth.uid()))
     WITH CHECK (public.is_admin(auth.uid()));
+CREATE POLICY dogs_updater_read ON public.dogs
+    FOR SELECT
+    USING (
+        public.is_updater(auth.uid())
+        AND dog_current_handler = auth.uid()
+        AND dog_is_archived = false
+    );
 -- ===============================  END DOGS TABLE  =============================== --
 
 

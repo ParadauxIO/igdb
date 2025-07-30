@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../state/supabaseClient.ts";
 import type { Dog } from "../../types/Dog.ts";
 import "./DogView.scss";
 import {getDogsPublic} from "../../partials/dog.ts";
