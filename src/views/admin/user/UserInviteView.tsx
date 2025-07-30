@@ -40,7 +40,7 @@ export default function UserInviteView() {
         setError(null);
         setSuccess(false);
 
-        const { data, error } = await supabase.functions.invoke(
+        const { error } = await supabase.functions.invoke(
             'invite-user',
             {
                 body: {

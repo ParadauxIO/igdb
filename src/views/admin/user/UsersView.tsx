@@ -61,8 +61,8 @@ export default function UsersView() {
             footer: info => info.column.id,
         }),
 
-        columnHelper.accessor('is_active', {
-            header: 'Active',
+        columnHelper.accessor('is_archived', {
+            header: 'Archived',
             cell: info => info.getValue() ? 'Yes' : 'No',
             footer: info => info.column.id,
         }),
@@ -93,7 +93,7 @@ export default function UsersView() {
     ];
 
     const filteredUsers = useMemo(
-        () => users.filter(u => u.is_active || showInactive),
+        () => users.filter(u => u.is_archived || showInactive),
         [users, showInactive]
     );
 

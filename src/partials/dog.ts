@@ -58,6 +58,63 @@ export const getDogsWithNames = async () => {
     }
 };
 
+export const createDog = async (form: Partial<Dog>) => {
+    const {data, error} = await supabase
+        .from('dogs')
+        .insert({
+            dog_name: form.dog_name,
+            dog_role: form.dog_role,
+            dog_yob: form.dog_yob,
+            dog_sex: form.dog_sex,
+            dog_picture: form.dog_picture,
+            dog_status: form.dog_status,
+            dog_current_handler: form.dog_current_handler,
+            dog_general_notes: form.dog_general_notes,
+            dog_is_archived: false,
+            dog_created_by: form.dog_created_by,
+            dog_last_edited_by: form.dog_created_by
+        })
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Failed to create dog:", error);
+        throw new Error("Failed to create dog");
+    }
+
+    return data;
+}
+
+export const updateDog = async (form: Partial<Dog>) => {
+    const {data, error} = await supabase
+        .from('dogs')
+        .update({...form})
+        .eq('dog_id', form.dog_id)
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Failed to update dog:", error);
+        throw new Error("Failed to update dog");
+    }
+
+    return data;
+}
+
+export const getDogById = async (dogId: string) => {
+    const {data, error} = await supabase
+        .from('dogs')
+        .select()
+        .eq('dog_id', dogId)
+        .single();
+
+    if (error) {
+        throw new Error("Failed to fetch dog by ID:");
+    }
+
+    return data;
+}
+
 export const deleteDog = async (dogId: string) => {
     const {error} = await supabase
         .from('dogs')

@@ -15,7 +15,7 @@ export default function AdminDogView() {
     const [showArchived, setShowArchived] = useState<boolean>(false);
 
     const filteredDogs = useMemo(
-        () => dogs.filter(dog => dog.dog_is_archived || showArchived),
+        () => dogs.filter(dog => !dog.dog_is_archived || showArchived),
         [dogs, showArchived]
     );
 
@@ -44,6 +44,7 @@ export default function AdminDogView() {
     async function loadDogs() {
         setLoading(true);
         const returnedDogs = await getDogsWithNames();
+        console.log(returnedDogs)
         if (returnedDogs) {
             setDogs(returnedDogs);
             setLoading(false);

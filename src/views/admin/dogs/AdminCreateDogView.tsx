@@ -1,20 +1,28 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
 
 import "./AdminCreateDogView.scss";
 import type {Dog} from "../../../types/Dog.ts";
 import IGDBForm, {type FormField} from "../../../components/form/IGDBForm.tsx";
+import {useAuth} from "../../../state/hooks/useAuth.ts";
+import {createDog} from "../../../partials/dog.ts";
 
 export default function AdminCreateDogView() {
-    const navigate = useNavigate();
-    const [form, setForm] = useState<Partial<Dog>>({
-        dog_is_archived: true,
-    });
+    const [form, setForm] = useState<Partial<Dog>>({});
+    const [message, setMessage] = useState<string|null >(null);
+    const [isError, setIsError] = useState<boolean>(false);
+    const {user} = useAuth();
 
-    // const [loading, setLoading] = useState(false);
-    // const [error, setError] = useState<string | null>(null);
-    // const [success, setSuccess] = useState(false);
-    // const { user } = useAuth();
+    const handleSubmit = async (dog: Partial<Dog>) => {
+        try {
+            dog.dog_created_by = user?.id;
+            await createDog(form);
+            setMessage(`This dog has been successfully added to the system.`);
+            setIsError(false);
+        } catch (error) {
+            setMessage("Failed to add this dog. Please try again later.");
+            setIsError(true);
+        }
+    }
 
     const dogFormFields: FormField[] = [
         {
@@ -56,7 +64,7 @@ export default function AdminCreateDogView() {
         {
             name: "dog_current_handler",
             label: "Current Handler",
-            type: "user-select", // custom type for user picker
+            type: "user-select",
         },
         {
             name: "dog_general_notes",
@@ -74,10 +82,18 @@ export default function AdminCreateDogView() {
         <div className="dog-create-view">
             <div className="dog-create-container">
                 <h1>Add New Dog</h1>
+                {message && (
+                    <div className={"status-message-card " + (isError ? "error" : "success")}>
+                        <h3>{isError ? "Failure" : "Success!"}</h3>
+                        <p>{message}</p>
+                    </div>
+                )}
                 <IGDBForm
                     form={form}
                     setForm={setForm}
-                    fields={dogFormFields}/>
+                    fields={dogFormFields}
+                    onSubmit={(dog) => handleSubmit(dog)}
+                />
             </div>
         </div>
     );

@@ -14,12 +14,12 @@ export default function AdminHeader() {
 
     return (
         <header className="primary-header flex admin-header">
-            <h1 className="logo">
+            <div className="logo">
                 <a href="/">
                     <img src="/logo.svg" alt="Irish Guide Dogs for the Blind Logo"/>
                 </a>
                 <h3>Admin Panel</h3>
-            </h1>
+            </div>
 
             <button
                 className={"hamburger" + (navOpen ? " is-active" : "")}
