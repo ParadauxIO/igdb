@@ -1,0 +1,12 @@
+.approval-queue {
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 1rem;
+
+    table {
+      min-width: 700px;
+      width: 100%;
+    }
+  }
+}
