@@ -15,7 +15,6 @@ import DogView from "./views/dogs/DogView.tsx";
 import RoleGuard from "./views/auth/guards/RoleGuard.tsx";
 import NotAuthorisedView from "./views/errors/NotAuthorisedView.tsx";
 import AdminEditDogView from "./views/admin/dogs/AdminEditDogView.tsx";
-import AdminCreateDogView from "./views/admin/dogs/AdminCreateDogView.tsx";
 import AdminDogView from "./views/admin/dogs/AdminDogView.tsx";
 import AuthenticatedLayout from "./views/layouts/AuthenticatedLayout.tsx";
 import AdminLayout from "./views/layouts/AdminLayout.tsx";
@@ -47,7 +46,7 @@ createRoot(document.getElementById('root')!).render(
                             <Route path="" element={<AdminDashboardView/>}/>
                             <Route path="dogs" element={<AdminDogView/>}/>
                             <Route path="dogs/edit/:dogId" element={<AdminEditDogView />} />
-                            <Route path="dogs/create" element={<AdminCreateDogView />} />
+                            <Route path="dogs/create" element={<AdminEditDogView />} />
                             <Route path="users" element={<UsersView/>}/>
                             <Route path="users/profile/:userId" element={<UserProfileView/>}/>
                             <Route path="users/invite" element={<UserInviteView/>}/>

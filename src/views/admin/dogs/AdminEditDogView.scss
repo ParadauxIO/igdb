@@ -87,4 +87,31 @@
     content: " *";
     color: red;
   }
+
+  .status-message-card {
+    margin: 1rem auto;
+    max-width: 600px;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: #f8f9fa;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 1rem;
+      color: black;
+    }
+  }
+
+  .success {
+    background: #C1E1C1;
+  }
+
+  .failure {
+    background: #ff8b8b;
+  }
 }
