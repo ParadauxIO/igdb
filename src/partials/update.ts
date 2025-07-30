@@ -1,7 +1,7 @@
 import {supabase} from "../state/supabaseClient.ts";
 import type {DogUpdate} from "../types/DogUpdate.ts";
 
-export const postUpdate = async (form: Partial<DogUpdate>) => {
+export const postUpdate = async (form: Partial<DogUpdate>): Promise<DogUpdate> => {
     const {data, error} = await supabase
         .from('dog_updates')
         .insert({
@@ -19,7 +19,7 @@ export const postUpdate = async (form: Partial<DogUpdate>) => {
 
     if (error) {
         console.error('Error posting update:', error.message);
-        return null;
+        throw new Error('Failed to post update');
     }
 
     return data;

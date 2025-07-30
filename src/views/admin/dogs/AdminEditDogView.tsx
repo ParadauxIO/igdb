@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router";
+import {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router";
 
 import "./AdminEditDogView.scss";
 import type {Dog} from "../../../types/Dog.ts";
 import {supabase} from "../../../state/supabaseClient.ts";
-import LookupInput from "../../../components/form/LookupInput.tsx";
 import type {User} from "../../../types/User.ts";
 
 
@@ -189,16 +188,6 @@ export default function AdminEditDogView() {
                         </select>
                     </div>
                     <div className="form-row">
-                        <LookupInput
-                            name="current_handler"
-                            label="Current Handler"
-                            value={form.dog_current_handler}
-                            placeholder="Search for a handler..."
-                            onSelect={(user) =>
-                                setForm(prev => ({...prev, dog_current_handler: user ? user.name : null, }))}
-                            searchFunc={searchUsers}
-                            displayField="name"
-                        />
                     </div>
                     <div className="form-row">
                         <label>General Notes</label>
@@ -211,9 +200,9 @@ export default function AdminEditDogView() {
                     <div className="form-row checkbox-row">
                         <label>
                             <input
-                                name="dog_is_active"
+                                name="dog_is_archived"
                                 type="checkbox"
-                                checked={!!form.dog_is_active}
+                                checked={form.dog_is_archived}
                                 onChange={handleChange}
                             />
                             Active
