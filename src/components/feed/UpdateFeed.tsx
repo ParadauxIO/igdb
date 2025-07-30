@@ -5,6 +5,7 @@ import "./UpdateFeed.scss";
 import type {DogUpdate} from "../../types/DogUpdate.ts";
 import Update from "./Update.tsx";
 import {useAuth} from "../../state/hooks/useAuth.ts";
+import {getUserFeed} from "../../partials/update.ts";
 
 export default function UpdateFeed() {
   const [updates, setUpdates] = useState<DogUpdate[]>([]);
@@ -27,14 +28,7 @@ export default function UpdateFeed() {
     const fetchUpdates = async () => {
       if (!user) return;
       setLoading(true);
-
-      const { data, error } = await supabase
-          .from("dog_updates")
-          .select("*")
-          .or(`update_date_approved.not.is.null,update_created_by.eq.${user?.id}`)
-          .order("update_created_at", { ascending: false });
-
-      if (!error && data) setUpdates(data);
+      setUpdates(await getUserFeed(user?.id))
       setLoading(false);
     };
     fetchUpdates();

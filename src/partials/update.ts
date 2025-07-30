@@ -24,3 +24,91 @@ export const postUpdate = async (form: Partial<DogUpdate>): Promise<DogUpdate> =
 
     return data;
 }
+
+export const getUserFeed = async (userId: string): Promise<DogUpdate[]> => {
+    const { data, error } = await supabase
+        .from("dog_updates")
+        .select("*")
+        .or(`update_date_approved.not.is.null,update_created_by.eq.${userId}`)
+        .order("update_created_at", { ascending: false });
+
+    if (error) {
+        throw new Error(`Failed to fetch feed: ${error.message}`);
+    }
+
+    return data;
+}
+
+export const updateDogUpdate = async (updateId: string, form: Partial<DogUpdate>): Promise<DogUpdate> => {
+    const { data, error } = await supabase
+        .from('dog_updates')
+        .update({
+            ...form
+        })
+        .eq('update_id', updateId)
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error updating dog update:', error.message);
+        throw new Error('Failed to update dog update');
+    }
+
+    return data;
+}
+
+export const approveUpdate = async (updateId: string, approvedBy: string): Promise<DogUpdate> => {
+    const { data, error } = await supabase
+        .from('dog_updates')
+        .update({
+            update_date_approved: new Date().toISOString(),
+            update_approved_by: approvedBy
+        })
+        .eq('update_id', updateId)
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error approving update:', error.message);
+        throw new Error('Failed to approve update');
+    }
+
+    return data;
+}
+
+export const rejectUpdate = async (updateId: string): Promise<DogUpdate> => {
+    const { data, error } = await supabase
+        .from('dog_updates')
+        .delete()
+        .eq('update_id', updateId)
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error rejecting update:', error.message);
+        throw new Error('Failed to reject update');
+    }
+
+    return data;
+}
+
+export const getApprovalQueue = async (showApproved: boolean): Promise<DogUpdate[]> => {
+    let query = supabase
+        .from("dog_updates")
+        .select("*")
+        .order("update_created_at", { ascending: false });
+
+    if (showApproved) {
+        query = query.not("update_date_approved", "is", null);
+    } else {
+        query = query.is("update_date_approved", null);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+        throw new Error(`Failed to fetch approval queue: ${error.message}`);
+    }
+
+    return data;
+}

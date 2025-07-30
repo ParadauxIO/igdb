@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {getDogsWithNames} from "../../partials/dog.ts";
 import type {Dog} from "../../types/Dog.ts";
 import "./AdminDashboardView.scss";
+import ApprovalQueue from "../../components/admin/ApprovalQueue.tsx";
 
 export default function AdminDashboardView() {
     console.log("AdminDashboardView rendered");
@@ -38,7 +39,7 @@ export default function AdminDashboardView() {
 
             <div className="approval-queue">
                 <h1> Approval Queue</h1>
-                <p></p>
+                <ApprovalQueue/>
             </div>
         </div>
     );
