@@ -37,12 +37,6 @@
       }
     }
 
-    .dog-cards {
-      padding: 1rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-    }
 
     .table-wrapper {
       overflow-x: auto;

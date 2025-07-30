@@ -4,7 +4,6 @@ import {FaPlus} from "react-icons/fa";
 import {getCoreRowModel, useReactTable} from "@tanstack/react-table";
 import {useNavigate} from "react-router";
 import type {Dog} from "../../../types/Dog.ts";
-import Card from "../../../components/info/Card.tsx";
 import Table from "../../../components/info/Table.tsx";
 import {archiveDog, deleteDog, getDogsWithNames} from "../../../partials/dog.ts";
 import {getAdminDogViewColumns} from "../../../types/columns/admin-dog-view-columns.tsx";
@@ -64,12 +63,6 @@ export default function AdminDogView() {
                         <FaPlus/>
                         <span>New Dog</span>
                     </button>
-                </div>
-                <div className="dog-cards">
-                    <Card title="Total Dogs" value={dogs.length}/>
-                    <Card title="In Training" value={dogs.filter(dog => dog.dog_status === 'In Training').length}/>
-                    <Card title="In Service" value={dogs.filter(dog => dog.dog_status === 'Active').length}/>
-                    <Card title="Actions Awaiting Approval" value={0}/>
                 </div>
                 <div className="table-wrapper">
                     <Table loading={loading} table={table}/>
