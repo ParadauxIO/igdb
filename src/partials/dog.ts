@@ -7,6 +7,24 @@ export const getDogsPublic = async () => {
     return data;
 }
 
+export type DogSearchResult = {
+    dog_id: string;
+    dog_name: string;
+}
+
+export const getUserDogs = async (userId: string): Promise<DogSearchResult[]> => {
+    const {data, error} = await supabase
+        .from("dogs")
+        .select("dog_id, dog_name")
+        .eq("dog_current_handler", userId);
+
+    if (error) {
+        throw new Error("Failed to fetch dogs");
+    }
+
+    return data;
+}
+
 export const getDogsWithNames = async () => {
     const {data, error} = await supabase
         .from('dogs')

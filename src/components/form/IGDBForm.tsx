@@ -1,13 +1,15 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import type {User} from "../../types/User.ts";
 import "./IGDBForm.scss"
-import LookupInput from "./LookupInput.tsx";
-import {searchUsers} from "../../partials/users.ts";
+import {getUsers} from "../../partials/users.ts";
+import {type DogSearchResult, getUserDogs} from "../../partials/dog.ts";
+import SearchDropdown from "./SearchDropdown.tsx";
+import {useAuth} from "../../state/hooks/useAuth.ts";
 
 export type FormField = {
     name: string;
     label: string;
-    type: 'text' | 'textarea' | 'password' | 'select' | 'checkbox' | 'datetime' | 'user-select';
+    type: 'text' | 'textarea' | 'password' | 'select' | 'checkbox' | 'datetime' | 'user-select' | 'dog-select';
     description?: string;
     required?: boolean;
     options?: string[];
@@ -17,9 +19,39 @@ interface IGDBFormProps<T> {
     form: Partial<T>;
     setForm: (f: Partial<T>) => void;
     fields: FormField[];
+    onSubmit: (form: Partial<T>) => void;
 }
 
-export default function IGDBForm<T>({form, setForm, fields}: IGDBFormProps<T>) {
+export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormProps<T>) {
+    const [users, setUsers] = useState<User[]>([]);
+    const [userDogs, setUserDogs] = useState<DogSearchResult[]>([]);
+    const {user} = useAuth();
+    const hasUserSelect = fields.some(field => field.type === 'user-select');
+    const hasDogSelect = fields.some(field => field.type === 'dog-select');
+    console.log(users, userDogs);
+    useEffect(() => {
+        if (!user) return;
+        if (hasUserSelect) {
+            getUsers(user?.id)
+                .then(users => {
+                    setUsers(users);
+                })
+                .catch(err => {
+                    console.error("Error fetching users:", err);
+                });
+        }
+
+        if (hasDogSelect) {
+            getUserDogs(user.id)
+                .then(dogs => {
+                    setUserDogs(dogs);
+                })
+                .catch(err => {
+                    console.error("Error fetching dogs:", err);
+                });
+        }
+    }, [user]);
+
     const handleChange = (name: string, value: any) => {
         setForm({
             ...form,
@@ -27,8 +59,13 @@ export default function IGDBForm<T>({form, setForm, fields}: IGDBFormProps<T>) {
         });
     };
 
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        onSubmit(form);
+    }
+
     return (
-        <form className="igdb-form">
+        <form className="igdb-form" onSubmit={handleSubmit}>
             {fields.map(field => {
                 const value = form[field.name as keyof T];
 
@@ -103,17 +140,18 @@ export default function IGDBForm<T>({form, setForm, fields}: IGDBFormProps<T>) {
 
                     case 'user-select':
                         return (
-                            <LookupInput
-                                key={field.name}
-                                name={field.name}
+                            <SearchDropdown
                                 label={field.label}
-                                value={value as string}
-                                placeholder={`Search for ${field.label.toLowerCase()}...`}
-                                onSelect={(user) =>
-                                    handleChange(field.name, user ? user.id : null)
+                                name={field.name}
+                                value={form[field.name as keyof T] as string | undefined}
+                                required={field.required}
+                                fetchOptions={async () =>
+                                    users.map((user) => ({
+                                        label: user.name,
+                                        value: user.id,
+                                    }))
                                 }
-                                searchFunc={searchUsers}
-                                displayField="name"
+                                onChange={(e) => handleChange(field.name, e.target.value)}
                             />
                         );
                     case 'textarea':
@@ -132,11 +170,29 @@ export default function IGDBForm<T>({form, setForm, fields}: IGDBFormProps<T>) {
                                 />
                             </div>
                         )
+
+                    case 'dog-select':
+                        return (
+                            <SearchDropdown
+                                label={field.label}
+                                name={field.name}
+                                value={form[field.name as keyof T] as string | undefined}
+                                required={field.required}
+                                fetchOptions={async () =>
+                                    userDogs.map((dog) => ({
+                                        label: dog.dog_name,
+                                        value: dog.dog_id,
+                                    }))
+                                }
+                                onChange={(e) => handleChange(field.name, e.target.value)}
+                            />
+                        );
                     default:
                         console.error("IGDBForm: Unsupported field type:", field.type);
                         return null;
                 }
             })}
+            <input type="submit" value="Submit"/>
         </form>
     );
 }

@@ -1,11 +1,9 @@
 import {supabase} from "../state/supabaseClient.js";
 
-export const searchUsers = async (query: string) => {
+export const getUsers = async () => {
     const {data, error} = await supabase
-        .from('user_basic_view')
-        .select('*')
-        .ilike('name', `%${query}%`)
-        .limit(10);
+        .from('users')
+        .select('*');
 
     if (error) {
         console.error('Error searching users:', error.message);
