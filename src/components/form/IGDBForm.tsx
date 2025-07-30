@@ -32,7 +32,7 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
     useEffect(() => {
         if (!user) return;
         if (hasUserSelect) {
-            getUsers(user?.id)
+            getUsers()
                 .then(users => {
                     setUsers(users);
                 })
@@ -67,7 +67,7 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
     return (
         <form className="igdb-form" onSubmit={handleSubmit}>
             {fields.map(field => {
-                const value = form[field.name as keyof T];
+                const value = form[field.name as keyof T] as string | number | readonly string[] | undefined;
 
                 switch (field.type) {
                     case 'text':
@@ -131,7 +131,7 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                                     type="datetime-local"
                                     name={field.name}
                                     required={field.required}
-                                    value={value ? new Date(value as Date).toISOString().slice(0, 16) : ''}
+                                    value={value ? new Date(value as string).toISOString().slice(0, 16) : ''}
                                     onChange={e => handleChange(field.name, new Date(e.target.value))}
                                     className="border p-2 rounded"
                                 />
@@ -160,7 +160,6 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                                 <label className="font-semibold">{field.label}</label>
                                 {field.description && <p className="description"> {field.description} </p>}
                                 <textarea
-                                    type={field.type}
                                     name={field.name}
                                     required={field.required}
                                     value={value || ''}
@@ -195,44 +194,4 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
             <input type="submit" value="Submit"/>
         </form>
     );
-}
-
-export const TestPage = () => {
-    const [form, setForm] = useState<Partial<User>>({});
-
-    const fields: FormField[] = [
-        {name: 'id', label: 'ID', type: 'text', required: true},
-        {name: 'name', label: 'Name', type: 'text', required: true},
-        {
-            name: 'permission_role',
-            label: 'Permission Role',
-            type: 'select',
-            options: ['viewer', 'admin', 'updater'],
-            required: true
-        },
-        {name: 'functional_role', label: 'Functional Role', type: 'text'},
-        {name: 'phone', label: 'Phone', type: 'text'},
-        {name: 'is_active', label: 'Is Active', type: 'checkbox'},
-        {name: 'can_approve_updates', label: 'Can Approve Updates', type: 'checkbox'},
-        {name: 'created_at', label: 'Created At', type: 'datetime'},
-        {name: 'updated_at', label: 'Updated At', type: 'datetime'}
-    ]
-
-    return (
-        <div>
-            <IGDBForm
-                form={form}
-                setForm={setForm}
-                fields={fields}
-            />
-            <div className="output">
-                {Object.keys(form).map(key => (
-                    <div key={key} className="flex items-center gap-2">
-                        <strong>{key}:</strong>
-                        <span>{form[key as keyof typeof form]?.toString() || 'N/A'}</span>
-                    </div>
-                ))}
-            </div>
-        </div>
-    )
 }
