@@ -9,7 +9,6 @@ import Table from "../../../components/info/Table.tsx";
 import {archiveDog, deleteDog, getDogsWithNames} from "../../../partials/dog.ts";
 import {getAdminDogViewColumns} from "../../../types/columns/admin-dog-view-columns.tsx";
 
-
 export default function AdminDogView() {
     const [dogs, setDogs] = useState<Dog[]>([])
     const [loading, setLoading] = useState<boolean>(false);
@@ -72,7 +71,9 @@ export default function AdminDogView() {
                     <Card title="In Service" value={dogs.filter(dog => dog.dog_status === 'Active').length}/>
                     <Card title="Actions Awaiting Approval" value={0}/>
                 </div>
-                <Table loading={loading} table={table}/>
+                <div className="table-wrapper">
+                    <Table loading={loading} table={table}/>
+                </div>
                 <form>
                     <label htmlFor="dog_is_enabled">Show archived dogs?</label>
                     <input

@@ -2,11 +2,17 @@
   .dog-container {
     margin-inline: 2rem;
 
+    @media (max-width: 600px) {
+      margin-inline: 1rem;
+    }
+
     .view-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-top: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
 
       h1 {
         font-size: 1.8rem;
@@ -32,21 +38,41 @@
     }
 
     .dog-cards {
-      padding: 1rem 1rem 1rem 1rem;
+      padding: 1rem;
       display: grid;
-      grid-template-columns: 2fr 2fr 2fr 2fr;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 16px;
     }
-  }
 
-  .actions-cell:hover {
-    cursor: pointer;
-    color: #212529;
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-top: 1rem;
+
+      table {
+        min-width: 700px;
+        width: 100%;
+      }
+    }
+
+    form {
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      label {
+        font-size: 0.95rem;
+      }
+    }
   }
 
   .actions-cell {
     position: relative;
+
+    &:hover {
+      cursor: pointer;
+      color: #212529;
+    }
   }
-
-
 }
