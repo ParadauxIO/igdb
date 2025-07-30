@@ -24,7 +24,7 @@ export default function ApprovalQueue() {
 
     const table = useReactTable({
         data: updates,
-        columns: getAdminApprovalQueueColumns(user?.id),
+        columns: getAdminApprovalQueueColumns(user?.id ?? ""),
         getCoreRowModel: getCoreRowModel(),
         getRowId: originalRow => originalRow.dog_id,
         enableRowSelection: true
