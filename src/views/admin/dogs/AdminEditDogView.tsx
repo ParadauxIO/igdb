@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
-
-import "./AdminCreateDogView.scss";
 import type {Dog} from "../../../types/Dog.ts";
 import IGDBForm, {type FormField} from "../../../components/form/IGDBForm.tsx";
 import {useAuth} from "../../../state/hooks/useAuth.ts";
 import {createDog, getDogById, updateDog} from "../../../partials/dog.ts";
+import "./AdminEditDogView.scss";
 
 export default function AdminEditDogView() {
     const { dogId } = useParams<{ dogId?: string }>();

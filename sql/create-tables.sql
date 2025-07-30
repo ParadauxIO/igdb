@@ -8,7 +8,7 @@ CREATE TABLE public.users
                                             ('staff', 'volunteer', 'puppy raiser', 'trainer', 'temporary boarder',
                                              'client', 'adoptive family')),
     phone               VARCHAR(32),
-    is_archived         BOOLEAN                  DEFAULT true,
+    is_archived         BOOLEAN                  DEFAULT false,
     can_approve_updates BOOLEAN                  DEFAULT false,
     created_at          TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at          TIMESTAMP WITH TIME ZONE DEFAULT NOW()

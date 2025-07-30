@@ -5,7 +5,7 @@ import './style/reset.scss';
 import HomeView from './views/HomeView.tsx';
 import LogoutView from './views/auth/LogoutView.tsx';
 import PostUpdateView from './views/updates/PostUpdateView';
-import UsersView from "./views/admin/user/UsersView.tsx";
+import AdminUsersView from "./views/admin/user/AdminUsersView.tsx";
 import UserInviteView from "./views/admin/user/UserInviteView.tsx";
 import UserProfileView from "./views/user/UserProfileView.tsx";
 import {AuthProvider} from "./state/context/AuthContext.tsx";
@@ -47,7 +47,7 @@ createRoot(document.getElementById('root')!).render(
                             <Route path="dogs" element={<AdminDogView/>}/>
                             <Route path="dogs/edit/:dogId" element={<AdminEditDogView />} />
                             <Route path="dogs/create" element={<AdminEditDogView />} />
-                            <Route path="users" element={<UsersView/>}/>
+                            <Route path="users" element={<AdminUsersView/>}/>
                             <Route path="users/profile/:userId" element={<UserProfileView/>}/>
                             <Route path="users/invite" element={<UserInviteView/>}/>
                         </Route>
