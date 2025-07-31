@@ -4,8 +4,10 @@ export interface User {
     permission_role: 'viewer' | 'admin' | 'updater';
     functional_role: string;
     phone: string;
-    is_active: boolean;
+    is_archived: boolean;
     can_approve_updates: boolean;
-    created_at: string;
-    updated_at: string;
+    created_at: Date;
+    updated_at: Date;
 }
+
+

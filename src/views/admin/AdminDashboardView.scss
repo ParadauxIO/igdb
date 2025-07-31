@@ -1,0 +1,18 @@
+.admin-dashboard {
+  font-family: sans-serif;
+  margin-inline: 2rem;
+  margin-block: 1rem;
+
+  // Padding top of 1rem for all direct children
+  > * {
+    padding-top: 1rem;
+  }
+
+  .dog-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+  }
+}
+
+

@@ -8,17 +8,11 @@ CREATE TABLE public.users
                                             ('staff', 'volunteer', 'puppy raiser', 'trainer', 'temporary boarder',
                                              'client', 'adoptive family')),
     phone               VARCHAR(32),
-    is_active           BOOLEAN                  DEFAULT true,
+    is_archived         BOOLEAN                  DEFAULT false,
     can_approve_updates BOOLEAN                  DEFAULT false,
     created_at          TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at          TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
-CREATE VIEW public.user_basic_view AS
-SELECT id, name
-FROM public.users;
-REVOKE ALL ON public.user_basic_view FROM anon;
-GRANT SELECT ON public.user_basic_view TO authenticated;
 
 -- Dogs table
 CREATE TABLE public.dogs
@@ -32,22 +26,12 @@ CREATE TABLE public.dogs
     dog_status          TEXT,                                                           -- e.g., 'available', 'adopted', 'fostered', 'in_training'
     dog_current_handler UUID REFERENCES public.users (id),
     dog_general_notes   TEXT,
-    dog_is_active       BOOLEAN                  DEFAULT true,
+    dog_is_archived     BOOLEAN                  DEFAULT false,
     dog_created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()                NOT NULL,
     dog_updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()                NOT NULL,
     dog_created_by      UUID                                                  NOT NULL REFERENCES public.users (id),
     dog_last_edited_by  UUID                                                  NOT NULL REFERENCES public.users (id)
 );
-
-CREATE VIEW public.public_dogs_view WITH (security_invoker = on) AS
-SELECT dog_name,
-       dog_role,
-       dog_yob,
-       dog_sex,
-       dog_picture,
-       dog_status
-FROM dogs
-WHERE dog_is_active = true;
 
 -- Updates/Feed table
 CREATE TABLE public.dog_updates
@@ -57,7 +41,6 @@ CREATE TABLE public.dog_updates
     update_title         TEXT                                                   NOT NULL,
     update_description   TEXT                                                   NOT NULL,
     update_media_urls    TEXT[], -- Array of Supabase storage URLs
-    update_is_public     BOOLEAN                  DEFAULT false,
     update_date_approved TIMESTAMP WITH TIME ZONE,
     update_created_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     update_created_by    UUID REFERENCES public.users (id)                      NOT NULL,
@@ -77,7 +60,7 @@ CREATE TABLE public.dog_following
 CREATE TABLE public.dog_history
 (
     history_id        UUID PRIMARY KEY         DEFAULT uuid_generate_v4(),
-    dog_id            UUID NOT NULL REFERENCES public.dogs (dog_id),
+    dog_id            UUID REFERENCES public.dogs (dog_id) ON DELETE SET NULL,
     changed_by        UUID NOT NULL REFERENCES public.users (id),
     changed_at        TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     old_name          TEXT,

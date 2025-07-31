@@ -8,7 +8,7 @@
     "permission_role": "admin",
     "functional_role": "staff",
     "phone": "+353800000000",
-    "isActive": true,
+    "isArchived": false,
     "canApproveUpdates": true
   },
   {
@@ -20,7 +20,7 @@
     "permission_role": "admin",
     "functional_role": "staff",
     "phone": "+353800000001",
-    "isActive": true,
+    "isArchived": false,
     "canApproveUpdates": true
   },
   {
@@ -32,7 +32,7 @@
     "permission_role": "updater",
     "functional_role": "puppy raiser",
     "phone": "+353800000002",
-    "isActive": true,
+    "isArchived": false,
     "canApproveUpdates": true
   },
   {
@@ -44,7 +44,7 @@
     "permission_role": "updater",
     "functional_role": "trainer",
     "phone": "+353800000003",
-    "isActive": true,
+    "isArchived": false,
     "canApproveUpdates": false
   },
   {
@@ -56,7 +56,7 @@
     "permission_role": "viewer",
     "functional_role": "client",
     "phone": "+353800000004",
-    "isActive": true,
+    "isArchived": false,
     "canApproveUpdates": false
   },
   {
@@ -68,7 +68,7 @@
     "permission_role": "viewer",
     "functional_role": "volunteer",
     "phone": "+353800000005",
-    "isActive": true,
+    "isArchived": false,
     "canApproveUpdates": false
   },
   {
@@ -80,7 +80,7 @@
     "permission_role": "viewer",
     "functional_role": "volunteer",
     "phone": "+353800000006",
-    "isActive": true,
+    "isArchived": false,
     "canApproveUpdates": false
   },
   {
@@ -92,7 +92,7 @@
     "permission_role": "viewer",
     "functional_role": "volunteer",
     "phone": "+353800000007",
-    "isActive": true,
+    "isArchived": false,
     "canApproveUpdates": false
   },
   {
@@ -104,7 +104,7 @@
     "permission_role": "viewer",
     "functional_role": "client",
     "phone": "+353800000008",
-    "isActive": false,
+    "isArchived": false,
     "canApproveUpdates": false
   },
   {
@@ -116,7 +116,7 @@
     "permission_role": "viewer",
     "functional_role": "client",
     "phone": "+353800000009",
-    "isActive": false,
+    "isArchived": false,
     "canApproveUpdates": false
   }
 ]

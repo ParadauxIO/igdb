@@ -1,4 +1,4 @@
-import Header from "../../components/Header.tsx";
+import Header from "../../components/nav/Header.tsx";
 import {Outlet} from "react-router";
 
 export default function AuthenticatedLayout() {

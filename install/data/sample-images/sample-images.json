@@ -9,6 +9,7 @@
   { "sourcePath": "./install/data/sample-images/dogs/8.jpg", "destinationPath": "sample/dogs/8.jpg" },
   { "sourcePath": "./install/data/sample-images/dogs/9.jpg", "destinationPath": "sample/dogs/9.jpg" },
   { "sourcePath": "./install/data/sample-images/dogs/10.jpg", "destinationPath": "sample/dogs/10.jpg" },
+  { "sourcePath": "./install/data/sample-images/dogs/11.png", "destinationPath": "sample/dogs/11.png" },
 
   { "sourcePath": "./install/data/sample-images/updates/1.jpg", "destinationPath": "sample/updates/1.jpg" },
   { "sourcePath": "./install/data/sample-images/updates/2.jpg", "destinationPath": "sample/updates/2.jpg" },

@@ -1,24 +1,6 @@
 import {useState} from "react";
-import type {User} from "../../types/User.ts";
 import {supabase} from "../../state/supabaseClient.ts";
-import {createColumnHelper} from "@tanstack/react-table";
 
-const columnHelper = createColumnHelper<User>()
-
-/**
- *
- *
- * https://github.com/JMaylor/vuepabase/tree/5e5668af6b4430a0c6dc7f6b72b38f885de2d2de/src/views/auth
- *
- * @returns
- * const handleSubmit = async (e: React.FormEvent) => {
-        const { error, data } = await supabase.auth.api.updateUser(resetToken, {
-            password: password.value,
-        });
-        console.log(error, data);
-    };
- *
- */
 export default function PasswordResetView() {
 
   const [password, setPassword] = useState('');

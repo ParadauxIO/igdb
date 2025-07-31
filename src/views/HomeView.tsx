@@ -1,4 +1,4 @@
-import UpdateFeed from "../components/UpdateFeed.tsx";
+import UpdateFeed from "../components/feed/UpdateFeed.tsx";
 import "./HomeView.scss"
 export default function HomeView() {
     return (

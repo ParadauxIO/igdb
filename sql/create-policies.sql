@@ -1,194 +1,126 @@
--- Enable RLS before defining policies
+CREATE OR REPLACE FUNCTION public.is_admin(user_uuid UUID)
+    RETURNS BOOLEAN
+    LANGUAGE sql
+    SECURITY DEFINER
+AS
+$$
+SELECT EXISTS (SELECT 1
+               FROM public.users
+               WHERE id = user_uuid
+                 AND permission_role = 'admin');
+$$;
+
+CREATE OR REPLACE FUNCTION public.is_updater(user_uuid UUID)
+    RETURNS BOOLEAN
+    LANGUAGE sql
+    SECURITY DEFINER
+AS
+$$
+SELECT EXISTS (SELECT 1
+               FROM public.users
+               WHERE id = user_uuid
+                 AND permission_role = 'updater');
+$$;
+
+CREATE OR REPLACE FUNCTION public.is_privileged_user(user_uuid UUID)
+    RETURNS BOOLEAN
+    LANGUAGE sql
+    SECURITY DEFINER
+AS
+$$
+SELECT EXISTS (SELECT 1
+               FROM public.users
+               WHERE id = user_uuid
+                 AND permission_role in ('updater', 'admin'));
+$$;
+
+
+-- ===============================  USERS TABLE  =============================== --
+-- 1. Authenticated users can CRUD their own profile.
+-- 2. Admins can CRUD all users.
 ALTER TABLE public.users
     ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.dogs
-    ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.dog_updates
-    ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.dog_following
-    ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.dog_history
-    ENABLE ROW LEVEL SECURITY;
-
--- Generic functions
-CREATE FUNCTION is_admin(uid uuid) RETURNS boolean AS $$
-SELECT permission_role = 'admin' FROM public.users WHERE id = uid;
-$$ LANGUAGE sql STABLE;
-
--- === USERS TABLE POLICIES ===
--- Users can read their own profile only
-CREATE POLICY "Users can read their own profile"
+CREATE POLICY users_manage_own_or_admin
     ON public.users
-    FOR SELECT
-    TO authenticated
-    USING (auth.uid() = id);
-
--- Users can update their own profile only
-CREATE POLICY "Users can update their own profile"
-    ON public.users
-    FOR UPDATE
-    TO authenticated
-    USING (auth.uid() = id);
-
--- Admins can delete users
-CREATE POLICY "Admins can delete users"
-    ON public.users
-    FOR DELETE
-    TO authenticated
+    FOR ALL
     USING (
-    EXISTS (SELECT 1
-            FROM public.users u
-            WHERE u.id = auth.uid()
-              AND u.permission_role = 'admin')
-    );
-
--- Admins can read all users
-CREATE POLICY "Admins can select users"
-    ON public.users
-    FOR SELECT
-    TO authenticated
-    USING (
-    is_admin(auth.uid())
-    );
-
--- Admins cna update users
-CREATE POLICY "Admins can update users"
-    ON public.users
-    FOR UPDATE
-    TO authenticated
-    USING (
-    is_admin(auth.uid())
+    -- SELECT, UPDATE, DELETE condition
+    auth.uid() = id
+        OR public.is_admin(auth.uid())
     )
     WITH CHECK (
-    is_admin(auth.uid())
+    -- INSERT, UPDATE condition
+    auth.uid() = id
+        OR public.is_admin(auth.uid())
     );
+-- ===============================  END USERS TABLE  =============================== --
 
--- === DOGS TABLE POLICIES ===
 
--- Allow users with role 'admin' to insert dogs
-CREATE POLICY "Admins can insert dogs"
-    ON public.dogs
-    FOR INSERT
-    TO authenticated
-    WITH CHECK (
-    EXISTS (SELECT 1
-            FROM public.users u
-            WHERE u.id = auth.uid()
-              AND u.permission_role = 'admin')
-    );
-
--- Allow users with role 'admin' to update dogs
-CREATE POLICY "Admins can update dogs"
-    ON public.dogs
-    FOR UPDATE
-    TO authenticated
-    USING (
-    EXISTS (SELECT 1
-            FROM public.users u
-            WHERE u.id = auth.uid()
-              AND u.permission_role = 'admin')
-    );
-
--- Allow only admins to delete dogs
-CREATE POLICY "Admins can delete dogs"
-    ON public.dogs
-    FOR DELETE
-    TO authenticated
-    USING (
-    EXISTS (SELECT 1
-            FROM public.users u
-            WHERE u.id = auth.uid()
-              AND u.permission_role = 'admin')
-    );
-
-CREATE POLICY "Admins can read dogs"
-    ON public.dogs
+-- ===============================  DOGS TABLE  =============================== --
+-- 1. Admins can CRUD all dogs.
+-- 2. Updaters can READ dogs they are assigned to.
+ALTER TABLE public.dogs
+    ENABLE ROW LEVEL SECURITY;
+CREATE POLICY dogs_admin_full_access ON public.dogs
+    FOR ALL
+    USING (public.is_admin(auth.uid()))
+    WITH CHECK (public.is_admin(auth.uid()));
+CREATE POLICY dogs_updater_read ON public.dogs
     FOR SELECT
-    TO authenticated
     USING (
-    EXISTS (SELECT 1
-            FROM public.users u
-            WHERE u.id = auth.uid()
-              AND u.permission_role = 'admin')
+        public.is_updater(auth.uid())
+        AND dog_current_handler = auth.uid()
+        AND dog_is_archived = false
     );
+-- ===============================  END DOGS TABLE  =============================== --
 
--- === DOG_UPDATES TABLE POLICIES ===
 
--- Authenticated users can read public updates or ones they created
-CREATE POLICY "Read public or own dog updates"
-    ON public.dog_updates
-    FOR SELECT
-    TO authenticated
+-- ===============================  DOG_UPDATES TABLE  =============================== --
+-- Updaters can CRUD their own updates.
+-- Admins can CRUD all updates.
+ALTER TABLE public.dog_updates
+    ENABLE ROW LEVEL SECURITY;
+CREATE POLICY dog_updates_admin_or_owner_crud ON public.dog_updates
+    FOR ALL
     USING (
-    update_is_public = true
-        OR update_created_by = auth.uid()
-    );
-
--- Allow users with role 'updater' to insert updates about dogs they handle
-CREATE POLICY "Updaters can insert updates on dogs they handle"
-    ON public.dog_updates
-    FOR INSERT
-    TO authenticated
+    public.is_admin(auth.uid())
+        OR
+    (public.is_updater(auth.uid()) AND update_created_by = auth.uid())
+    )
     WITH CHECK (
-    EXISTS (SELECT 1
-            FROM public.users u
-                     JOIN public.dogs d ON d.dog_id = dog_id
-            WHERE u.id = auth.uid()
-              AND u.permission_role = 'updater'
-              AND d.dog_current_handler = auth.uid())
+    public.is_admin(auth.uid())
+        OR
+    (public.is_updater(auth.uid()) AND update_created_by = auth.uid())
     );
 
--- === DOG_FOLLOWING TABLE POLICIES (if needed) ===
+CREATE POLICY dog_updates_public ON public.dog_updates
+    FOR
+    SELECT TO authenticated
+    USING (update_date_approved IS NOT NULL);
 
--- Users can follow dogs (insert)
-CREATE POLICY "Users can follow dogs"
-    ON public.dog_following
-    FOR INSERT
-    TO authenticated
-    WITH CHECK (
-    user_id = auth.uid()
-    );
+-- ===============================  END DOG_UPDATES TABLE  =============================== --
 
--- Users can view their followed dogs
-CREATE POLICY "Users can view their followed dogs"
-    ON public.dog_following
+
+-- ===============================  DOG_FOLLOWING TABLE  =============================== --
+-- 1. Users can CRUD their own dog following records.
+ALTER TABLE public.dog_following
+    ENABLE ROW LEVEL SECURITY;
+CREATE POLICY dog_following_own_crud ON public.dog_following
+    FOR ALL
+    USING (user_id = auth.uid())
+    WITH CHECK (user_id = auth.uid());
+
+-- ===============================  END DOG_FOLLOWING TABLE  =============================== --
+
+-- ===============================  DOG_HISTORY TABLE  =============================== --
+ALTER TABLE public.dog_history
+    ENABLE ROW LEVEL SECURITY;
+CREATE POLICY dog_history_admin_select ON public.dog_history
     FOR SELECT
-    TO authenticated
-    USING (
-    user_id = auth.uid()
-    );
+    USING (public.is_admin(auth.uid()));
 
--- Users can unfollow dogs
-CREATE POLICY "Users can unfollow dogs"
-    ON public.dog_following
-    FOR DELETE
-    TO authenticated
-    USING (
-    user_id = auth.uid()
-    );
-
--- === DOG_HISTORY TABLE POLICIES (optional – likely admin-only) ===
-
--- Admins can insert history records (e.g. audit log)
-CREATE POLICY "Admins can insert dog history"
-    ON public.dog_history
+-- Policy 2: Admins can INSERT
+CREATE POLICY dog_history_admin_insert ON public.dog_history
     FOR INSERT
-    TO authenticated
-    WITH CHECK (
-    EXISTS (SELECT 1
-            FROM public.users u
-            WHERE u.id = auth.uid()
-              AND u.permission_role = 'admin')
-    );
-
--- Admins can view dog history
-CREATE POLICY "Admins can view dog history"
-    ON public.dog_history
-    FOR SELECT
-    TO authenticated
-    USING (
-    EXISTS (SELECT 1
-            FROM public.users u
-            WHERE u.id = auth.uid()
-              AND u.permission_role = 'admin')
-    );
+    WITH CHECK (public.is_admin(auth.uid()));
+-- ===============================  END DOG_HISTORY TABLE  =============================== --

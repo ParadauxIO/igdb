@@ -19,7 +19,7 @@ const createUsers = async (supabase: SupabaseClient, users: SampleUser[]) => {
             functional_role: sampleUser.functional_role,
             name: sampleUser.name,
             phone: sampleUser.phone,
-            is_active: sampleUser.isActive,
+            is_archived: sampleUser.isActive,
             can_approve_updates: sampleUser.canApproveUpdates
         });
 
