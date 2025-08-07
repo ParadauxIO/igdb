@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
 import { supabase } from "../../../state/supabaseClient.ts";
-
-type InvitedUser = {
+import StatusCard from "../../../components/general/StatusCard.tsx";
+import IGDBForm, {type FormField} from "../../../components/form/IGDBForm.tsx";
+import "./UserInviteView.scss";
+type UserInvitation = {
     email: string;
     functional_role?: string;
 }
@@ -13,33 +14,16 @@ type InvitedUser = {
  */
 export default function UserInviteView() {
 
-    const navigate = useNavigate();
-    const [form, setForm] = useState<Partial<InvitedUser>>({});
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState(false);
+    const [form, setForm] = useState<Partial<UserInvitation>>({});
+    const [message, setMessage] = useState<string|null>(null);
+    const [isError, setIsError] = useState<boolean>(false);
 
-    type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
-    type ChangeEventValues = {
-        name: string;
-        value: string;
-        type: string;
-        checked?: boolean;
-    }
-    const handleChange = (e: ChangeEvent) => {
-        const { name, value, type, checked }: ChangeEventValues = e.target;
-        let val: any = value;
-        if (type === "checkbox") val = checked;
-        if (type === "number") val = value === "" ? null : Number(value);
-        setForm(f => ({ ...f, [name]: val }));
-    };
+    const fields: FormField[] = [
+        {name: 'email', label: 'Email Address', type: 'text', required: true},
+        {name: 'functional_role', label: 'Functional Role', type: 'select', required: true, options: ['staff', 'volunteer', 'puppy raiser', 'trainer', 'temporary boarder', 'client', 'adoptive family', 'sponsor'], description: "This is a purely informational field that describes the user's role in the organisation."}
+    ];
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
-        setSuccess(false);
-
+    const onSubmit = async (form: Partial<UserInvitation>) => {
         const { error } = await supabase.functions.invoke(
             'invite-user',
             {
@@ -49,47 +33,26 @@ export default function UserInviteView() {
                 }
             }
         );
-        setLoading(false);
         if (error) {
-            setError("Failed to create user.");
+            setIsError(true);
+            setMessage("Failed to invite user.");
             console.error(error);
         } else {
-            setSuccess(true);
-            setTimeout(() => navigate("/users"), 1200);
+            setIsError(false);
+            setMessage("Successfully sent user invitation email.");
         }
     };
 
     return (
-        <div className="user-create-view">
-            <div className="user-create-container">
-                <h1>Invite New User</h1>
-                <h2>Just need their email. they fill out the rest.</h2>
-                <form className="user-create-form" onSubmit={handleSubmit}>
-                    <div className="form-row">
-                        <label>Email Address</label>
-                        <input
-                            name="email"
-                            value={form.email || ""}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>Functional Role - make as a dropdown.</label>
-                        <input
-                            name="functional_role"
-                            value={form.functional_role || ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-actions">
-                        <button type="submit" disabled={loading}>Send Invite</button>
-                        <button type="button" onClick={() => navigate("/users")}>Cancel</button>
-                    </div>
-                    {success && <div className="success-msg">User invitation sent successfully!</div>}
-                    {error && <div className="error-msg">{error}</div>}
-                </form>
-            </div>
+        <div className="user-invitation-view">
+            <h1>Invite a user</h1>
+            <StatusCard message={message} isError={isError} />
+            <IGDBForm
+                form={form}
+                setForm={setForm}
+                fields={fields}
+                onSubmit={(update) => onSubmit(update)}
+            />
         </div>
     );
 
