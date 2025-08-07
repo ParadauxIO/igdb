@@ -35,3 +35,17 @@ export const deleteUser = async (userId: string) => {
         throw new Error("Failed to delete user");
     }
 }
+
+export const getUserById = async (userId: string) => {
+    const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+    if (error) {
+        throw new Error("Failed to fetch user by ID: " + userId + " - " + error.message);
+    }
+
+    return data;
+}
