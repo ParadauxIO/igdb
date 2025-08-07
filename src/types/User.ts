@@ -8,6 +8,8 @@ export interface User {
     can_approve_updates: boolean;
     created_at: Date;
     updated_at: Date;
+    password?: string; // Optional for user profile updates
+    confirm_password?: string; // Optional for user profile updates
 }
 
 
