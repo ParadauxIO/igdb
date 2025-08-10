@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import type { Dog } from "../../types/Dog.ts";
 import "./DogView.scss";
-import {getDogsPublic} from "../../partials/dog.ts";
+import {getDogsPublic, getDogsUserIsFollowing, followDog, unfollowDog} from "../../partials/dog.ts";
 
 export default function DogView() {
     const [dogs, setDogs] = useState<Dog[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
+    const [isFollowing, setIsFollowing] = useState<string[]>([]);
 
     useEffect(() => {
         async function fetchDogs() {
@@ -13,6 +14,24 @@ export default function DogView() {
             setDogs(dogs);
         }
         fetchDogs();
+
+        // load the dogs this user is following
+        async function fetchUserDogFollowers() {
+            const isFollowing = await getDogsUserIsFollowing(1);
+            setIsFollowing(isFollowing);
+        }       
+        fetchUserDogFollowers();
+
+        const toggleDogFollower = async function toggleDogFollower(dog_id) {
+            if(isFollowing.includes(dog_id)) {
+                // unfollow by deleting
+                await unfollowDog(user, dog_id);
+            } else {
+                // follow by adding
+                await followDog(user, dog_id);
+            }
+            fetchUserDogFollowers();
+        }
     }, []);
 
     // 🔎 Filter dogs by search term
@@ -59,8 +78,9 @@ export default function DogView() {
                             <td className="p-2 border">{dog.dog_role}</td>
                             <td className="p-2 border">{dog.dog_sex}</td>
                             <td className="p-2 border">
-                                <button className="follow-button bg-blue-500 text-white px-4 py-2 rounded">
-                                    Follow
+                                <button className="follow-button bg-blue-500 text-white px-4 py-2 rounded" 
+                                    onClick={toggleDogFollower(dog.dog_id)}>
+                                    {isFollowing.includes(dog.dog_id) ? "Unfollow" : "Follow"}
                                 </button>
                             </td>
                         </tr>
