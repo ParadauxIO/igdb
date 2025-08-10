@@ -1,38 +1,49 @@
 import { useEffect, useState } from "react";
 import type { Dog } from "../../types/Dog.ts";
 import "./DogView.scss";
-import {getDogsPublic, getDogsUserIsFollowing, followDog, unfollowDog} from "../../partials/dog.ts";
+import {getDogsPublic} from "../../partials/dog.ts";
+import {getDogsUserIsFollowing, followDog, unfollowDog} from "../../partials/dogfollowing.ts";
+
+import {useAuth} from "../../state/hooks/useAuth.ts";
 
 export default function DogView() {
+    const {user} = useAuth();
     const [dogs, setDogs] = useState<Dog[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
+
     const [isFollowing, setIsFollowing] = useState<string[]>([]);
 
     useEffect(() => {
         async function fetchDogs() {
             const dogs = await getDogsPublic();
+            console.log('load dogs for user',user?.id)
             setDogs(dogs);
         }
         fetchDogs();
 
         // load the dogs this user is following
         async function fetchUserDogFollowers() {
-            const isFollowing = await getDogsUserIsFollowing(1);
+            const isFollowing = await getDogsUserIsFollowing(user?.id);
+            console.log(isFollowing);
             setIsFollowing(isFollowing);
         }       
         fetchUserDogFollowers();
-
-        const toggleDogFollower = async function toggleDogFollower(dog_id) {
-            if(isFollowing.includes(dog_id)) {
-                // unfollow by deleting
-                await unfollowDog(user, dog_id);
-            } else {
-                // follow by adding
-                await followDog(user, dog_id);
-            }
-            fetchUserDogFollowers();
-        }
     }, []);
+
+
+    const handleSubmit = async function toggleDogFollower(user_id, dog_id) {
+        console.log('toggleDogFollower()',user_id,dog_id);
+        if(isFollowing.includes(dog_id)) {
+            // unfollow by deleting
+            console.log('unfollowDog');
+            await unfollowDog(user_id, dog_id);
+        } else {
+            // follow by adding
+            console.log('followDog');
+            await followDog(user_id, dog_id);
+        }
+        //fetchUserDogFollowers();
+    }
 
     // 🔎 Filter dogs by search term
     const filteredDogs = dogs.filter(dog =>
@@ -41,6 +52,9 @@ export default function DogView() {
 
     return (
         <div className="user-dog-view p-4">
+            <div>User: {user?.id || 'Unknown'}</div>
+            <div>Following: {isFollowing || 'Unknown'}</div>
+
             <div className="search-box">
                 <input
                     type="text"
@@ -79,8 +93,8 @@ export default function DogView() {
                             <td className="p-2 border">{dog.dog_sex}</td>
                             <td className="p-2 border">
                                 <button className="follow-button bg-blue-500 text-white px-4 py-2 rounded" 
-                                    onClick={toggleDogFollower(dog.dog_id)}>
-                                    {isFollowing.includes(dog.dog_id) ? "Unfollow" : "Follow"}
+                                    onClick={() => handleSubmit(user?.id, dog.dog_id)}>
+                                    {isFollowing.includes(dog.dog_id) ? "Unfollow:"+dog.dog_id : "Follow:"+dog.dog_id}
                                 </button>
                             </td>
                         </tr>
