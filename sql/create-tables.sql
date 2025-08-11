@@ -6,7 +6,7 @@ CREATE TABLE public.users
     permission_role     VARCHAR(64) NOT NULL     DEFAULT 'viewer' CHECK ( users.permission_role in ('viewer', 'updater', 'admin')),
     functional_role     VARCHAR(64) CHECK ( functional_role in
                                             ('staff', 'volunteer', 'puppy raiser', 'trainer', 'temporary boarder',
-                                             'client', 'adoptive family')),
+                                             'client', 'adoptive family', 'sponsor')),
     phone               VARCHAR(32),
     is_archived         BOOLEAN                  DEFAULT false,
     can_approve_updates BOOLEAN                  DEFAULT false,

@@ -39,7 +39,7 @@ export default function UpdateFeed() {
   return (
     <div className="feed">
       {updates.map(update => (
-        <Update update={update} isAdmin={isAdmin} removeUpdate={(id) => removeUpdate(id)}/>
+        <Update key={update.update_id} update={update} isAdmin={isAdmin} removeUpdate={(id) => removeUpdate(id)}/>
       ))}
     </div>
   );

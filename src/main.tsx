@@ -19,6 +19,7 @@ import AdminDogView from "./views/admin/dogs/AdminDogView.tsx";
 import AuthenticatedLayout from "./views/layouts/AuthenticatedLayout.tsx";
 import AdminLayout from "./views/layouts/AdminLayout.tsx";
 import AdminDashboardView from "./views/admin/AdminDashboardView.tsx";
+import AdminEditUserView from "./views/admin/user/AdminEditUserView.tsx";
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -48,7 +49,7 @@ createRoot(document.getElementById('root')!).render(
                             <Route path="dogs/edit/:dogId" element={<AdminEditDogView />} />
                             <Route path="dogs/create" element={<AdminEditDogView />} />
                             <Route path="users" element={<AdminUsersView/>}/>
-                            <Route path="users/profile/:userId" element={<UserProfileView/>}/>
+                            <Route path="users/edit/:userId" element={<AdminEditUserView/>}/>
                             <Route path="users/invite" element={<UserInviteView/>}/>
                         </Route>
                     </Routes>

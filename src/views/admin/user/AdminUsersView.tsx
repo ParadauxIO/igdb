@@ -21,7 +21,7 @@ export default function AdminUsersView() {
     );
 
     const handleEditUser = (id: string) => {
-        navigate(`/admin/users/profile/${id}`);
+        navigate(`/admin/users/edit/${id}`);
     };
 
     const handleArchiveUser = (id: string) => {

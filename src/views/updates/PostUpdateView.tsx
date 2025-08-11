@@ -4,6 +4,7 @@ import IGDBForm, {type FormField} from "../../components/form/IGDBForm.tsx";
 import {postUpdate} from "../../partials/update.ts";
 import {useAuth} from "../../state/hooks/useAuth.ts";
 import "./PostUpdateView.scss";
+import StatusCard from "../../components/general/StatusCard.tsx";
 
 const PostUpdateView = () => {
     const [form, setForm] = useState<Partial<DogUpdate>>({});
@@ -33,12 +34,7 @@ const PostUpdateView = () => {
         <div className="post-update-view">
             <div className="post-update-container">
                 <h1>Post an update</h1>
-                {message && (
-                    <div className={"status-message-card " + (isError ? "error" : "success")}>
-                        <h3>{isError ? "Failure" : "Success!"}</h3>
-                        <p>{message}</p>
-                    </div>
-                )}
+                <StatusCard message={message} isError={isError}/>
                 <IGDBForm
                     form={form}
                     setForm={setForm}
