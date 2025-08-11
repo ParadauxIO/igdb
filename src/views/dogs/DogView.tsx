@@ -47,9 +47,6 @@ export default function DogView() {
 
     return (
         <div className="user-dog-view p-4">
-            <div>User: {user?.id || 'Unknown'}</div>
-            <div>Following: {isFollowing || 'Unknown'}</div>
-
             <div className="search-box">
                 <input
                     type="text"
@@ -89,7 +86,7 @@ export default function DogView() {
                             <td className="p-2 border">
                                 <button className="follow-button bg-blue-500 text-white px-4 py-2 rounded" 
                                     onClick={() => handleSubmit(user?.id, dog.dog_id)}>
-                                    {isFollowing.includes(dog.dog_id) ? "Unfollow:"+dog.dog_id : "Follow:"+dog.dog_id}
+                                    {isFollowing.includes(dog.dog_id) ? "Unfollow" : "Follow"}
                                 </button>
                             </td>
                         </tr>
