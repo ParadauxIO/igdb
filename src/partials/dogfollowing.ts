@@ -2,7 +2,7 @@ import {supabase} from "../state/supabaseClient.ts";
 
 // could probally move these 3 functions to it's own partial.
 // Return the list of dog_id which a user is following currently.
-export const getDogsUserIsFollowing = async (userId: string): Promise<string[]> => {
+export const getDogsUserIsFollowing = async (userId: string|undefined): Promise<string[]> => {
     const {data, error} = await supabase
         .from("dog_following")
         .select("dog_id")
@@ -16,7 +16,7 @@ export const getDogsUserIsFollowing = async (userId: string): Promise<string[]> 
     return (data ?? []).map((item: {dog_id: string}) => item.dog_id);
 }
 
-export const followDog = async (userId: string, dogId: string) => {
+export const followDog = async (userId: string|undefined, dogId: string|undefined) => {
     const {error} = await supabase
         .from('dog_following')
         .insert({'user_id': userId, 'dog_id': dogId});
@@ -26,7 +26,7 @@ export const followDog = async (userId: string, dogId: string) => {
     }
 };
 
-export const unfollowDog = async (userId: string, dogId: string) => {
+export const unfollowDog = async (userId: string|undefined, dogId: string|undefined) => {
     const {error} = await supabase
         .from('dog_following')
         .delete()

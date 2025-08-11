@@ -28,7 +28,7 @@ export default function DogView() {
         fetchUserDogFollowers();
     }, []);
 
-    const handleSubmit = async function toggleDogFollower(user_id, dog_id) {
+    const handleSubmit = async function toggleDogFollower(user_id: string|undefined, dog_id: string) {
         console.log('toggleDogFollower()',user_id,dog_id);
         if(isFollowing.includes(dog_id)) {
             // unfollow by deleting
