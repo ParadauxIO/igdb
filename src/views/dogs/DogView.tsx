@@ -10,39 +10,34 @@ export default function DogView() {
     const {user} = useAuth();
     const [dogs, setDogs] = useState<Dog[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
-
     const [isFollowing, setIsFollowing] = useState<string[]>([]);
+
+    // load the dogs this user is following
+    async function fetchUserDogFollowers() {
+        const isFollowing = await getDogsUserIsFollowing(user?.id);
+        setIsFollowing(isFollowing);
+    }
 
     useEffect(() => {
         async function fetchDogs() {
             const dogs = await getDogsPublic();
-            console.log('load dogs for user',user?.id)
             setDogs(dogs);
         }
         fetchDogs();
-
-        // load the dogs this user is following
-        async function fetchUserDogFollowers() {
-            const isFollowing = await getDogsUserIsFollowing(user?.id);
-            console.log(isFollowing);
-            setIsFollowing(isFollowing);
-        }       
+           
         fetchUserDogFollowers();
     }, []);
-
 
     const handleSubmit = async function toggleDogFollower(user_id, dog_id) {
         console.log('toggleDogFollower()',user_id,dog_id);
         if(isFollowing.includes(dog_id)) {
             // unfollow by deleting
-            console.log('unfollowDog');
             await unfollowDog(user_id, dog_id);
         } else {
             // follow by adding
-            console.log('followDog');
             await followDog(user_id, dog_id);
         }
-        //fetchUserDogFollowers();
+        fetchUserDogFollowers();
     }
 
     // 🔎 Filter dogs by search term

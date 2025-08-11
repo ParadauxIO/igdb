@@ -1,5 +1,4 @@
 import {supabase} from "../state/supabaseClient.ts";
-import type {DogFollowing} from "../types/DogFollowing.ts";
 
 // could probally move these 3 functions to it's own partial.
 // Return the list of dog_id which a user is following currently.
@@ -23,7 +22,7 @@ export const followDog = async (userId: string, dogId: string) => {
         .insert({'user_id': userId, 'dog_id': dogId});
     if (error) {
         console.error("Failed to insert dog_following row:", error);
-        return;
+        throw new Error("Failed to insert to dog_follow.");
     }
 };
 
@@ -35,6 +34,6 @@ export const unfollowDog = async (userId: string, dogId: string) => {
         .eq('dog_id', dogId);
     if (error) {
         console.error("Failed to delete dog_following row:", error);
-        return;
+        throw new Error("Failed to delete dog_following.");
     }
 };
