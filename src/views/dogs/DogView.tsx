@@ -2,10 +2,21 @@ import { useEffect, useState } from "react";
 import type { Dog } from "../../types/Dog.ts";
 import "./DogView.scss";
 import {getDogsPublic} from "../../partials/dog.ts";
+import {getDogsUserIsFollowing, followDog, unfollowDog} from "../../partials/dogfollowing.ts";
+
+import {useAuth} from "../../state/hooks/useAuth.ts";
 
 export default function DogView() {
+    const {user} = useAuth();
     const [dogs, setDogs] = useState<Dog[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
+    const [isFollowing, setIsFollowing] = useState<string[]>([]);
+
+    // load the dogs this user is following
+    async function fetchUserDogFollowers() {
+        const isFollowing = await getDogsUserIsFollowing(user?.id);
+        setIsFollowing(isFollowing);
+    }
 
     useEffect(() => {
         async function fetchDogs() {
@@ -13,7 +24,21 @@ export default function DogView() {
             setDogs(dogs);
         }
         fetchDogs();
+           
+        fetchUserDogFollowers();
     }, []);
+
+    const handleSubmit = async function toggleDogFollower(user_id: string|undefined, dog_id: string) {
+        console.log('toggleDogFollower()',user_id,dog_id);
+        if(isFollowing.includes(dog_id)) {
+            // unfollow by deleting
+            await unfollowDog(user_id, dog_id);
+        } else {
+            // follow by adding
+            await followDog(user_id, dog_id);
+        }
+        fetchUserDogFollowers();
+    }
 
     // 🔎 Filter dogs by search term
     const filteredDogs = dogs.filter(dog =>
@@ -59,8 +84,9 @@ export default function DogView() {
                             <td className="p-2 border">{dog.dog_role}</td>
                             <td className="p-2 border">{dog.dog_sex}</td>
                             <td className="p-2 border">
-                                <button className="follow-button bg-blue-500 text-white px-4 py-2 rounded">
-                                    Follow
+                                <button className="follow-button bg-blue-500 text-white px-4 py-2 rounded" 
+                                    onClick={() => handleSubmit(user?.id, dog.dog_id)}>
+                                    {isFollowing.includes(dog.dog_id) ? "Unfollow" : "Follow"}
                                 </button>
                             </td>
                         </tr>

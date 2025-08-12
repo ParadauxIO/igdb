@@ -1,10 +1,10 @@
 import {useState} from "react";
 import type {DogUpdate} from "../../types/DogUpdate";
-import IGDBForm, {type FormField} from "../../components/form/IGDBForm.tsx";
-import {postUpdate} from "../../partials/update.ts";
-import {useAuth} from "../../state/hooks/useAuth.ts";
+import IGDBForm, {type FormField} from "../../components/form/IGDBForm";
+import {postUpdate} from "../../partials/update";
+import {useAuth} from "../../state/hooks/useAuth";
 import "./PostUpdateView.scss";
-import StatusCard from "../../components/general/StatusCard.tsx";
+import StatusCard from "../../components/general/StatusCard";
 
 const PostUpdateView = () => {
     const [form, setForm] = useState<Partial<DogUpdate>>({});
@@ -15,7 +15,8 @@ const PostUpdateView = () => {
     const fields: FormField[] = [
         {name: 'dog_id', label: 'Dog ID', type: 'dog-select', required: true},
         {name: 'update_title', label: 'Title', type: 'text', required: true},
-        {name: 'update_description', label: 'Description', type: 'textarea', required: false}
+        {name: 'update_description', label: 'Description', type: 'textarea', required: false},
+        {name: 'files', label: 'Media', type: 'file-upload', required: false}
     ]
 
     const handleUpdate = async (update: Partial<DogUpdate>) => {
