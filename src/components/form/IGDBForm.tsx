@@ -5,11 +5,12 @@ import {getUsers} from "../../partials/users.ts";
 import {type DogSearchResult, getUserDogs} from "../../partials/dog.ts";
 import SearchDropdown from "./SearchDropdown.tsx";
 import {useAuth} from "../../state/hooks/useAuth.ts";
+import MediaUploader from "./MediaUploader";
 
 export type FormField = {
     name: string;
     label: string;
-    type: 'text' | 'textarea' | 'password' | 'select' | 'checkbox' | 'datetime' | 'user-select' | 'dog-select';
+    type: 'text' | 'textarea' | 'password' | 'select' | 'checkbox' | 'datetime' | 'user-select' | 'dog-select' | 'file-upload';
     description?: string;
     required?: boolean;
     options?: string[];
@@ -185,6 +186,20 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                                 }
                                 onChange={(e) => handleChange(field.name, e.target.value)}
                             />
+                        );
+                    
+                    case 'file-upload':
+                        return (
+                            <div key={field.name} className="file-input form-input">
+                                <label className="font-semibold">{field.label}</label>
+                                <MediaUploader
+                                    label={field.label}
+                                    name={field.name}
+                                    value={form[field.name as keyof T] as string | undefined}
+                                    required={field.required}
+                                    onChange={(value) => handleChange(field.name, value)}
+                                />
+                            </div>
                         );
                     default:
                         console.error("IGDBForm: Unsupported field type:", field.type);

@@ -1,7 +1,13 @@
 import {supabase} from "../state/supabaseClient.ts";
 import type {DogUpdate} from "../types/DogUpdate.ts";
+import { uploadAndGetUrl } from "./fileUpload";
 
 export const postUpdate = async (form: Partial<DogUpdate>): Promise<DogUpdate> => {
+    let update_media_urls =[];
+    if(form.files.length){
+        update_media_urls = await uploadAndGetUrl(form.files, 'sample' , 'updates'); // TODO: change bucket name in prod
+    }
+
     const {data, error} = await supabase
         .from('dog_updates')
         .insert({
@@ -9,7 +15,7 @@ export const postUpdate = async (form: Partial<DogUpdate>): Promise<DogUpdate> =
             update_title: form.update_title,
             update_description: form.update_description,
             update_type: form.update_type,
-            update_media_urls: form.update_media_urls,
+            update_media_urls: update_media_urls,
             update_location: form.update_location,
             update_tags: form.update_tags,
             update_created_by: form.update_created_by
