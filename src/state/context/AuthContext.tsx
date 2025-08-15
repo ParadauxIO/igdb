@@ -1,4 +1,4 @@
-import { createContext, type ReactNode, useEffect, useState } from 'react';
+import { createContext, type ReactNode, useEffect, useState, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import type { User } from '../../types/User';
@@ -9,6 +9,7 @@ interface AuthContextType {
     user: User | null;
     isAdmin: boolean | null;
     isUpdater: boolean | null;
+    refreshProfile: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,8 +21,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
     const [isUpdater, setIsUpdater] = useState<boolean | null>(null);
 
-    // Fetch profile from users table
-    const fetchProfile = async (userId: string) => {
+    const fetchProfile = useCallback(async (userId: string) => {
         const { data, error } = await supabase
             .from('users')
             .select('*')
@@ -34,48 +34,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
 
         setUser((prev) => (prev?.id === data.id ? prev : data));
-        setIsAdmin((prev) => (prev === (data.permission_role === 'admin') ? prev : data.permission_role === 'admin'));
-        setIsUpdater((prev) => (prev === (data.permission_role === 'updater' || data.permission_role === 'admin')
-            ? prev
-            : data.permission_role === 'updater' || data.permission_role === 'admin'));
-    };
-
-    useEffect(() => {
-        const getSession = async () => {
-            const {
-                data: { session },
-            } = await supabase.auth.getSession();
-
-            setSession(session);
-            setSupabaseUser(session?.user ?? null);
-
-            if (session?.user) {
-                fetchProfile(session.user.id);
-            } else {
-                setUser(null);
-            }
-        };
-
-        getSession();
-
-        const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session);
-            setSupabaseUser(session?.user ?? null);
-
-            if (session?.user) {
-                fetchProfile(session.user.id);
-            } else {
-                setUser(null);
-            }
-        });
-
-        return () => {
-            listener.subscription.unsubscribe();
-        };
+        setIsAdmin(data.permission_role === 'admin');
+        setIsUpdater(data.permission_role === 'updater' || data.permission_role === 'admin');
     }, []);
 
+    const refreshProfile = useCallback(async () => {
+        if (supabaseUser?.id) {
+            await fetchProfile(supabaseUser.id);
+        }
+    }, [supabaseUser, fetchProfile]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        const hardCheck = async () => {
+            const { data, error } = await supabase.auth.getUser(); // triggers refresh if needed
+            if (cancelled) return;
+
+            if (error || !data.user) {
+                // token invalid/expired and refresh failed
+                setSession(null);
+                setSupabaseUser(null);
+                setUser(null);
+                setIsAdmin(null);
+                setIsUpdater(null);
+                return;
+            }
+
+            setSupabaseUser(data.user);
+            const { data: sess } = await supabase.auth.getSession();
+            setSession(sess.session);
+            await fetchProfile(data.user.id);
+        };
+
+        hardCheck();
+
+        // re-check when tab gains focus (auto-refresh may be paused in background)
+        const onFocus = () => void hardCheck();
+        window.addEventListener('focus', onFocus);
+
+        return () => { cancelled = true; window.removeEventListener('focus', onFocus); };
+    }, [fetchProfile]);
+
     return (
-        <AuthContext.Provider value={{ supabaseUser, session, user, isAdmin, isUpdater }}>
+        <AuthContext.Provider value={{ supabaseUser, session, user, isAdmin, isUpdater, refreshProfile }}>
             {children}
         </AuthContext.Provider>
     );

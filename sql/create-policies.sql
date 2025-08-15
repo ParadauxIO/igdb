@@ -38,21 +38,29 @@ $$;
 -- ===============================  USERS TABLE  =============================== --
 -- 1. Authenticated users can CRUD their own profile.
 -- 2. Admins can CRUD all users.
-ALTER TABLE public.users
-    ENABLE ROW LEVEL SECURITY;
-CREATE POLICY users_manage_own_or_admin
+CREATE POLICY users_select_own_or_admin
     ON public.users
-    FOR ALL
-    USING (
-    -- SELECT, UPDATE, DELETE condition
-    auth.uid() = id
-        OR public.is_admin(auth.uid())
-    )
-    WITH CHECK (
-    -- INSERT, UPDATE condition
-    auth.uid() = id
-        OR public.is_admin(auth.uid())
-    );
+    FOR SELECT
+    USING (auth.uid() = id OR public.is_admin(auth.uid()));
+
+-- INSERT: only admins can create users
+CREATE POLICY users_admin_insert
+    ON public.users
+    FOR INSERT
+    WITH CHECK (public.is_admin(auth.uid()));
+
+-- UPDATE: only admins can update any user
+CREATE POLICY users_admin_update
+    ON public.users
+    FOR UPDATE
+    USING (public.is_admin(auth.uid()))
+    WITH CHECK (public.is_admin(auth.uid()));
+
+-- DELETE: only admins can delete users
+CREATE POLICY users_admin_delete
+    ON public.users
+    FOR DELETE
+    USING (public.is_admin(auth.uid()));
 -- ===============================  END USERS TABLE  =============================== --
 
 

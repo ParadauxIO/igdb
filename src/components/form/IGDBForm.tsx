@@ -10,9 +10,10 @@ import MediaUploader from "./MediaUploader";
 export type FormField = {
     name: string;
     label: string;
-    type: 'text' | 'textarea' | 'password' | 'select' | 'checkbox' | 'datetime' | 'user-select' | 'dog-select' | 'file-upload';
+    type: 'text' | 'textarea' | 'password' | 'select' | 'checkbox' | 'datetime' | 'user-select' | 'dog-select' | 'file-upload' | 'component';
     description?: string;
     required?: boolean;
+    component?: React.ComponentType<any>;
     options?: string[];
 };
 
@@ -29,7 +30,7 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
     const {user} = useAuth();
     const hasUserSelect = fields.some(field => field.type === 'user-select');
     const hasDogSelect = fields.some(field => field.type === 'dog-select');
-    console.log(users, userDogs);
+
     useEffect(() => {
         if (!user) return;
         if (hasUserSelect) {
@@ -148,7 +149,7 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                                 required={field.required}
                                 fetchOptions={async () =>
                                     users.map((user) => ({
-                                        label: user.name,
+                                        label: user.name ?? "(No name)",
                                         value: user.id,
                                     }))
                                 }
@@ -179,15 +180,15 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                                 value={form[field.name as keyof T] as string | undefined}
                                 required={field.required}
                                 fetchOptions={async () =>
-                                    userDogs.map((dog) => ({
-                                        label: dog.dog_name,
+                                    userDogs.map(dog => ({
+                                        label: dog.dog_name ?? "(Unnamed dog)",
                                         value: dog.dog_id,
                                     }))
                                 }
                                 onChange={(e) => handleChange(field.name, e.target.value)}
                             />
                         );
-                    
+
                     case 'file-upload':
                         return (
                             <div key={field.name} className="file-input form-input">
@@ -201,6 +202,14 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                                 />
                             </div>
                         );
+
+                    case 'component':
+                        return field.component ? (
+                            <div key={field.name} className="">
+                                <field.component/>
+                            </div>
+                        ) : null;
+
                     default:
                         console.error("IGDBForm: Unsupported field type:", field.type);
                         return null;
