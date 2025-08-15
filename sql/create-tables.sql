@@ -82,3 +82,22 @@ CREATE TABLE public.dog_history
     old_is_active     BOOLEAN,
     new_is_active     BOOLEAN
 );
+
+CREATE TABLE public.system_settings
+(
+    setting_key   TEXT PRIMARY KEY,
+    setting_value TEXT NOT NULL,
+    setting_type  TEXT NOT NULL CHECK (setting_type IN ('string', 'integer', 'boolean', 'json')),
+    updated_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+    -- Validate value based on type
+    CONSTRAINT system_settings_value_type_chk CHECK (
+        CASE
+            WHEN setting_type = 'string'  THEN TRUE
+            WHEN setting_type = 'integer' THEN setting_value ~ '^\d+$'
+            WHEN setting_type = 'boolean' THEN lower(setting_value) IN ('true','false')
+            WHEN setting_type = 'json'    THEN jsonb_typeof(setting_value::jsonb) IS NOT NULL
+            ELSE FALSE
+            END
+        )
+);

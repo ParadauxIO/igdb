@@ -124,3 +124,19 @@ CREATE POLICY dog_history_admin_insert ON public.dog_history
     FOR INSERT
     WITH CHECK (public.is_admin(auth.uid()));
 -- ===============================  END DOG_HISTORY TABLE  =============================== --
+
+-- ===============================  SYSTEM_SETTINGS TABLE  =============================== --
+ALTER TABLE public.system_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow authenticated users to read system settings"
+    ON public.system_settings
+    FOR SELECT
+    USING (
+    auth.role() = 'authenticated'
+    );
+
+CREATE POLICY "Allow admins to update system settings"
+    ON public.system_settings
+    FOR UPDATE
+    USING (
+    is_admin(auth.uid())
+    );
