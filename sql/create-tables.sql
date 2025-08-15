@@ -21,7 +21,7 @@ CREATE TABLE public.dogs
     dog_name            TEXT                                                  NOT NULL,
     dog_role            TEXT                                                  NOT NULL CHECK (dog_role in ('Guide Dog', 'Assistance Dog', 'Community Ambassador Dog')),
     dog_yob             INTEGER                                               NOT NULL, -- year of birth
-    dog_sex             TEXT CHECK (dog_sex IN ('male', 'female', 'unknown')) NOT NULL,
+    dog_sex             TEXT CHECK (dog_sex IN ('Male', 'Female')) NOT NULL,
     dog_picture         TEXT,                                                           -- Supabase storage URL
     dog_status          TEXT,                                                           -- e.g., 'available', 'adopted', 'fostered', 'in_training'
     dog_current_handler UUID REFERENCES public.users (id),
