@@ -11,6 +11,7 @@ export default function DogView() {
     const [dogs, setDogs] = useState<Dog[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [isFollowing, setIsFollowing] = useState<string[]>([]);
+    const [searchYob, setSearchYob] = useState("");
 
     // load the dogs this user is following
     async function fetchUserDogFollowers() {
@@ -40,10 +41,11 @@ export default function DogView() {
         fetchUserDogFollowers();
     }
 
-    // 🔎 Filter dogs by search term
-    const filteredDogs = dogs.filter(dog =>
-        dog.dog_name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredDogs = dogs.filter(dog => {
+        const matchesName = dog.dog_name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesYob = searchYob === "" || dog.dog_yob.toString().includes(searchYob);
+        return matchesName && matchesYob;
+    });
 
     return (
         <div className="user-dog-view p-4">
@@ -53,6 +55,13 @@ export default function DogView() {
                     placeholder="Search by dog name..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    className="p-2 border border-gray-300 rounded w-full max-w-md"
+                />
+                <input
+                    type="text"
+                    placeholder="Search by year of birth..."
+                    value={searchYob}
+                    onChange={(e) => setSearchYob(e.target.value)}
                     className="p-2 border border-gray-300 rounded w-full max-w-md"
                 />
             </div>
