@@ -19,10 +19,14 @@ export default function ActionsDropdown({ id, actions }: ActionsDropdownProps) {
         setIsOpen(prev => !prev);
     };
 
-    const handleAction = (actionFn: (id: string) => void) => {
-        actionFn(id);
-        setIsOpen(false);
-        window.location.reload(); // page reload
+    const handleAction = async (actionFn: (id: string) => Promise<void> | void) => {
+    try {
+        await actionFn(id);  // wait for action to finish if it's async
+    } catch (e) {
+        console.error("Action failed:", e);
+    }
+    setIsOpen(false);
+    window.location.reload();
     };
 
     return (
