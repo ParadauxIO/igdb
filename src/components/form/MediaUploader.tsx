@@ -44,6 +44,7 @@ const MediaUploader = ( props: MediaUploaderProps) => {
           const updated = [...prev];
           URL.revokeObjectURL(updated[indexToRemove].previewUrl); // Clean up
           updated.splice(indexToRemove, 1);
+          onChange(updated.map(f => f.file));
           return updated;
         });
     };

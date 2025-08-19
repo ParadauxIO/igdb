@@ -22,6 +22,7 @@ export default function ActionsDropdown({ id, actions }: ActionsDropdownProps) {
     const handleAction = (actionFn: (id: string) => void) => {
         actionFn(id);
         setIsOpen(false);
+        window.location.reload(); // page reload
     };
 
     return (

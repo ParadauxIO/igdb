@@ -83,7 +83,7 @@ export default function DogView() {
                         <tr key={index} className="hover:bg-gray-50">
                             <td className="p-2 border">
                                 <img
-                                    src={dog.dog_picture ?? ""}
+                                    src={dog.dog_picture ?? undefined}
                                     alt={"Picture of " + dog.dog_name}
                                     className="w-24 h-auto object-cover"
                                 />
