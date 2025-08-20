@@ -65,12 +65,6 @@ const MediaUploader: React.FC<MediaUploaderProps> = (props) => {
 
     return (
         <div>
-            {label && (
-                <label htmlFor={name} style={{display: "block", marginBottom: 8}}>
-                    {label}
-                </label>
-            )}
-
             <div
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
