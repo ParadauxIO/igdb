@@ -33,7 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             return;
         }
 
-        setUser((prev) => (prev?.id === data.id ? prev : data));
+        setUser(data);
         setIsAdmin(data.permission_role === 'admin');
         setIsUpdater(data.permission_role === 'updater' || data.permission_role === 'admin');
     }, []);

@@ -15,6 +15,10 @@ export default function AuthGuard({ children, fallback, publicRoutes }: { childr
         return <Navigate to="/onboarding" replace state={{ from: location }} />;
     }
 
+    // If user has accepted terms and is on the onboarding page, redirect to home
+    if (session && user?.has_accepted_terms && location.pathname === "/onboarding") {
+        return <Navigate to="/" replace />;
+    }
 
     return <>{children}</>;
 }
