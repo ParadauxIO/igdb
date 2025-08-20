@@ -189,19 +189,22 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                             />
                         );
 
-                    case 'file-upload':
+                    case 'file-upload': {
+                        const filesValue = form[field.name as keyof T] as unknown as File[] | null | undefined;
+
                         return (
                             <div key={field.name} className="file-input form-input">
                                 <label className="font-semibold">{field.label}</label>
                                 <MediaUploader
                                     label={field.label}
                                     name={field.name}
-                                    value={form[field.name as keyof T] as string | undefined}
+                                    value={filesValue ?? null}
                                     required={field.required}
-                                    onChange={(value) => handleChange(field.name, value)}
+                                    onChange={(files: File[]) => handleChange(field.name, files)}
                                 />
                             </div>
                         );
+                    }
 
                     case 'component':
                         return field.component ? (
