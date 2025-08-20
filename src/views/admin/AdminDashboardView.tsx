@@ -10,7 +10,6 @@ import type {User} from "../../types/User.ts";
 import {getUsers} from "../../partials/users.ts";
 
 export default function AdminDashboardView() {
-    console.log("AdminDashboardView rendered");
     const [dogs, setDogs] = useState<Dog[]>([]);
     const [approvalQueue, setApprovalQueue] = useState<DogUpdate[]>([]);
     const [users, setUsers] = useState<User[]>([]);

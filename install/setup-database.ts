@@ -58,7 +58,9 @@ const dropAndCreateTablesAndPolicies = async () => {
     await runSqlFile(db, "./sql/drop-tables.sql");
     await runSqlFile(db, "./sql/create-tables.sql");
     await runSqlFile(db, './sql/create-policies.sql');
-    // await runSqlFile(db, './sql/create-triggers.sql');
+    await runSqlFile(db, './sql/seed-data.sql');
 }
 
-run();
+run()
+    .then(() => console.log('Database setup completed successfully!'))
+    .catch(err => console.error('Database setup failed:', err));

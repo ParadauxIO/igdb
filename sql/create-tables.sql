@@ -1,17 +1,17 @@
 -- Users table (extends Supabase auth.users)
 CREATE TABLE public.users
 (
-    id                  UUID REFERENCES auth.users (id) ON DELETE CASCADE PRIMARY KEY,
-    name                TEXT,
-    permission_role     VARCHAR(64) NOT NULL     DEFAULT 'viewer' CHECK ( users.permission_role in ('viewer', 'updater', 'admin')),
-    functional_role     VARCHAR(64) CHECK ( functional_role in
-                                            ('staff', 'volunteer', 'puppy raiser', 'trainer', 'temporary boarder',
-                                             'client', 'adoptive family', 'sponsor')),
-    phone               VARCHAR(32),
-    is_archived         BOOLEAN                  DEFAULT false,
-    can_approve_updates BOOLEAN                  DEFAULT false,
-    created_at          TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at          TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    id                 UUID REFERENCES auth.users (id) ON DELETE CASCADE PRIMARY KEY,
+    name               TEXT,
+    permission_role    VARCHAR(64) NOT NULL     DEFAULT 'viewer' CHECK ( users.permission_role in ('viewer', 'updater', 'admin')),
+    functional_role    VARCHAR(64) CHECK ( functional_role in
+                                           ('staff', 'volunteer', 'puppy raiser', 'trainer', 'temporary boarder',
+                                            'client', 'adoptive family', 'sponsor')),
+    phone              VARCHAR(32),
+    is_archived        BOOLEAN                  DEFAULT false,
+    has_accepted_terms BOOLEAN                  DEFAULT false,
+    created_at         TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at         TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Dogs table
@@ -81,4 +81,23 @@ CREATE TABLE public.dog_history
     new_general_notes TEXT,
     old_is_active     BOOLEAN,
     new_is_active     BOOLEAN
+);
+
+CREATE TABLE public.system_settings
+(
+    setting_key   TEXT PRIMARY KEY,
+    setting_value TEXT        NOT NULL,
+    setting_type  TEXT        NOT NULL CHECK (setting_type IN ('string', 'integer', 'boolean', 'json')),
+    updated_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+    -- Validate value based on type
+    CONSTRAINT system_settings_value_type_chk CHECK (
+        CASE
+            WHEN setting_type = 'string' THEN TRUE
+            WHEN setting_type = 'integer' THEN setting_value ~ '^\d+$'
+            WHEN setting_type = 'boolean' THEN lower(setting_value) IN ('true', 'false')
+            WHEN setting_type = 'json' THEN jsonb_typeof(setting_value::jsonb) IS NOT NULL
+            ELSE FALSE
+            END
+        )
 );

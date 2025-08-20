@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js";
 // ---------  BEGIN SETTINGS ---------
-const redirectTo = Deno.env.get('REDIRECT_URI') ?? 'http://localhost:5173';
+const redirectTo = 'https://igdb-demo.paradaux.io/onboarding';
 const allowedOrigins = [
     "https://dogs.guidedogs.ie", // Production
     "http://localhost:5173", // Local
@@ -133,10 +133,10 @@ serve(async (req)=>{
         }
     });
 });
-const validateEmail = (email)=>{
+const validateEmail = (email: string)=>{
     return String(email).toLowerCase().match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
 };
-async function userExists(emailToCheck) {
+async function userExists(emailToCheck: string) {
     const perPage = 100;
     let page = 1;
     while(true){

@@ -15,7 +15,7 @@ interface MediaUploaderProps {
 }
 
 const MediaUploader: React.FC<MediaUploaderProps> = (props) => {
-    const { label, name, required, onChange, errorMessage } = props;
+    const {label, name, required, onChange, errorMessage} = props;
 
     const [files, setFiles] = useState<UploadedFile[]>([]);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -46,9 +46,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = (props) => {
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        if (e.dataTransfer?.files?.length) {
-            handleFilesAdded(e.dataTransfer.files);
-        }
+        handleFilesAdded(e.dataTransfer.files);
     };
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -60,6 +58,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = (props) => {
             const updated = [...prev];
             URL.revokeObjectURL(updated[indexToRemove].previewUrl); // Clean up
             updated.splice(indexToRemove, 1);
+            onChange(updated.map(f => f.file));
             return updated;
         });
     };
@@ -67,7 +66,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = (props) => {
     return (
         <div>
             {label && (
-                <label htmlFor={name} style={{ display: "block", marginBottom: 8 }}>
+                <label htmlFor={name} style={{display: "block", marginBottom: 8}}>
                     {label}
                 </label>
             )}
@@ -95,7 +94,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = (props) => {
                     required={required}
                     ref={fileInputRef}
                     onChange={handleFileChange}
-                    style={{ display: "none" }}
+                    style={{display: "none"}}
                 />
             </div>
 
@@ -109,11 +108,11 @@ const MediaUploader: React.FC<MediaUploaderProps> = (props) => {
                     }}
                 >
                     {files.map((item, index) => (
-                        <div key={index} style={{ position: "relative", width: "100px" }}>
+                        <div key={index} style={{position: "relative", width: "100px"}}>
                             <img
                                 src={item.previewUrl}
                                 alt={`preview-${index}`}
-                                style={{ width: "100%", borderRadius: "4px" }}
+                                style={{width: "100%", borderRadius: "4px"}}
                             />
                             <button
                                 type="button"
@@ -143,7 +142,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = (props) => {
                 </div>
             )}
 
-            {errorMessage && <p style={{ marginTop: "10px" }}>{errorMessage}</p>}
+            {errorMessage && <p style={{marginTop: "10px"}}>{errorMessage}</p>}
         </div>
     );
 };

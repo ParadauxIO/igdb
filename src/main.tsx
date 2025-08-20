@@ -20,12 +20,13 @@ import AuthenticatedLayout from "./views/layouts/AuthenticatedLayout.tsx";
 import AdminLayout from "./views/layouts/AdminLayout.tsx";
 import AdminDashboardView from "./views/admin/AdminDashboardView.tsx";
 import AdminEditUserView from "./views/admin/user/AdminEditUserView.tsx";
+import OnboardingView from "./views/auth/OnboardingView.tsx";
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <AuthProvider>
             <BrowserRouter>
-                <AuthGuard fallback={<AuthView/>} publicRoutes={[]}>
+                <AuthGuard fallback={<AuthView/>} publicRoutes={["/onboarding"]}>
                     <Routes>
                         {/* Authenticated Routes: requires valid session */}
                         <Route path="/" element={<AuthenticatedLayout/>}>
@@ -39,7 +40,7 @@ createRoot(document.getElementById('root')!).render(
                                 <Route path="post" element={<PostUpdateView/>}/>
                             </Route>
 
-                            {/*<Route path="/test" element={<TestPage/>}/>*/}
+                            <Route path="/onboarding" element={<OnboardingView/>}/>
                         </Route>
 
                         {/* Admin Routes: requires admin role */}
