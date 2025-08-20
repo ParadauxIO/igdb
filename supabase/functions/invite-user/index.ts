@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js";
 // ---------  BEGIN SETTINGS ---------
-const redirectTo = 'http://localhost:5173/onboarding';
+const redirectTo = 'https://igdb-demo.paradaux.io/onboarding';
 const allowedOrigins = [
     "https://dogs.guidedogs.ie", // Production
     "http://localhost:5173", // Local
