@@ -45,7 +45,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
 
     useEffect(() => {
         const filtered = options.filter(option =>
-            (option.label?.toLowerCase() ?? "").includes(searchTerm.toLowerCase())
+            option.label?.toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredOptions(filtered);
     }, [searchTerm, options]);

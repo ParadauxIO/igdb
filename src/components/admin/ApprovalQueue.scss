@@ -1,12 +1,27 @@
 .approval-queue {
+  
+  position: relative;
+
   .table-wrapper {
     overflow-x: auto;
+    overflow-y: visible;
     -webkit-overflow-scrolling: touch;
     margin-top: 1rem;
 
     table {
       min-width: 700px;
       width: 100%;
+
+      td, th {
+        position: relative;
+        overflow: visible;
+        vertical-align: top;
+      }
+
+      tr {
+        overflow: visible;
+        min-height: 80px;
+      }
     }
   }
 }
