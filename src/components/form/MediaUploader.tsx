@@ -15,7 +15,7 @@ interface MediaUploaderProps {
 }
 
 const MediaUploader: React.FC<MediaUploaderProps> = (props) => {
-    const { label, name, value, required, onChange, errorMessage } = props;
+    const { name, value, required, onChange, errorMessage } = props;
 
     const [files, setFiles] = useState<PreviewItem[]>([]);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -87,8 +87,6 @@ const MediaUploader: React.FC<MediaUploaderProps> = (props) => {
 
     return (
         <div>
-            {label && <label htmlFor={name} style={{ display: 'block', marginBottom: 8 }}>{label}</label>}
-
             <div
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
