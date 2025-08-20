@@ -1,63 +1,74 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 
-type PreviewItem = {
-    file: File;
-    previewUrl: string;
-};
+type PreviewItem = { file: File; url: string };
 
 interface MediaUploaderProps {
     label: string;
     name: string;
-    value?: File[] | null;
+    value?: File[] | null;         // controlled source of truth
     required?: boolean;
     onChange: (files: File[]) => void;
     errorMessage?: string;
 }
 
-const MediaUploader: React.FC<MediaUploaderProps> = (props) => {
-    const { label, name, value, required, onChange, errorMessage } = props;
-
-    const [files, setFiles] = useState<PreviewItem[]>([]);
+const MediaUploader: React.FC<MediaUploaderProps> = ({
+                                                         name,
+                                                         value,
+                                                         required,
+                                                         onChange,
+                                                         errorMessage,
+                                                     }) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    // If used as a controlled component, build previews from `value`
-    useEffect(() => {
-        if (!value) {
-            setFiles([]);
-            return;
+    // Keep a stable map of File -> objectURL across renders.
+    // We only (a) create URLs for new Files and (b) revoke URLs for removed Files.
+    const urlMapRef = useRef<Map<File, string>>(new Map());
+
+    const files: File[] = value ?? [];
+
+    const previews: PreviewItem[] = useMemo(() => {
+        const next = new Map<File, string>();
+
+        // Create or reuse URLs for current files
+        for (const f of files) {
+            const existing = urlMapRef.current.get(f);
+            if (existing) {
+                next.set(f, existing);
+            } else {
+                next.set(f, URL.createObjectURL(f));
+            }
         }
-        const previews = value.map((file) => ({
-            file,
-            previewUrl: URL.createObjectURL(file),
-        }));
-        setFiles((prev) => {
-            // Revoke previous URLs to avoid leaks
-            prev.forEach((p) => URL.revokeObjectURL(p.previewUrl));
-            return previews;
-        });
-        // Cleanup on unmount
+
+        // Revoke URLs for files no longer present
+        for (const [f, url] of urlMapRef.current) {
+            if (!next.has(f)) {
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        urlMapRef.current = next;
+
+        return Array.from(next.entries()).map(([file, url]) => ({ file, url }));
+    }, [files]);
+
+    // Cleanup all URLs on unmount
+    useEffect(() => {
         return () => {
-            previews.forEach((p) => URL.revokeObjectURL(p.previewUrl));
+            for (const [, url] of urlMapRef.current) {
+                URL.revokeObjectURL(url);
+            }
+            urlMapRef.current.clear();
         };
-    }, [value]);
+    }, []);
 
-    const handleFilesAdded = (newFiles: FileList | File[]) => {
-        const fileArray = Array.from(newFiles) as File[];
-        const updatedFiles: PreviewItem[] = fileArray.map((file) => ({
-            file,
-            previewUrl: URL.createObjectURL(file),
-        }));
-
-        setFiles((prev) => {
-            const next = [...prev, ...updatedFiles];
-            onChange(next.map((f) => f.file));
-            return next;
-        });
+    const addFiles = (incoming: FileList | File[]) => {
+        const toAdd = Array.from(incoming) as File[];
+        onChange([...(value ?? []), ...toAdd]);
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            handleFilesAdded(e.target.files);
+            addFiles(e.target.files);
             // allow reselection of the same file(s)
             e.target.value = '';
         }
@@ -66,32 +77,28 @@ const MediaUploader: React.FC<MediaUploaderProps> = (props) => {
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            handleFilesAdded(e.dataTransfer.files);
+            addFiles(e.dataTransfer.files);
             e.dataTransfer.clearData();
         }
     };
 
-    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-    };
-
-    const removeFile = (indexToRemove: number) => {
-        setFiles((prev) => {
-            const updated = [...prev];
-            const [removed] = updated.splice(indexToRemove, 1);
-            if (removed) URL.revokeObjectURL(removed.previewUrl);
-            onChange(updated.map((f) => f.file));
-            return updated;
-        });
+    const removeAt = (index: number) => {
+        const next = [...files];
+        const [removed] = next.splice(index, 1);
+        // Revoke URL for the removed file
+        const url = urlMapRef.current.get(removed);
+        if (url) {
+            URL.revokeObjectURL(url);
+            urlMapRef.current.delete(removed);
+        }
+        onChange(next);
     };
 
     return (
         <div>
-            {label && <label htmlFor={name} style={{ display: 'block', marginBottom: 8 }}>{label}</label>}
-
             <div
                 onDrop={handleDrop}
-                onDragOver={handleDragOver}
+                onDragOver={(e) => e.preventDefault()}
                 onClick={() => fileInputRef.current?.click()}
                 style={{
                     border: '2px dashed #ccc',
@@ -99,7 +106,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = (props) => {
                     padding: '20px',
                     textAlign: 'center',
                     cursor: 'pointer',
-                    background: 'white'
+                    background: 'white',
                 }}
             >
                 <p>Drag &amp; drop or click to select multiple images</p>
@@ -111,17 +118,21 @@ const MediaUploader: React.FC<MediaUploaderProps> = (props) => {
                     name={name}
                     required={required}
                     ref={fileInputRef}
-                    onChange={handleFileChange}
+                    onChange={handleInputChange}
                     style={{ display: 'none' }}
                 />
             </div>
 
-            {files.length > 0 && (
+            {previews.length > 0 && (
                 <div style={{ marginTop: '10px', display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                    {files.map((item, index) => (
-                        <div key={item.previewUrl} style={{ position: 'relative', width: '100px' }}>
+                    {previews.map((item, index) => (
+                        <div
+                            // Use a stable key derived from the File, not the objectURL (which can change).
+                            key={`${item.file.name}-${item.file.size}-${item.file.lastModified}-${index}`}
+                            style={{ position: 'relative', width: '100px' }}
+                        >
                             <img
-                                src={item.previewUrl}
+                                src={item.url}
                                 alt={`preview-${index}`}
                                 style={{ width: '100%', borderRadius: '4px' }}
                             />
@@ -129,7 +140,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = (props) => {
                                 type="button"
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    removeFile(index);
+                                    removeAt(index);
                                 }}
                                 aria-label="Remove image"
                                 style={{

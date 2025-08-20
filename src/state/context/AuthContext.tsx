@@ -45,9 +45,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         let cancelled = false;
 
-        const hardCheck = async () => {
-            setLoading(true);
-            const { data, error } = await supabase.auth.getUser(); // refresh if needed
+        const hardCheck = async (setBusy = true) => {
+            if (setBusy) setLoading(true);
+            const { data, error } = await supabase.auth.getUser();
             if (cancelled) return;
 
             if (error || !data.user) {
@@ -65,25 +65,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setLoading(false);
         };
 
-        // initial + focus refresh
-        void hardCheck();
-        const onFocus = () => void hardCheck();
-        window.addEventListener('focus', onFocus);
+        // initial load
+        void hardCheck(true);
 
-        // subscribe to auth state changes
+        // refresh when user returns to the tab (not when file picker closes)
+        const onVis = () => {
+            if (document.visibilityState === 'visible') {
+                void hardCheck(false); // soft: don’t flip global loading
+            }
+        };
+        document.addEventListener('visibilitychange', onVis);
+
         const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
             setSession(newSession);
             setSupabaseUser(newSession?.user ?? null);
-            if (newSession?.user?.id) {
-                void fetchProfile(newSession.user.id);
-            } else {
-                setUser(null);
-            }
+            if (newSession?.user?.id) void fetchProfile(newSession.user.id);
+            else setUser(null);
         });
 
         return () => {
             cancelled = true;
-            window.removeEventListener('focus', onFocus);
+            document.removeEventListener('visibilitychange', onVis);
             sub.subscription.unsubscribe();
         };
     }, [fetchProfile]);
