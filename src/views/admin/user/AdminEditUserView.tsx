@@ -39,7 +39,6 @@ export default function AdminEditUserView() {
         {name: 'functional_role', label: 'Functional Role', type: 'select', required: true, options: ['staff', 'volunteer', 'puppy raiser', 'trainer', 'temporary boarder', 'client', 'adoptive family', 'sponsor'], description: "This is a purely informational field that describes the user's role in the organisation."},
         {name: 'phone', label: 'Phone Number', type: 'text', required: true},
         {name: 'is_archived', label: 'Archived', type: 'checkbox', description: 'Check if this user is archived'},
-        {name: 'can_approve_updates', label: 'Can Approve Updates', type: 'checkbox', description: 'Check if this user can approve update requests'},
     ];
 
     const onSubmit = async (form: Partial<User>) => {

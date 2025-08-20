@@ -1,4 +1,4 @@
-import { createContext, type ReactNode, useEffect, useState, useCallback } from 'react';
+import { createContext, type ReactNode, useEffect, useState, useCallback, useMemo } from 'react';
 import { supabase } from '../supabaseClient';
 import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import type { User } from '../../types/User';
@@ -7,8 +7,9 @@ interface AuthContextType {
     supabaseUser: SupabaseUser | null;
     session: Session | null;
     user: User | null;
-    isAdmin: boolean | null;
-    isUpdater: boolean | null;
+    isAdmin: boolean;
+    isUpdater: boolean;
+    loading: boolean;
     refreshProfile: () => Promise<void>;
 }
 
@@ -18,24 +19,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null);
     const [session, setSession] = useState<Session | null>(null);
     const [user, setUser] = useState<User | null>(null);
-    const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-    const [isUpdater, setIsUpdater] = useState<boolean | null>(null);
+    const [loading, setLoading] = useState(true);
 
     const fetchProfile = useCallback(async (userId: string) => {
         const { data, error } = await supabase
             .from('users')
-            .select('*')
+            .select('id,name,permission_role,functional_role,phone,is_archived,has_accepted_terms,created_at,updated_at')
             .eq('id', userId)
             .single();
 
         if (error) {
             console.error('Error fetching profile:', error.message);
+            setUser(null);
             return;
         }
-
         setUser(data);
-        setIsAdmin(data.permission_role === 'admin');
-        setIsUpdater(data.permission_role === 'updater' || data.permission_role === 'admin');
     }, []);
 
     const refreshProfile = useCallback(async () => {
@@ -48,16 +46,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         let cancelled = false;
 
         const hardCheck = async () => {
-            const { data, error } = await supabase.auth.getUser(); // triggers refresh if needed
+            setLoading(true);
+            const { data, error } = await supabase.auth.getUser(); // refresh if needed
             if (cancelled) return;
 
             if (error || !data.user) {
-                // token invalid/expired and refresh failed
                 setSession(null);
                 setSupabaseUser(null);
                 setUser(null);
-                setIsAdmin(null);
-                setIsUpdater(null);
+                setLoading(false);
                 return;
             }
 
@@ -65,19 +62,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const { data: sess } = await supabase.auth.getSession();
             setSession(sess.session);
             await fetchProfile(data.user.id);
+            setLoading(false);
         };
 
-        hardCheck();
-
-        // re-check when tab gains focus (auto-refresh may be paused in background)
+        // initial + focus refresh
+        void hardCheck();
         const onFocus = () => void hardCheck();
         window.addEventListener('focus', onFocus);
 
-        return () => { cancelled = true; window.removeEventListener('focus', onFocus); };
+        // subscribe to auth state changes
+        const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
+            setSession(newSession);
+            setSupabaseUser(newSession?.user ?? null);
+            if (newSession?.user?.id) {
+                void fetchProfile(newSession.user.id);
+            } else {
+                setUser(null);
+            }
+        });
+
+        return () => {
+            cancelled = true;
+            window.removeEventListener('focus', onFocus);
+            sub.subscription.unsubscribe();
+        };
     }, [fetchProfile]);
 
+    const isAdmin = useMemo(() => user?.permission_role === 'admin', [user]);
+    const isUpdater = useMemo(() => user?.permission_role === 'admin' || user?.permission_role === 'updater', [user]);
+
     return (
-        <AuthContext.Provider value={{ supabaseUser, session, user, isAdmin, isUpdater, refreshProfile }}>
+        <AuthContext.Provider value={{ supabaseUser, session, user, isAdmin: !!isAdmin, isUpdater: !!isUpdater, loading, refreshProfile }}>
             {children}
         </AuthContext.Provider>
     );
