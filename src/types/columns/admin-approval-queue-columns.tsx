@@ -43,9 +43,29 @@ export const getAdminApprovalQueueColumns = (userId: string) => {
         columnHelper.accessor('update_media_urls', {
             header: 'Media',
             cell: info => {
-                const value = info.getValue();
-                if (value && value.length) {
-                    return value.join(', ')
+                const urls: string[] = info.getValue();
+                if (urls && urls.length) {
+                    return (
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                            {urls.map((url, idx) => (
+                                <a href={url} target="_blank" rel="noopener noreferrer">
+                                    <img
+                                        key={idx}
+                                        src={url}
+                                        alt={`Media ${idx + 1}`}
+                                        loading="lazy"
+                                        style={{
+                                            width: '80px',
+                                            height: '80px',
+                                            objectFit: 'cover',
+                                            borderRadius: '4px',
+                                            border: '1px solid #ccc',
+                                        }}
+                                    />
+                                </a>
+                            ))}
+                        </div>
+                    );
                 }
                 return 'No Media';
             },

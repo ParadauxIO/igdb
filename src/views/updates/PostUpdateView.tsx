@@ -20,11 +20,13 @@ const PostUpdateView = () => {
     ]
 
     const handleUpdate = async (update: Partial<DogUpdate>) => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         try {
             update.update_created_by = user?.id;
             await postUpdate(update);
             setMessage(`Your update needs to be approved by an admin before it is posted, you can see your pending updates in red on the home page.`);
             setIsError(false);
+            setForm({}); // Clear form on successful submit
         } catch (error) {
             setMessage("Failed to post this update. Please try again later.");
             setIsError(true);
