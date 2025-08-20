@@ -1,24 +1,12 @@
 import {useEffect, useState} from "react";
-import {supabase} from "../../state/supabaseClient.ts";
 import "./TermsAndConditions.scss";
+import {fetchTerms} from "../../partials/settings.ts";
 
 export default function TermsAndConditions() {
     const [terms, setTerms] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchTerms = async () => {
-            const {data, error} = await supabase.from("system_settings")
-                .select("setting_value")
-                .eq("setting_key", "terms")
-                .single();
-
-            if (error) {
-                throw new Error("Failed to fetch terms and conditions: " + error.message);
-            }
-
-            setTerms(data.setting_value);
-        }
-        fetchTerms();
+        fetchTerms().then(data => setTerms(data));
     }, []);
 
     return (

@@ -21,6 +21,7 @@ export default function UserProfileView() {
         name: user.name,
         phone: user.phone,
     });
+
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
     const [isError, setIsError] = useState<boolean>(false);
