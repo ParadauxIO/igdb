@@ -2,16 +2,16 @@
 CREATE TABLE public.users
 (
     id                 UUID REFERENCES auth.users (id) ON DELETE CASCADE PRIMARY KEY,
-    name               TEXT,
-    permission_role    VARCHAR(64) NOT NULL     DEFAULT 'viewer' CHECK ( users.permission_role in ('viewer', 'updater', 'admin')),
+    name               TEXT                     NOT NULL DEFAULT '',
+    permission_role    VARCHAR(64)              NOT NULL DEFAULT 'viewer' CHECK ( permission_role in ('viewer', 'updater', 'admin')),
     functional_role    VARCHAR(64) CHECK ( functional_role in
                                            ('staff', 'volunteer', 'puppy raiser', 'trainer', 'temporary boarder',
                                             'client', 'adoptive family', 'sponsor')),
-    phone              VARCHAR(32),
-    is_archived        BOOLEAN                  DEFAULT false,
-    has_accepted_terms BOOLEAN                  DEFAULT false,
-    created_at         TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at         TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    phone              VARCHAR(32)              NOT NULL DEFAULT '',
+    is_archived        BOOLEAN                  NOT NULL DEFAULT false,
+    has_accepted_terms BOOLEAN                  NOT NULL DEFAULT false,
+    created_at         TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at         TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
 -- Dogs table
