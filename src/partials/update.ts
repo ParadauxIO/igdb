@@ -1,6 +1,6 @@
-import { supabase } from "../state/supabaseClient.ts";
-import type { DogUpdate } from "../types/DogUpdate.ts";
-import { uploadAndGetUrl } from "./fileUpload";
+import {supabase} from "../state/supabaseClient.ts";
+import type {DogUpdate} from "../types/DogUpdate.ts";
+import {uploadAndGetUrl} from "./fileUpload";
 
 /**
  * Posts a new dog update.
@@ -18,7 +18,7 @@ export const postUpdate = async (
         );
     }
 
-    const { data, error } = await supabase
+    const {data, error} = await supabase
         .from("dog_updates")
         .insert({
             dog_id: form.dog_id,
@@ -45,18 +45,23 @@ export const postUpdate = async (
  * Gets a user's feed.
  */
 export const getUserFeed = async (userId: string): Promise<DogUpdate[]> => {
-    const { data, error } = await supabase
+    const {data, error} = await supabase
         .from("dog_updates")
-        .select("*")
+        .select(`
+      *,
+      dogs!inner(
+        dog_id,
+        dog_following!inner(user_id)
+      )
+    `)
+        .eq("dogs.dog_following.user_id", userId)
         .or(`update_date_approved.not.is.null,update_created_by.eq.${userId}`)
-        .order("update_created_at", { ascending: false })
-        .returns<DogUpdate[]>();
+        .order("update_created_at", {ascending: false});
 
-    if (error) {
-        throw new Error(`Failed to fetch feed: ${error.message}`);
-    }
-
-    return data;
+    if (error) throw new Error(`Failed to fetch feed: ${error.message}`);
+    // strip embedded objects if your types don’t include them:
+    // @ts-ignore
+    return (data ?? []).map(({dogs, ...rest}) => rest as DogUpdate);
 };
 
 /**
@@ -66,9 +71,9 @@ export const updateDogUpdate = async (
     updateId: string,
     form: Partial<DogUpdate>
 ): Promise<DogUpdate> => {
-    const { data, error } = await supabase
+    const {data, error} = await supabase
         .from("dog_updates")
-        .update({ ...form })
+        .update({...form})
         .eq("update_id", updateId)
         .select()
         .single<DogUpdate>();
@@ -88,7 +93,7 @@ export const approveUpdate = async (
     updateId: string,
     approvedBy: string
 ): Promise<DogUpdate> => {
-    const { data, error } = await supabase
+    const {data, error} = await supabase
         .from("dog_updates")
         .update({
             update_date_approved: new Date().toISOString(),
@@ -110,7 +115,7 @@ export const approveUpdate = async (
  * Rejects (deletes) a dog update.
  */
 export const rejectUpdate = async (updateId: string): Promise<DogUpdate> => {
-    const { data, error } = await supabase
+    const {data, error} = await supabase
         .from("dog_updates")
         .delete()
         .eq("update_id", updateId)
@@ -134,7 +139,7 @@ export const getApprovalQueue = async (
     let query = supabase
         .from("dog_updates")
         .select("*")
-        .order("update_created_at", { ascending: false });
+        .order("update_created_at", {ascending: false});
 
     if (showApproved) {
         query = query.not("update_date_approved", "is", null);
@@ -142,7 +147,7 @@ export const getApprovalQueue = async (
         query = query.is("update_date_approved", null);
     }
 
-    const { data, error } = await query.returns<DogUpdate[]>();
+    const {data, error} = await query.returns<DogUpdate[]>();
 
     if (error) {
         throw new Error(`Failed to fetch approval queue: ${error.message}`);
