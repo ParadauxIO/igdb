@@ -8,34 +8,62 @@ import type {DogUpdate} from "../../types/DogUpdate.ts";
 import {getApprovalQueue} from "../../partials/update.ts";
 import type {User} from "../../types/User.ts";
 import {getUsers} from "../../partials/users.ts";
+import IGDBForm, {type FormField} from "../../components/form/IGDBForm.tsx";
+import {fetchTerms, updateSetting} from "../../partials/settings.ts";
+import StatusCard from "../../components/general/StatusCard.tsx";
+
+interface SettingsForm {
+    terms: string;
+}
 
 export default function AdminDashboardView() {
-    console.log("AdminDashboardView rendered");
     const [dogs, setDogs] = useState<Dog[]>([]);
     const [approvalQueue, setApprovalQueue] = useState<DogUpdate[]>([]);
     const [users, setUsers] = useState<User[]>([]);
+    const [form, setForm] = useState<Partial<SettingsForm>>({});
+    const [message, setMessage] = useState<string>("");
+    const [isError, setIsError] = useState<boolean>(false);
+
+    const settingsFields: FormField[] = [
+        {
+            name: "terms",
+            label: "Terms & Conditions",
+            description: "This is shown to users when they are setting their password for the first time.",
+            type: "textarea",
+            required: false
+        },
+    ];
 
     async function load() {
-        const returnedDogs = await getDogsWithNames();
-        const returnedApprovalQueue = await getApprovalQueue(false);
-        const returnedUsers = await getUsers();
+        const [returnedDogs, returnedApprovalQueue, returnedUsers, returnedTerms] = await Promise.all([
+            getDogsWithNames(),
+            getApprovalQueue(false),
+            getUsers(),
+            fetchTerms()
+        ]);
 
-        if (returnedDogs) {
-            setDogs(returnedDogs);
-        }
-
-        if (returnedApprovalQueue) {
-            setApprovalQueue(returnedApprovalQueue);
-        }
-
-        if (returnedUsers) {
-            setUsers(returnedUsers);
-        }
+        if (returnedDogs) setDogs(returnedDogs);
+        if (returnedApprovalQueue) setApprovalQueue(returnedApprovalQueue);
+        if (returnedUsers) setUsers(returnedUsers);
+        if (returnedTerms) setForm(prev => ({...prev, terms: returnedTerms}));
     }
 
     useEffect(() => {
         load();
     }, []);
+
+    const onFormSubmit = async (returnedForm: Partial<SettingsForm>) => {
+        try {
+            if (returnedForm.terms != null) {
+                await updateSetting("terms", returnedForm.terms);
+            }
+            setMessage("Settings updated successfully");
+            setIsError(false);
+        } catch (e) {
+            setMessage("An error occurred while updating the settings.");
+            setIsError(true);
+        }
+    }
 
     return (
         <div className="admin-dashboard">
@@ -46,17 +74,21 @@ export default function AdminDashboardView() {
                 <Card title="Total Users" value={users.length}/>
             </div>
 
-            <div className="admin-settings">
-                <h1> System Settings </h1>
-                <p> Here you can configure the overall system. </p>
-                <div>
-                    Coming soon.
-                </div>
-            </div>
-
             <div className="approval-queue">
                 <h1> Approval Queue</h1>
                 <ApprovalQueue/>
+            </div>
+
+            <div className="admin-settings">
+                <h1> System Settings </h1>
+                <p> Here you can configure the overall system. </p>
+                <StatusCard message={message} isError={isError}/>
+                <IGDBForm
+                    form={form}
+                    setForm={setForm}
+                    fields={settingsFields}
+                    onSubmit={onFormSubmit}
+                />
             </div>
         </div>
     );

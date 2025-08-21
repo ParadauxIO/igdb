@@ -5,7 +5,7 @@ export interface User {
     functional_role: string;
     phone: string;
     is_archived: boolean;
-    can_approve_updates: boolean;
+    has_accepted_terms: boolean;
     created_at: Date;
     updated_at: Date;
     password?: string; // Optional for user profile updates
