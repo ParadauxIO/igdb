@@ -45,8 +45,8 @@ export const postUpdate = async (
  * Gets a user's feed.
  */
 export const getUserFeed = async (): Promise<DogUpdate[]> => {
-    const { data, error } = await supabase.functions.invoke("views", {
-        body: { view: "feed" },
+    const {data, error} = await supabase.functions.invoke("views", {
+        body: {view: "feed"},
     });
 
     if (error) {
@@ -126,25 +126,37 @@ export const rejectUpdate = async (updateId: string): Promise<DogUpdate> => {
 /**
  * Gets the approval queue, filtered by approval status.
  */
-export const getApprovalQueue = async (
-    showApproved: boolean
-): Promise<DogUpdate[]> => {
+export async function getApprovalQueue(showApproved: boolean): Promise<DogUpdate[]> {
     let query = supabase
         .from("dog_updates")
-        .select("*")
+        .select(`
+      update_id,
+      dog_id,
+      update_title,
+      update_description,
+      update_media_urls,
+      update_date_approved,
+      update_created_at,
+      update_created_by,
+      update_approved_by,
+
+      creator:users!dog_updates_update_created_by_fkey(name),
+      dog:dogs!dog_updates_dog_id_fkey(dog_name)
+    `)
         .order("update_created_at", {ascending: false});
 
-    if (showApproved) {
-        query = query.not("update_date_approved", "is", null);
-    } else {
-        query = query.is("update_date_approved", null);
-    }
+    // Filter pending vs approved
+    query = showApproved
+        ? query.not("update_date_approved", "is", null)
+        : query.is("update_date_approved", null);
 
-    const {data, error} = await query.returns<DogUpdate[]>();
+    const {data, error} = await query;
+    if (error) throw error;
 
-    if (error) {
-        throw new Error(`Failed to fetch approval queue: ${error.message}`);
-    }
-
-    return data;
-};
+    // Flatten the joined objects into simple fields the table can use
+    return (data ?? []).map((row: any) => ({
+        ...row,
+        creator_name: row.creator?.name ?? "",
+        dog_name: row.dog?.dog_name ?? "",
+    })) as DogUpdate[];
+}
