@@ -50,7 +50,7 @@ export default function UpdateFeed() {
             }
             setLoading(true);
             try {
-                const data = await getUserFeed(userId);
+                const data = await getUserFeed();
                 if (active) setUpdates(data);
             } finally {
                 if (active) setLoading(false);
