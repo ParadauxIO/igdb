@@ -75,8 +75,7 @@ export default function OnboardingView() {
         if (form.password && form.password.trim().length > 0) {
             // Make the logout immediate so you don't sit on a soon-to-be-dead refresh token.
             await supabase.auth.signOut();
-            // Use router navigation with state or a query param to show a flash message
-            window.location.assign("/login?msg=password-updated");
+            window.location.assign("/");
             return;
         }
 
