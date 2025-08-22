@@ -44,26 +44,19 @@ export const postUpdate = async (
 /**
  * Gets a user's feed.
  */
-export const getUserFeed = async (userId: string): Promise<DogUpdate[]> => {
-    const {data, error} = await supabase
-        .from("dog_updates")
-        .select(`
-      *,
-      dogs!inner(
-        dog_id,
-        dog_following!inner(user_id)
-      )
-    `)
-        .eq("dogs.dog_following.user_id", userId)
-        .or(`update_date_approved.not.is.null,update_created_by.eq.${userId}`)
-        .order("update_created_at", {ascending: false});
+export const getUserFeed = async (): Promise<DogUpdate[]> => {
+    const { data, error } = await supabase.functions.invoke("views", {
+        body: { view: "feed" },
+    });
 
-    if (error) throw new Error(`Failed to fetch feed: ${error.message}`);
-    // strip embedded objects if your types don’t include them:
-    // @ts-ignore
-    return (data ?? []).map(({dogs, ...rest}) => rest as DogUpdate);
+    if (error) {
+        throw new Error(`Feed fetch failed: ${error.message}`);
+    }
+
+    // supabase-js already passes the user’s JWT automatically,
+    // no need to manually set Authorization headers.
+    return data as DogUpdate[];
 };
-
 /**
  * Updates an existing dog update.
  */
