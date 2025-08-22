@@ -22,9 +22,9 @@ export default function OnboardingView() {
 
     const fields: FormField[] = [
         {name: 'name', label: 'Name', type: 'text', required: true},
-        {name: 'phone', label: 'Phone Number', type: 'text', required: true},
-        {name: 'password', label: 'Password', type: 'password', required: false},
-        {name: 'confirm_password', label: 'Confirm Password', type: 'password', required: false},
+        {name: 'phone', label: 'Phone Number', type: 'text', required: false},
+        {name: 'password', label: 'Password', type: 'password', required: true},
+        {name: 'confirm_password', label: 'Confirm Password', type: 'password', required: true},
         {name: "Terms and Conditions", label: "You must accept our terms and conditions to finish creating your account", type: 'component', component: TermsAndConditions},
         {name: 'terms_accepted', label: 'I accept the terms and conditions', type: 'checkbox', required: true, description: "You must accept our terms and conditions to finish creating your account."}
     ];
@@ -71,6 +71,15 @@ export default function OnboardingView() {
 
         setIsError(false);
         setMessage("Successfully onboarded. You can continue to the app.");
+
+        if (form.password && form.password.trim().length > 0) {
+            // Make the logout immediate so you don't sit on a soon-to-be-dead refresh token.
+            await supabase.auth.signOut();
+            // Use router navigation with state or a query param to show a flash message
+            window.location.assign("/login?msg=password-updated");
+            return;
+        }
+
         await refreshProfile();
     };
 
