@@ -36,7 +36,7 @@ export default function PasswordResetView() {
         setSuccess(null);
         try {
             const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
-                redirectTo: `${import.meta.env.VITE_PUBLIC_URL}/reset`,
+                redirectTo: `${import.meta.env.VITE_PUBLIC_URL}/user/profile`,
             });
             if (error) throw error;
             setSuccess("If that email exists, we’ve sent a reset link.");
