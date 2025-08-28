@@ -59,6 +59,21 @@
     font-size: 16px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     outline: none;
+
+    &:focus {
+      border-color: #2A9D8F;
+      box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.25);
+    }
+  }
+
+  .error {
+    font-size: 14px;
+    font-weight: 500;
+    color: #e53e3e;
+    background: #fff5f5;
+    border: 1px solid #feb2b2;
+    border-radius: 6px;
+    padding: 10px 14px;
   }
 
   .button {
@@ -69,7 +84,27 @@
     border-radius: 8px;
     font-size: 16px;
     font-weight: 600;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &.is-loading {
+      position: relative;
+    }
   }
 
   .footer {
@@ -82,6 +117,34 @@
     text-decoration: none;
     font-size: 14px;
     font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
+  .error {
+    font-size: 14px;
+    font-weight: 500;
+    color: #e53e3e;
+    background: #fff5f5;
+    border: 1px solid #feb2b2;
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+
+  .success {
+    font-size: 14px;
+    font-weight: 500;
+    color: #276749;
+    background: #f0fff4;
+    border: 1px solid #9ae6b4;
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+
+  .button.is-loading {
+    position: relative;
+    pointer-events: none;
+  }
 }

@@ -11,4 +11,6 @@ export interface DogUpdate {
     update_date_approved: string | null;
     update_created_by: string;
     update_approved_by: string | null;
+    creator_name?: string; // For approval queue table
+    dog_name?: string;
 }

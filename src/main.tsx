@@ -27,6 +27,7 @@ import AdminLayout from "./views/layouts/AdminLayout.tsx";
 import AdminDashboardView from "./views/admin/AdminDashboardView.tsx";
 import AdminEditUserView from "./views/admin/user/AdminEditUserView.tsx";
 import OnboardingView from "./views/auth/OnboardingView.tsx";
+import PasswordResetView from "./views/auth/PasswordResetView.tsx";
 
 // tiny loading element so we don't flash the login screen during refresh
 const Loading = <div style={{ padding: 24, textAlign: "center" }}>Loading…</div>;
@@ -37,7 +38,7 @@ createRoot(document.getElementById("root")!).render(
             <BrowserRouter>
                 {/* Guard everything, but distinguish loading vs unauthenticated */}
                 <AuthGuard
-                    publicRoutes={["/login", "/reset/*", "/callback/*", "/onboarding"]}
+                    publicRoutes={["/login", "/reset", "/callback/*", "/onboarding"]}
                     loadingElement={Loading}
                     // unauthenticated → show the login screen (not during loading)
                     fallback={<AuthView />}
@@ -88,6 +89,7 @@ createRoot(document.getElementById("root")!).render(
                         </Route>
 
                         {/* Default */}
+                        <Route path="/reset" element={<PasswordResetView />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </AuthGuard>

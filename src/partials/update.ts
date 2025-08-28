@@ -44,26 +44,19 @@ export const postUpdate = async (
 /**
  * Gets a user's feed.
  */
-export const getUserFeed = async (userId: string): Promise<DogUpdate[]> => {
-    const {data, error} = await supabase
-        .from("dog_updates")
-        .select(`
-      *,
-      dogs!inner(
-        dog_id,
-        dog_following!inner(user_id)
-      )
-    `)
-        .eq("dogs.dog_following.user_id", userId)
-        .or(`update_date_approved.not.is.null,update_created_by.eq.${userId}`)
-        .order("update_created_at", {ascending: false});
+export const getUserFeed = async (): Promise<DogUpdate[]> => {
+    const {data, error} = await supabase.functions.invoke("views", {
+        body: {view: "feed"},
+    });
 
-    if (error) throw new Error(`Failed to fetch feed: ${error.message}`);
-    // strip embedded objects if your types don’t include them:
-    // @ts-ignore
-    return (data ?? []).map(({dogs, ...rest}) => rest as DogUpdate);
+    if (error) {
+        throw new Error(`Feed fetch failed: ${error.message}`);
+    }
+
+    // supabase-js already passes the user’s JWT automatically,
+    // no need to manually set Authorization headers.
+    return data as DogUpdate[];
 };
-
 /**
  * Updates an existing dog update.
  */
@@ -133,25 +126,37 @@ export const rejectUpdate = async (updateId: string): Promise<DogUpdate> => {
 /**
  * Gets the approval queue, filtered by approval status.
  */
-export const getApprovalQueue = async (
-    showApproved: boolean
-): Promise<DogUpdate[]> => {
+export async function getApprovalQueue(showApproved: boolean): Promise<DogUpdate[]> {
     let query = supabase
         .from("dog_updates")
-        .select("*")
+        .select(`
+      update_id,
+      dog_id,
+      update_title,
+      update_description,
+      update_media_urls,
+      update_date_approved,
+      update_created_at,
+      update_created_by,
+      update_approved_by,
+
+      creator:users!dog_updates_update_created_by_fkey(name),
+      dog:dogs!dog_updates_dog_id_fkey(dog_name)
+    `)
         .order("update_created_at", {ascending: false});
 
-    if (showApproved) {
-        query = query.not("update_date_approved", "is", null);
-    } else {
-        query = query.is("update_date_approved", null);
-    }
+    // Filter pending vs approved
+    query = showApproved
+        ? query.not("update_date_approved", "is", null)
+        : query.is("update_date_approved", null);
 
-    const {data, error} = await query.returns<DogUpdate[]>();
+    const {data, error} = await query;
+    if (error) throw error;
 
-    if (error) {
-        throw new Error(`Failed to fetch approval queue: ${error.message}`);
-    }
-
-    return data;
-};
+    // Flatten the joined objects into simple fields the table can use
+    return (data ?? []).map((row: any) => ({
+        ...row,
+        creator_name: row.creator?.name ?? "",
+        dog_name: row.dog?.dog_name ?? "",
+    })) as DogUpdate[];
+}
