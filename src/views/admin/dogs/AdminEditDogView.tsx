@@ -6,6 +6,7 @@ import {useAuth} from "../../../state/hooks/useAuth.ts";
 import {createDog, getDogById, updateDog} from "../../../partials/dog.ts";
 import "./AdminEditDogView.scss";
 import { uploadAndGetUrl } from "../../../partials/fileUpload.ts";
+import StatusCard from "../../../components/general/StatusCard.tsx";
 
 export default function AdminEditDogView() {
     const { dogId } = useParams<{ dogId?: string }>();
@@ -37,10 +38,10 @@ export default function AdminEditDogView() {
     }, [dogId, isEditMode]);
 
     const handleSubmit = async (dog: Partial<Dog>) => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         try {
             dog.dog_created_by = user?.id;
 
-            // ✅ Upload photo if it exists
             const photoFiles = (dog.dog_picture as File[] | undefined)?.filter(f => f instanceof File);
 
             if (photoFiles && photoFiles.length > 0) {
@@ -58,9 +59,11 @@ export default function AdminEditDogView() {
             if (isEditMode) {
                 await updateDog(dog);
                 setMessage(`Dog has been successfully updated.`);
+                setForm({}); // Clear form on successful submit
             } else {
                 await createDog(dog);
                 setMessage(`Dog has been successfully created.`);
+                setForm({}); // Clear form on successful submit
             }
 
             setIsError(false);
@@ -141,12 +144,7 @@ export default function AdminEditDogView() {
         <div className="dog-create-view">
             <div className="dog-create-container">
                 <h1>{isEditMode ? "Edit Dog" : "Add New Dog"}</h1>
-                {message && (
-                    <div className={"status-message-card " + (isError ? "error" : "success")}>
-                        <h3>{isError ? "Failure" : "Success!"}</h3>
-                        <p>{message}</p>
-                    </div>
-                )}
+                <StatusCard message={message} isError={isError}/>
                 <IGDBForm
                     form={form}
                     setForm={setForm}
