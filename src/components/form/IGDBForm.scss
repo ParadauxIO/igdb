@@ -121,4 +121,10 @@
   .dropdown-option:last-child {
     border-bottom: none;
   }
+
+  label.required::after {
+    content: '*';
+    color: red;
+    margin-left: 4px;
+  }
 }

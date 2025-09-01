@@ -5,6 +5,7 @@ import IGDBForm, {type FormField} from "../../../components/form/IGDBForm.tsx";
 import {useAuth} from "../../../state/hooks/useAuth.ts";
 import {createDog, getDogById, updateDog} from "../../../partials/dog.ts";
 import "./AdminEditDogView.scss";
+import { uploadAndGetUrl } from "../../../partials/fileUpload.ts";
 
 export default function AdminEditDogView() {
     const { dogId } = useParams<{ dogId?: string }>();
@@ -39,6 +40,21 @@ export default function AdminEditDogView() {
         try {
             dog.dog_created_by = user?.id;
 
+            // ✅ Upload photo if it exists
+            const photoFiles = (dog.dog_picture as File[] | undefined)?.filter(f => f instanceof File);
+
+            if (photoFiles && photoFiles.length > 0) {
+                const [uploadedUrl] = await uploadAndGetUrl(
+                    photoFiles,
+                    "sample",
+                    "dogs"
+                );
+                dog.dog_picture = uploadedUrl;
+            } else {
+                // Optionally clear it or leave as is
+                dog.dog_picture = undefined;
+            }
+
             if (isEditMode) {
                 await updateDog(dog);
                 setMessage(`Dog has been successfully updated.`);
@@ -49,11 +65,12 @@ export default function AdminEditDogView() {
 
             setIsError(false);
         } catch (error) {
+            console.error("Submit error:", error);
             const action = isEditMode ? "update" : "create";
             setMessage(`Failed to ${action} dog. Please try again later.`);
             setIsError(true);
         }
-    }
+    };
 
     const dogFormFields: FormField[] = [
         {
@@ -84,8 +101,9 @@ export default function AdminEditDogView() {
         },
         {
             name: "dog_picture",
-            label: "Picture URL",
-            type: "text",
+            label: "Dog Photo",
+            type: "file-upload",
+            required: false,
         },
         {
             name: "dog_status",

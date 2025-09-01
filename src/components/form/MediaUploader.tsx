@@ -31,6 +31,8 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
 
         // Create or reuse URLs for current files
         for (const f of files) {
+            if (!(f instanceof File)) continue; // Skip non-File items (e.g. string URLs from edit mode)
+            
             const existing = urlMapRef.current.get(f);
             if (existing) {
                 next.set(f, existing);
