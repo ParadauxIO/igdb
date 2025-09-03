@@ -88,7 +88,7 @@ export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleAr
         // Active
         columnHelper.accessor('dog_is_archived', {
             header: 'Active',
-            cell: info => info.getValue() ? 'Yes' : 'No',
+            cell: info => info.getValue() ? 'No' : 'Yes',
             footer: info => info.column.id,
         }),
 

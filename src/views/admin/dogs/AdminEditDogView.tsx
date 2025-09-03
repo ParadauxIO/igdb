@@ -87,7 +87,7 @@ export default function AdminEditDogView() {
             label: "Role",
             type: "select",
             options: ["Guide Dog", "Assistance Dog", "Community Ambassador Dog"],
-            required: true,
+            required: false,
         },
         {
             name: "dog_yob",
@@ -124,7 +124,7 @@ export default function AdminEditDogView() {
             type: "textarea",
         },
         {
-            name: "dog_is_archived",
+            name: "dog_is_active",
             label: "Archived",
             type: "checkbox",
         }

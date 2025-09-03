@@ -40,7 +40,7 @@ export default function Header() {
                 <ul
                     id="primary-navigation"
                     className="primary-navigation flex"
-                    data-visable={`${navOpen}`}
+                    data-visible={`${navOpen}`}
                 >
                     <li><Link to="/">Home</Link></li>
                     <li><Link to="/dogs">Dogs</Link></li>

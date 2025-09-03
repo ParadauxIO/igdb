@@ -11,7 +11,7 @@ export default function AdminHeader() {
     }, [location.pathname]);
 
     return (
-        <header className="primary-header flex admin-header">
+        <header className="primary-header admin-header flex">
             <div className="logo">
                 <Link to="/">
                     <img src="/logo.svg" alt="Irish Guide Dogs for the Blind Logo" />
