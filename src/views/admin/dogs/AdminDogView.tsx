@@ -20,11 +20,16 @@ export default function AdminDogView() {
     );
 
     const handleEditDog = (dogId: string) => navigate(`/admin/dogs/edit/${dogId}`);
-    const handleDeleteDog = (dogId: string) => {
+    const handleDeleteDog = async (dogId: string) => {
         const confirmed = window.confirm("Are you sure you want to delete this dog?");
         if (!confirmed) return;
-        deleteDog(dogId).then(() => loadDogs());
-    }
+        try {
+            await deleteDog(dogId);
+            await loadDogs(); 
+        } catch (error) {
+            alert("Failed to delete dog. Please try again.");
+        }
+    };
     const handleArchiveDog = (dogId: string) => {
         const confirmed = window.confirm("Are you sure you want to archive this dog?");
         if (!confirmed) return;
