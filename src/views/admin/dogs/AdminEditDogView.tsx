@@ -39,33 +39,34 @@ export default function AdminEditDogView() {
 
     const handleSubmit = async (dog: Partial<Dog>) => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
+
         try {
             dog.dog_created_by = user?.id;
 
-            const photoFiles = (dog.dog_picture as File[] | undefined)?.filter(f => f instanceof File);
-
-            if (photoFiles && photoFiles.length > 0) {
+            // Check if it's a File[] (new upload)
+            if (Array.isArray(dog.dog_picture) && dog.dog_picture[0] instanceof File) {
                 const [uploadedUrl] = await uploadAndGetUrl(
-                    photoFiles,
+                    dog.dog_picture,
                     "sample",
                     "dogs"
                 );
                 dog.dog_picture = uploadedUrl;
+            } else if (typeof dog.dog_picture === "string") {
+                // Leave the existing string URL as-is
             } else {
-                // Optionally clear it or leave as is
+                // If cleared or not a valid value, remove it
                 dog.dog_picture = undefined;
             }
 
             if (isEditMode) {
                 await updateDog(dog);
                 setMessage(`Dog has been successfully updated.`);
-                setForm({}); // Clear form on successful submit
             } else {
                 await createDog(dog);
                 setMessage(`Dog has been successfully created.`);
-                setForm({}); // Clear form on successful submit
             }
 
+            setForm({}); // Clear form on success
             setIsError(false);
         } catch (error) {
             console.error("Submit error:", error);
