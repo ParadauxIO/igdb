@@ -125,7 +125,7 @@ export default function AdminEditDogView() {
             type: "textarea",
         },
         {
-            name: "dog_is_active",
+            name: "dog_is_archived",
             label: "Archived",
             type: "checkbox",
         }

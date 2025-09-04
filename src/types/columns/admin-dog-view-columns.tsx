@@ -88,7 +88,7 @@ export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleAr
         // Active
         columnHelper.accessor('dog_is_archived', {
             header: 'Active',
-            cell: info => info.getValue() ? 'No' : 'Yes',
+            cell: info => info.getValue() ? 'Yes' : 'No',
             footer: info => info.column.id,
         }),
 
@@ -125,11 +125,11 @@ export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleAr
             cell: ({row}) => {
                 const dog = row.original;
 
-                const actions = useMemo(() => [
+                const actions = [
                     {label: "Edit", action: handleEditDog},
                     {label: "Delete", action: handleDeleteDog},
                     {label: "Archive", action: handleArchiveDog}
-                ], []);
+                ];
 
                 return (
                     <ActionsDropdown
