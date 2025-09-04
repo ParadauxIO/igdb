@@ -19,16 +19,6 @@ export default function ActionsDropdown({ id, actions }: ActionsDropdownProps) {
         setIsOpen(prev => !prev);
     };
 
-    const handleAction = async (actionFn: (id: string) => Promise<void> | void) => {
-    try {
-        await actionFn(id);  // wait for action to finish if it's async
-    } catch (e) {
-        console.error("Action failed:", e);
-    }
-    setIsOpen(false);
-    window.location.reload();
-    };
-
     return (
         <div className="actions-dropdown">
             <div onClick={toggleDropdown}>
@@ -38,7 +28,7 @@ export default function ActionsDropdown({ id, actions }: ActionsDropdownProps) {
             {isOpen && (
                 <div className="dropdown-menu">
                     {actions.map(({ label, action }) => (
-                        <button key={label} onClick={() => handleAction(action)}>
+                        <button key={label} onClick={() => action(id)}>
                             {label}
                         </button>
                     ))}
