@@ -125,11 +125,11 @@ export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleAr
             cell: ({row}) => {
                 const dog = row.original;
 
-                const actions = [
+                const actions = useMemo(() => [
                     {label: "Edit", action: handleEditDog},
                     {label: "Delete", action: handleDeleteDog},
                     {label: "Archive", action: handleArchiveDog}
-                ];
+                ], []);
 
                 return (
                     <ActionsDropdown
