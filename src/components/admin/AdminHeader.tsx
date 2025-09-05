@@ -10,6 +10,11 @@ export default function AdminHeader() {
         setNavOpen(false);
     }, [location.pathname]);
 
+    // Check if the path is /admin/dogs/create or /admin/dogs/edit/:id
+    const isOnDogFormPage =
+        location.pathname === "/admin/dogs/create" ||
+        /^\/admin\/dogs\/edit\/[^/]+$/.test(location.pathname);
+
     return (
         <header className="primary-header admin-header flex">
             <div className="logo">
@@ -36,10 +41,19 @@ export default function AdminHeader() {
                     className="primary-navigation flex"
                     data-visible={navOpen}
                 >
-                    <li><NavLink to="/admin">Dashboard</NavLink></li>
-                    <li><NavLink to="/admin/users">Users</NavLink></li>
-                    <li><NavLink to="/admin/dogs">Dogs</NavLink></li>
-                    <li><NavLink to="/">Back</NavLink></li>
+                    {/* Show this link only on /admin/dogs/create or /admin/dogs/edit/:id */}
+                    {isOnDogFormPage ? (
+                        <li>
+                            <NavLink to="/admin/dogs">← Back to Dogs</NavLink>
+                        </li>
+                    ) : (
+                        <>
+                            <li><NavLink to="/admin">Dashboard</NavLink></li>
+                            <li><NavLink to="/admin/users">Users</NavLink></li>
+                            <li><NavLink to="/admin/dogs">Dogs</NavLink></li>
+                            <li><NavLink to="/">Back to Home</NavLink></li>
+                        </>
+                    )}
                 </ul>
             </nav>
         </header>
