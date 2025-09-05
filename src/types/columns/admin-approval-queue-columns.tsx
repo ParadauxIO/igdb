@@ -102,8 +102,30 @@ export const getAdminApprovalQueueColumns = (userId: string) => {
                 cell: ({row}) => {
                     const update = row.original;
                     const actions = [
-                        {label: "Approve", action: (id: string) => approveUpdate(id, userId)},
-                        {label: "Delete", action: (id: string) => rejectUpdate(id)},
+                        {
+                            label: "Approve",
+                            action: async (id: string) => {
+                                try {
+                                    await approveUpdate(id, userId);
+                                    window.location.reload(); // reload after success
+                                } catch (error) {
+                                    console.error("Failed to approve update", error);
+                                    alert("Failed to approve update");
+                                }
+                            }
+                        },
+                        {
+                            label: "Delete",
+                            action: async (id: string) => {
+                                try {
+                                    await rejectUpdate(id);
+                                    window.location.reload(); // reload after success
+                                } catch (error) {
+                                    console.error("Failed to delete update", error);
+                                    alert("Failed to delete update");
+                                }
+                            }
+                        }
                     ];
                     return <ActionsDropdown id={update.update_id} actions={actions}/>;
                 },
