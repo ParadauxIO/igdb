@@ -124,11 +124,6 @@ export default function AdminEditDogView() {
             label: "General Notes",
             type: "textarea",
         },
-        {
-            name: "dog_is_archived",
-            label: "Archived",
-            type: "checkbox",
-        }
     ];
 
     if (isLoading) {
