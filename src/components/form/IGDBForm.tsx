@@ -76,7 +76,9 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                     case 'password':
                         return (
                             <div key={field.name} className="text-input form-input">
-                                <label className="font-semibold">{field.label}</label>
+                                <label className={`font-semibold ${field.required ? 'required' : ''}`}>
+                                    {field.label}
+                                </label>
                                 {field.description && <p className="description"> {field.description} </p>}
                                 <input
                                     type={field.type}
@@ -92,7 +94,9 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                     case 'select':
                         return (
                             <div key={field.name} className="select-input form-input">
-                                <label className="font-semibold">{field.label}</label>
+                                <label className={`font-semibold ${field.required ? 'required' : ''}`}>
+                                    {field.label}
+                                </label>
                                 {field.description && <p className="description"> {field.description} </p>}
                                 <select
                                     name={field.name}
@@ -119,7 +123,9 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                                         checked={Boolean(value)}
                                         onChange={e => handleChange(field.name, e.target.checked)}
                                     />
-                                    <label className="font-semibold">{field.label}</label>
+                                    <label className={`font-semibold ${field.required ? 'required' : ''}`}>
+                                        {field.label}
+                                    </label>
                                 </div>
                                 {field.description && <p className="description"> {field.description} </p>}
                             </div>
@@ -128,7 +134,9 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                     case 'datetime':
                         return (
                             <div key={field.name} className="datetime-input form-input">
-                                <label className="font-semibold">{field.label}</label>
+                                <label className={`font-semibold ${field.required ? 'required' : ''}`}>
+                                    {field.label}
+                                </label>
                                 <input
                                     type="datetime-local"
                                     name={field.name}

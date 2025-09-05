@@ -115,7 +115,7 @@ export const getDogById = async (dogId: string) => {
     return data;
 }
 
-export const deleteDog = async (dogId: string) => {
+export const deleteDog = async (dogId: string): Promise<void> => {
     const {error} = await supabase
         .from('dogs')
         .delete()
@@ -123,14 +123,14 @@ export const deleteDog = async (dogId: string) => {
 
     if (error) {
         console.error("Failed to delete dog:", error);
-        return;
+        throw new Error("Failed to delete dog");
     }
 };
 
 export const archiveDog = async (dogId: string) => {
     const {error} = await supabase
         .from('dogs')
-        .update({dog_is_active: false})
+        .update({dog_is_archived: true})
         .eq('dog_id', dogId);
 
     if (error) {
