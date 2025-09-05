@@ -47,7 +47,7 @@ $nav-text-color: black;
             transition: transform 500ms ease-out;
         }
 
-        .primary-navigation[data-visable="true"] {
+        .primary-navigation[data-visible="true"] {
             transform: translateX(0%);
         }
 

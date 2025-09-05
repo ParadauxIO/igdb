@@ -16,7 +16,7 @@ export type SampleDog = {
     dog_name: string;
     dog_role: string;
     dog_yob: number;
-    dog_sex: "male" | "female" | string; // assuming these are possible values
+    dog_sex: "Male" | "Female" | string; // assuming these are possible values
     dog_picture: string; // URL string
     dog_status: string;
     dog_current_handler: string; // probably a user ID

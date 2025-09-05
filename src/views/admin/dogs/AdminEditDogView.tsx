@@ -5,6 +5,8 @@ import IGDBForm, {type FormField} from "../../../components/form/IGDBForm.tsx";
 import {useAuth} from "../../../state/hooks/useAuth.ts";
 import {createDog, getDogById, updateDog} from "../../../partials/dog.ts";
 import "./AdminEditDogView.scss";
+import { uploadAndGetUrl } from "../../../partials/fileUpload.ts";
+import StatusCard from "../../../components/general/StatusCard.tsx";
 
 export default function AdminEditDogView() {
     const { dogId } = useParams<{ dogId?: string }>();
@@ -35,9 +37,37 @@ export default function AdminEditDogView() {
         }
     }, [dogId, isEditMode]);
 
+    function isFile(value: unknown): value is File {
+        return typeof File !== "undefined" && value instanceof File;
+    }
+
     const handleSubmit = async (dog: Partial<Dog>) => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
         try {
             dog.dog_created_by = user?.id;
+
+            if (dog.dog_picture) {
+                let filesToUpload: File[] = [];
+
+                if (Array.isArray(dog.dog_picture)) {
+                    filesToUpload = dog.dog_picture.filter(isFile);
+                } else if (isFile(dog.dog_picture)) {
+                    filesToUpload = [dog.dog_picture];
+                }
+
+                if (filesToUpload.length > 0) {
+                    const [uploadedUrl] = await uploadAndGetUrl(filesToUpload, "sample", "dogs");
+                    dog.dog_picture = uploadedUrl; // replace File(s) with URL
+                } else if (typeof dog.dog_picture === "string") {
+                    // Already a URL — do nothing
+                } else {
+                    // Not valid file or string, clear the field
+                    dog.dog_picture = undefined;
+                }
+            } else {
+                dog.dog_picture = undefined;
+            }
 
             if (isEditMode) {
                 await updateDog(dog);
@@ -47,13 +77,15 @@ export default function AdminEditDogView() {
                 setMessage(`Dog has been successfully created.`);
             }
 
+            setForm({}); // Clear form on success
             setIsError(false);
         } catch (error) {
+            console.error("Submit error:", error);
             const action = isEditMode ? "update" : "create";
             setMessage(`Failed to ${action} dog. Please try again later.`);
             setIsError(true);
         }
-    }
+    };
 
     const dogFormFields: FormField[] = [
         {
@@ -67,7 +99,7 @@ export default function AdminEditDogView() {
             label: "Role",
             type: "select",
             options: ["Guide Dog", "Assistance Dog", "Community Ambassador Dog"],
-            required: true,
+            required: false,
         },
         {
             name: "dog_yob",
@@ -79,13 +111,14 @@ export default function AdminEditDogView() {
             name: "dog_sex",
             label: "Sex",
             type: "select",
-            options: ["male", "female", "unknown"],
+            options: ["Male", "Female"],
             required: true,
         },
         {
             name: "dog_picture",
-            label: "Picture URL",
-            type: "text",
+            label: "Dog Photo",
+            type: "file-upload",
+            required: false,
         },
         {
             name: "dog_status",
@@ -102,11 +135,6 @@ export default function AdminEditDogView() {
             label: "General Notes",
             type: "textarea",
         },
-        {
-            name: "dog_is_archived",
-            label: "Archived",
-            type: "checkbox",
-        }
     ];
 
     if (isLoading) {
@@ -123,12 +151,7 @@ export default function AdminEditDogView() {
         <div className="dog-create-view">
             <div className="dog-create-container">
                 <h1>{isEditMode ? "Edit Dog" : "Add New Dog"}</h1>
-                {message && (
-                    <div className={"status-message-card " + (isError ? "error" : "success")}>
-                        <h3>{isError ? "Failure" : "Success!"}</h3>
-                        <p>{message}</p>
-                    </div>
-                )}
+                <StatusCard message={message} isError={isError}/>
                 <IGDBForm
                     form={form}
                     setForm={setForm}
