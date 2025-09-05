@@ -3,7 +3,7 @@ export interface Dog {
     dog_name: string;
     dog_role: 'Guide Dog' | 'Assistance Dog' | 'Community Ambassador Dog';
     dog_yob: number;
-    dog_sex: 'male' | 'female' | 'unknown';
+    dog_sex: 'Male' | 'Female';
     dog_picture: string | null;
     dog_status: string | null;
     dog_current_handler: string | null;
