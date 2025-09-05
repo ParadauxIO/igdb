@@ -37,24 +37,35 @@ export default function AdminEditDogView() {
         }
     }, [dogId, isEditMode]);
 
+    function isFile(value: unknown): value is File {
+        return typeof File !== "undefined" && value instanceof File;
+    }
+
     const handleSubmit = async (dog: Partial<Dog>) => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
         try {
             dog.dog_created_by = user?.id;
 
-            // Check if it's a File[] (new upload)
-            if (Array.isArray(dog.dog_picture) && dog.dog_picture[0] instanceof File) {
-                const [uploadedUrl] = await uploadAndGetUrl(
-                    dog.dog_picture,
-                    "sample",
-                    "dogs"
-                );
-                dog.dog_picture = uploadedUrl;
-            } else if (typeof dog.dog_picture === "string") {
-                // Leave the existing string URL as-is
+            if (dog.dog_picture) {
+                let filesToUpload: File[] = [];
+
+                if (Array.isArray(dog.dog_picture)) {
+                    filesToUpload = dog.dog_picture.filter(isFile);
+                } else if (isFile(dog.dog_picture)) {
+                    filesToUpload = [dog.dog_picture];
+                }
+
+                if (filesToUpload.length > 0) {
+                    const [uploadedUrl] = await uploadAndGetUrl(filesToUpload, "sample", "dogs");
+                    dog.dog_picture = uploadedUrl; // replace File(s) with URL
+                } else if (typeof dog.dog_picture === "string") {
+                    // Already a URL — do nothing
+                } else {
+                    // Not valid file or string, clear the field
+                    dog.dog_picture = undefined;
+                }
             } else {
-                // If cleared or not a valid value, remove it
                 dog.dog_picture = undefined;
             }
 
