@@ -111,7 +111,7 @@ export default function AdminEditDogView() {
             name: "dog_sex",
             label: "Sex",
             type: "select",
-            options: ["male", "female", "unknown"],
+            options: ["Male", "Female"],
             required: true,
         },
         {
