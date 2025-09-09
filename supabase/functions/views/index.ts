@@ -15,9 +15,6 @@ const supabaseAdmin = createClient(supabaseUrl, serviceRole);
 // ---------  CORS ---------
 const allowedOrigins = [
     "https://dogs.guidedogs.ie",
-    "http://localhost:5173",
-    "https://igdb-demo.paradaux.io",
-    "https://igdb.pages.dev",
 ];
 
 function getCorsHeaders(origin: string | null) {

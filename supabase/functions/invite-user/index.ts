@@ -1,14 +1,10 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js";
 // ---------  BEGIN SETTINGS ---------
-const redirectTo = 'https://igdb-demo.paradaux.io/onboarding';
+const redirectTo = 'https://dogs.guidedogs.ie/onboarding';
 const allowedOrigins = [
-    "https://dogs.guidedogs.ie", // Production
-    "http://localhost:5173", // Local
-    "https://igdb-demo.paradaux.io", // IGDB sandbox alt domain
-    "https://igdb.pages.dev"  // IGDB sandbox
+    "https://dogs.guidedogs.ie",
 ];
-
 const functionalRoles = [
     'staff',
     'volunteer',
