@@ -1,0 +1,161 @@
+[
+  {
+    "update_id": "17d1eac5-e101-44f7-9f42-3e3e1e45e2ea",
+    "dog_id": "4a5aa72f-0102-4ec2-b76e-e0e9ecdd2a01",
+    "update_title": "Max completed advanced obedience training",
+    "update_description": "Max successfully completed his advanced obedience training program with flying colors. He demonstrated excellent recall, heel work, and stay commands.",
+    "update_media_urls": [
+      "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/1.jpg",
+      "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/2.jpg"
+    ],
+    "update_created_at": "2024-01-15T14:30:00+00:00",
+    "update_date_approved": "2024-01-15T16:00:00+00:00",
+    "update_created_by": "{{UPDATER2_ID}}",
+    "update_approved_by": "{{ADMIN2_ID}}"
+  },
+  {
+    "update_id": "59a9eb35-6b3d-4cf7-a282-7c52d03a5a12",
+    "dog_id": "4a5aa72f-0102-4ec2-b76e-e0e9ecdd2a01",
+    "update_title": "Veterinary checkup - all clear",
+    "update_description": "Annual veterinary examination completed. Max is in excellent health with no concerns noted. Weight is ideal at 32.5kg.",
+    "update_media_urls": [
+      "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/3.jpg"
+    ],
+    "update_created_at": "2024-02-20T09:15:00+00:00",
+    "update_date_approved": "2024-02-20T10:00:00+00:00",
+    "update_created_by": "{{UPDATER1_ID}}",
+    "update_approved_by": "{{ADMIN2_ID}}"
+  },
+  {
+    "update_id": "b0f02b5a-b44b-49d2-aec0-5e071c21deef",
+    "dog_id": "4a5aa72f-0102-4ec2-b76e-e0e9ecdd2a01",
+    "update_title": "Max enjoys beach day",
+    "update_description": "Max had his first beach experience today! He loved running in the sand and was very well-behaved around other dogs and people. Great socialization opportunity.",
+    "update_media_urls": [
+      "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/4.jpg",
+      "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/5.jpg"
+    ],
+    "update_created_at": "2024-03-18T12:30:00+00:00",
+    "update_date_approved": "2024-03-18T13:45:00+00:00",
+    "update_created_by": "{{UPDATER1_ID}}",
+    "update_approved_by": "{{ADMIN1_ID}}"
+  },
+  {
+    "update_id": "fcf6e83f-7116-4953-9208-07e02e46f9c3",
+    "dog_id": "4a5aa72f-0102-4ec2-b76e-e0e9ecdd2a01",
+    "update_title": "Max assists with community event",
+    "update_description": "Max participated in a local community safety demonstration, showing children proper dog interaction techniques. He was a perfect ambassador for service dogs.",
+    "update_media_urls": [
+      "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/6.jpg",
+      "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/7.jpg"
+    ],
+    "update_created_at": "2024-04-02T09:30:00+00:00",
+    "update_date_approved": "2024-04-02T11:00:00+00:00",
+    "update_created_by": "{{UPDATER1_ID}}",
+    "update_approved_by": "{{ADMIN1_ID}}"
+  },
+  {
+    "update_id": "204fae7d-3731-4395-9a57-b3f31fcd1bc2",
+    "dog_id": "fa062c25-2c36-4a53-b441-6b1ae8aeae4a",
+    "update_title": "Luna visits children's hospital",
+    "update_description": "Luna had a wonderful day at the children's hospital today. She brought smiles to 15 young patients and their families. The staff was amazed by her gentle nature.",
+    "update_media_urls": [
+      "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/8.jpg"
+    ],
+    "update_created_at": "2024-01-28T11:00:00+00:00",
+    "update_date_approved": "2024-01-28T12:30:00+00:00",
+    "update_created_by": "{{UPDATER1_ID}}",
+    "update_approved_by": "{{ADMIN2_ID}}"
+  },
+  {
+    "update_id": "8d262d89-e140-4b1b-b3f5-62a41a674e49",
+    "dog_id": "fa062c25-2c36-4a53-b441-6b1ae8aeae4a",
+    "update_title": "Luna learns new therapy techniques",
+    "update_description": "Luna has been working with our therapy coordinator to learn new calming techniques for anxious patients. She's mastering the \"deep pressure therapy\" position.",
+    "update_media_urls": [
+      "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/9.jpg"
+    ],
+    "update_created_at": "2024-03-05T15:45:00+00:00",
+    "update_date_approved": null,
+    "update_created_by": "{{UPDATER2_ID}}",
+    "update_approved_by": null
+  },
+  {
+    "update_id": "6c7c2ac4-d265-4ff3-9e0a-d6ed8f24a2d7",
+    "dog_id": "fa062c25-2c36-4a53-b441-6b1ae8aeae4a",
+    "update_title": "Luna's grooming day",
+    "update_description": "Luna received her monthly grooming session today. Her coat is looking beautiful and healthy. The groomer noted her excellent behavior during nail trimming.",
+    "update_media_urls": [
+      "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/10.jpg"
+    ],
+    "update_created_at": "2024-03-22T10:00:00+00:00",
+    "update_date_approved": null,
+    "update_created_by": "{{UPDATER2_ID}}",
+    "update_approved_by": null
+  },
+  {
+    "update_id": "b12975d3-558e-4d74-b071-bf373cc7a12b",
+    "dog_id": "fa062c25-2c36-4a53-b441-6b1ae8aeae4a",
+    "update_title": "Luna receives therapy certification renewal",
+    "update_description": "Luna successfully passed her annual therapy dog certification renewal. She scored excellent marks in all categories including temperament, obedience, and stress response.",
+    "update_media_urls": [
+      "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/11.jpg"
+    ],
+    "update_created_at": "2024-04-08T11:15:00+00:00",
+    "update_date_approved": "2024-04-08T12:00:00+00:00",
+    "update_created_by": "{{UPDATER1_ID}}",
+    "update_approved_by": "{{ADMIN2_ID}}"
+  },
+  {
+    "update_id": "0c238c96-19b6-490b-a6fc-85733c2323cb",
+    "dog_id": "3bfa28b4-bb83-4970-b03a-d00c4dcf0bc6",
+    "update_title": "Rocky excels in agility course",
+    "update_description": "Rocky completed his first official agility course today with an impressive time of 42 seconds! His jumping technique and weave pole navigation were particularly strong.",
+    "update_media_urls": [
+      "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/12.jpg"
+    ],
+    "update_created_at": "2024-02-12T16:20:00+00:00",
+    "update_date_approved": "2024-02-12T17:00:00+00:00",
+    "update_created_by": "{{UPDATER1_ID}}",
+    "update_approved_by": "{{ADMIN2_ID}}"
+  },
+  {
+    "update_id": "af947b96-75be-4604-b316-9864c8a18d86",
+    "dog_id": "3bfa28b4-bb83-4970-b03a-d00c4dcf0bc6",
+    "update_title": "Behavioral assessment update",
+    "update_description": "Rocky's monthly behavioral assessment shows continued improvement in focus and impulse control. He's ready to advance to intermediate protection training.",
+    "update_media_urls": [
+      "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/13.jpg"
+    ],
+    "update_created_at": "2024-03-10T13:00:00+00:00",
+    "update_date_approved": "2024-03-10T14:15:00+00:00",
+    "update_created_by": "{{UPDATER2_ID}}",
+    "update_approved_by": "{{ADMIN1_ID}}"
+  },
+  {
+    "update_id": "3fa35356-792e-45c5-877f-c08ff3b30279",
+    "dog_id": "3bfa28b4-bb83-4970-b03a-d00c4dcf0bc6",
+    "update_title": "Rocky meets new training partner",
+    "update_description": "Rocky was introduced to his new training partner, a 3-year-old German Shepherd named Zeus. They worked well together during their first joint session.",
+    "update_media_urls": [
+      "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/14.jpg"
+    ],
+    "update_created_at": "2024-03-25T14:00:00+00:00",
+    "update_date_approved": "2024-03-25T15:30:00+00:00",
+    "update_created_by": "{{UPDATER2_ID}}",
+    "update_approved_by": "{{ADMIN2_ID}}"
+  },
+  {
+    "update_id": "942dfb8a-0d28-4b98-bc8a-98ce16789b21",
+    "dog_id": "3bfa28b4-bb83-4970-b03a-d00c4dcf0bc6",
+    "update_title": "Rocky's first protection work evaluation",
+    "update_description": "Rocky completed his first formal protection work evaluation. He showed excellent control and discrimination, earning a score of 87/100. Ready for advanced training.",
+    "update_media_urls": [
+      "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/updates/15.jpg"
+    ],
+    "update_created_at": "2024-04-15T08:00:00+00:00",
+    "update_date_approved": null,
+    "update_created_by": "{{UPDATER1_ID}}",
+    "update_approved_by": null
+  }
+]

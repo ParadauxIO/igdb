@@ -1,0 +1,86 @@
+import {createColumnHelper} from "@tanstack/react-table";
+import type {User} from "../User.ts";
+import {useMemo} from "react";
+import ActionsDropdown from "../../components/general/ActionsDropdown.tsx";
+
+type AdminUserViewColumnsProps = {
+    handleEditUser: (id: string) => void;
+    handleDeleteUser: (id: string) => void;
+    handleArchiveUser: (id: string) => void;
+}
+
+const columnHelper = createColumnHelper<User>();
+export const getAdminUserViewColumns = ({handleEditUser, handleDeleteUser, handleArchiveUser}: AdminUserViewColumnsProps) => {
+    return [
+        // Multiselect checkbox for selecting rows
+        columnHelper.display({
+            id: "select",
+            header: ({ table }) => (
+                <input
+                    type="checkbox"
+                    checked={table.getIsAllRowsSelected()}
+                    onChange={table.getToggleAllRowsSelectedHandler()}
+                />
+            ),
+            cell: ({ row }) => (
+                <input
+                    type="checkbox"
+                    checked={row.getIsSelected()}
+                    onChange={row.getToggleSelectedHandler()}
+                />
+            ),
+        }),
+
+        // Fields from the user type
+        columnHelper.accessor('name', {
+            header: 'Name',
+            cell: info => info.getValue(),
+            footer: info => info.column.id,
+        }),
+
+        columnHelper.accessor('permission_role', {
+            header: 'Role',
+            cell: info => info.getValue() ?? 'N/A',
+            footer: info => info.column.id,
+        }),
+
+        columnHelper.accessor('functional_role', {
+            header: 'Function',
+            cell: info => info.getValue(),
+            footer: info => info.column.id,
+        }),
+
+        columnHelper.accessor('phone', {
+            header: 'Phone',
+            footer: info => info.column.id,
+        }),
+
+        columnHelper.accessor('is_archived', {
+            header: 'Archived',
+            cell: info => info.getValue() ? 'Yes' : 'No',
+            footer: info => info.column.id,
+        }),
+
+        // Kebab menu for actions
+        columnHelper.display({
+            id: "actions",
+            header: "Actions",
+            cell: ({ row }) => {
+                const user = row.original;
+
+                const actions = useMemo(() => [
+                    {label: "Edit", action: handleEditUser},
+                    {label: "Delete", action: handleDeleteUser},
+                    {label: "Archive", action: handleArchiveUser}
+                ], []);
+
+                return (
+                    <ActionsDropdown
+                        id={user.id}
+                        actions={actions}
+                    />
+                );
+            },
+        }),
+    ];
+}

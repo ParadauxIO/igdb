@@ -1,0 +1,122 @@
+[
+  {
+    "dog_id": "4a5aa72f-0102-4ec2-b76e-e0e9ecdd2a01",
+    "dog_name": "Max",
+    "dog_role": "Guide Dog",
+    "dog_yob": 2020,
+    "dog_sex": "Male",
+    "dog_picture": "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/dogs/1.jpg",
+    "dog_status": "",
+    "dog_current_handler": "{{UPDATER1_ID}}",
+    "dog_general_notes": "Very friendly and well-trained. Excellent with children.",
+    "dog_created_by": "{{ADMIN1_ID}}"
+  },
+  {
+    "dog_id": "fa062c25-2c36-4a53-b441-6b1ae8aeae4a",
+    "dog_name": "Luna",
+    "dog_role": "Assistance Dog",
+    "dog_yob": 2019,
+    "dog_sex": "Female",
+    "dog_picture": "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/dogs/2.jpg",
+    "dog_status": "",
+    "dog_current_handler": "{{UPDATER2_ID}}",
+    "dog_general_notes": "Calm temperament, perfect for therapy work. Loves swimming.",
+    "dog_created_by": "{{ADMIN1_ID}}"
+  },
+  {
+    "dog_id": "3bfa28b4-bb83-4970-b03a-d00c4dcf0bc6",
+    "dog_name": "Rocky",
+    "dog_role": "Community Ambassador Dog",
+    "dog_yob": 2019,
+    "dog_sex": "Male",
+    "dog_picture": "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/dogs/3.jpg",
+    "dog_status": "",
+    "dog_current_handler": "{{UPDATER2_ID}}",
+    "dog_general_notes": "High energy, very intelligent. Excels in agility training.",
+    "dog_created_by": "{{ADMIN2_ID}}"
+  },
+  {
+    "dog_id": "b3c9f2d0-7a8e-4f3f-90de-1c8e9dcd0f67",
+    "dog_name": "Bella",
+    "dog_role": "Guide Dog",
+    "dog_yob": 2018,
+    "dog_sex": "Female",
+    "dog_picture": "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/dogs/4.jpg",
+    "dog_status": "",
+    "dog_current_handler": "{{UPDATER1_ID}}",
+    "dog_general_notes": "Calm and obedient. Great at navigating urban environments.",
+    "dog_created_by": "{{ADMIN2_ID}}"
+  },
+  {
+    "dog_id": "9f56ab8e-28d3-4bc3-88cc-08d7f28a0fba",
+    "dog_name": "Charlie",
+    "dog_role": "Assistance Dog",
+    "dog_yob": 2017,
+    "dog_sex": "Male",
+    "dog_picture": "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/dogs/5.jpg",
+    "dog_status": "",
+    "dog_current_handler": "{{UPDATER2_ID}}",
+    "dog_general_notes": "Extremely agile and intelligent. Loves outdoor work.",
+    "dog_created_by": "{{ADMIN1_ID}}"
+  },
+  {
+    "dog_id": "8e3fa7cd-4b52-4f99-b324-232be0e9e6f0",
+    "dog_name": "Daisy",
+    "dog_role": "Guide Dog",
+    "dog_yob": 2020,
+    "dog_sex": "Female",
+    "dog_picture": "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/dogs/6.jpg",
+    "dog_status": "",
+    "dog_current_handler": "{{UPDATER1_ID}}",
+    "dog_general_notes": "Loving and playful. Gets along well with other pets.",
+    "dog_created_by": "{{ADMIN2_ID}}"
+  },
+  {
+    "dog_id": "1a74d9b2-517a-4e7f-9c7f-d1b2c6b47d4a",
+    "dog_name": "Milo",
+    "dog_role": "Assistance Dog",
+    "dog_yob": 2019,
+    "dog_sex": "Male",
+    "dog_picture": "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/dogs/7.jpg",
+    "dog_status": "",
+    "dog_current_handler": "{{UPDATER2_ID}}",
+    "dog_general_notes": "Affectionate and sociable. Enjoys short walks.",
+    "dog_created_by": "{{ADMIN1_ID}}"
+  },
+  {
+    "dog_id": "5f984dca-8877-42db-845f-721d7abf986b",
+    "dog_name": "Zara",
+    "dog_role": "Guide Dog",
+    "dog_yob": 2016,
+    "dog_sex": "Female",
+    "dog_picture": "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/dogs/8.jpg",
+    "dog_status": "",
+    "dog_current_handler": "{{UPDATER2_ID}}",
+    "dog_general_notes": "Energetic and strong. Excellent endurance.",
+    "dog_created_by": "{{ADMIN2_ID}}"
+  },
+  {
+    "dog_id": "bde4b35d-2a89-47d0-bce6-77e215e93810",
+    "dog_name": "Toby",
+    "dog_role": "Community Ambassador Dog",
+    "dog_yob": 2018,
+    "dog_sex": "Male",
+    "dog_picture": "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/dogs/9.jpg",
+    "dog_status": "",
+    "dog_current_handler": "{{UPDATER1_ID}}",
+    "dog_general_notes": "Excellent scent tracking skills. Very curious and friendly.",
+    "dog_created_by": "{{ADMIN2_ID}}"
+  },
+  {
+    "dog_id": "cd712e8b-3bc4-49c7-8d4f-3e1d0b7b4a96",
+    "dog_name": "Sadie",
+    "dog_role": "Guide Dog",
+    "dog_yob": 2020,
+    "dog_sex": "Female",
+    "dog_picture": "https://ceiqksexeqmhazwurmkz.supabase.co/storage/v1/object/public/sample/dogs/10.jpg",
+    "dog_status": "",
+    "dog_current_handler": "{{UPDATER2_ID}}",
+    "dog_general_notes": "Gentle and empathetic. Excellent with children and seniors.",
+    "dog_created_by": "{{ADMIN1_ID}}"
+  }
+]

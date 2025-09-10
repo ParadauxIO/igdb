@@ -1,0 +1,23 @@
+.feed {
+  display: flex;
+  flex-direction: column;
+  align-items: center; // centers children horizontally
+  padding: 2rem 1rem;
+}
+
+.no-feed {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  h1 {
+    font-family: sans-serif;
+    text-align: center;
+    font-size: 2rem;
+  }
+
+  a {
+    font-size: 1.2rem;
+
+  }
+}
