@@ -1,0 +1,26 @@
+.igdb-footer {
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  padding: 1rem 2rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-align: center;
+  font-family: sans-serif;
+
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  &__brand {
+    font-weight: 600;
+    color: #111827;
+  }
+
+  &__copy {
+    font-style: italic;
+  }
+}
