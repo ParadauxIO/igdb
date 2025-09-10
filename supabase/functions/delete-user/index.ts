@@ -5,10 +5,7 @@ const priviligedSupabaseClient = createClient(Deno.env.get('SUPABASE_URL') ?? ''
 
 // ---------  BEGIN SETTINGS ---------
 const allowedOrigins = [
-    "https://dogs.guidedogs.ie", // Production
-    "http://localhost:5173", // Local
-    "https://igdb-demo.paradaux.io", // IGDB sandbox alt domain
-    "https://igdb.pages.dev"  // IGDB sandbox
+    "https://dogs.guidedogs.ie",
 ];
 // ---------  END SETTINGS ---------
 

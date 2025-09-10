@@ -4,10 +4,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2';
 
 // CORS config
 const allowedOrigins = [
-    "https://dogs.guidedogs.ie", // Production
-    "http://localhost:5173",     // Local
-    "https://igdb-demo.paradaux.io", // IGDB sandbox alt domain
-    "https://igdb.pages.dev"         // IGDB sandbox
+    "https://dogs.guidedogs.ie",
 ];
 
 function corsHeaders(origin: string, isAllowed: boolean) {
