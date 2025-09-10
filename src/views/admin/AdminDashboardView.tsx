@@ -62,6 +62,7 @@ export default function AdminDashboardView() {
         } catch (e) {
             setMessage("An error occurred while updating the settings.");
             setIsError(true);
+            console.log(e);
         }
     }
 

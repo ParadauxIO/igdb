@@ -13,6 +13,10 @@ type ProfileForm = Partial<User> & {
 
 export default function UserProfileView() {
     const { user, refreshProfile } = useAuth();
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState<string | null>(null);
+    const [isError, setIsError] = useState<boolean>(false);
+
     if (!user) {
         return <div className="user-profile-view error">You must be logged in to view this page.</div>;
     }
@@ -22,15 +26,12 @@ export default function UserProfileView() {
         phone: user.phone,
     });
 
-    const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState<string | null>(null);
-    const [isError, setIsError] = useState<boolean>(false);
 
     const fields: FormField[] = [
         { name: "name", label: "Name", type: "text", required: true },
         { name: "phone", label: "Phone Number", type: "text", required: true },
-        { name: "password", label: "Password", type: "password", required: false },
-        { name: "confirm_password", label: "Confirm Password", type: "password", required: false },
+        { name: "password", label: "New Password", description: "Password must contain at least 8 characters.", type: "password", required: false },
+        { name: "confirm_password", label: "Confirm New Password", type: "password", required: false },
     ];
 
     const onSubmit = async (update: ProfileForm) => {
@@ -42,6 +43,12 @@ export default function UserProfileView() {
             if (update.password && update.password !== update.confirm_password) {
                 setIsError(true);
                 setMessage("Passwords do not match.");
+                return;
+            }
+
+            if (update.password && update.password.length < 8) {
+                setIsError(true);
+                setMessage("Password must contain at least 8 characters.")
                 return;
             }
 

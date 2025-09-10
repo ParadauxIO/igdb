@@ -28,6 +28,7 @@ import AdminDashboardView from "./views/admin/AdminDashboardView.tsx";
 import AdminEditUserView from "./views/admin/user/AdminEditUserView.tsx";
 import OnboardingView from "./views/auth/OnboardingView.tsx";
 import PasswordResetView from "./views/auth/PasswordResetView.tsx";
+import TermsView from "./views/TermsView.tsx";
 
 // tiny loading element so we don't flash the login screen during refresh
 const Loading = <div style={{ padding: 24, textAlign: "center" }}>Loading…</div>;
@@ -54,6 +55,7 @@ createRoot(document.getElementById("root")!).render(
                             <Route path="users/profile" element={<UserProfileView />} />
                             <Route path="logout" element={<LogoutView />} />
                             <Route path="dogs" element={<DogView />} />
+                            <Route path="terms" element={<TermsView/>} />
 
                             {/* Updater/Admin gated section */}
                             <Route

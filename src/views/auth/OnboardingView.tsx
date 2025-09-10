@@ -4,7 +4,6 @@ import TermsAndConditions from "../../components/onboarding/TermsAndConditions.t
 import {useState} from "react";
 import StatusCard from "../../components/general/StatusCard.tsx";
 import "./OnboardingView.scss";
-import {useAuth} from "../../state/hooks/useAuth.ts";
 
 type OnboardingForm = {
     name: string;
@@ -18,12 +17,11 @@ export default function OnboardingView() {
     const [form, setForm] = useState<Partial<OnboardingForm>>({});
     const [message, setMessage] = useState<string | null>(null);
     const [isError, setIsError] = useState<boolean>(false);
-    const {refreshProfile} = useAuth();
 
     const fields: FormField[] = [
         {name: 'name', label: 'Name', type: 'text', required: true},
         {name: 'phone', label: 'Phone Number', type: 'text', required: false},
-        {name: 'password', label: 'Password', type: 'password', required: true},
+        {name: 'password', label: 'Password', type: 'password', description: "Password must contain at least 8 characters.", required: true},
         {name: 'confirm_password', label: 'Confirm Password', type: 'password', required: true},
         {name: "Terms and Conditions", label: "You must accept our terms and conditions to finish creating your account", type: 'component', component: TermsAndConditions},
         {name: 'terms_accepted', label: 'I accept the terms and conditions', type: 'checkbox', required: true, description: "You must accept our terms and conditions to finish creating your account."}
@@ -36,6 +34,12 @@ export default function OnboardingView() {
         if (form.password !== form.confirm_password) {
             setIsError(true);
             setMessage("Passwords do not match.");
+            return;
+        }
+
+        if (form.password && form.password?.length < 8) {
+            setIsError(true);
+            setMessage("Password must contain at least 8 characters.")
             return;
         }
 
@@ -71,15 +75,8 @@ export default function OnboardingView() {
 
         setIsError(false);
         setMessage("Successfully onboarded. You can continue to the app.");
-
-        if (form.password && form.password.trim().length > 0) {
-            // Make the logout immediate so you don't sit on a soon-to-be-dead refresh token.
-            await supabase.auth.signOut();
-            window.location.assign("/");
-            return;
-        }
-
-        await refreshProfile();
+        // Sign them out and bring them to the login page.
+        supabase.auth.signOut().then(() => window.location.href = "/");
     };
 
 
