@@ -7,33 +7,23 @@ type AdminUserViewColumnsProps = {
     handleEditUser: (id: string) => void;
     handleDeleteUser: (id: string) => void;
     handleArchiveUser: (id: string) => void;
+    handleResendInvite: (id: string) => void;
 }
 
 const columnHelper = createColumnHelper<User>();
-export const getAdminUserViewColumns = ({handleEditUser, handleDeleteUser, handleArchiveUser}: AdminUserViewColumnsProps) => {
+export const getAdminUserViewColumns = ({handleEditUser, handleDeleteUser, handleArchiveUser, handleResendInvite}: AdminUserViewColumnsProps) => {
     return [
         // Multiselect checkbox for selecting rows
-        columnHelper.display({
-            id: "select",
-            header: ({ table }) => (
-                <input
-                    type="checkbox"
-                    checked={table.getIsAllRowsSelected()}
-                    onChange={table.getToggleAllRowsSelectedHandler()}
-                />
-            ),
-            cell: ({ row }) => (
-                <input
-                    type="checkbox"
-                    checked={row.getIsSelected()}
-                    onChange={row.getToggleSelectedHandler()}
-                />
-            ),
-        }),
 
         // Fields from the user type
         columnHelper.accessor('name', {
             header: 'Name',
+            cell: info => info.getValue(),
+            footer: info => info.column.id,
+        }),
+
+        columnHelper.accessor('email', {
+            header: 'Email',
             cell: info => info.getValue(),
             footer: info => info.column.id,
         }),
@@ -71,7 +61,8 @@ export const getAdminUserViewColumns = ({handleEditUser, handleDeleteUser, handl
                 const actions = useMemo(() => [
                     {label: "Edit", action: handleEditUser},
                     {label: "Delete", action: handleDeleteUser},
-                    {label: "Archive", action: handleArchiveUser}
+                    {label: "Archive", action: handleArchiveUser},
+                    {label: "Resend Invite", action: handleResendInvite}
                 ], []);
 
                 return (

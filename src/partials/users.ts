@@ -19,10 +19,7 @@ export const archiveUser = async (userId: string) => {
         .update({ is_archived: true})
         .eq('id', userId);
 
-    if (error) {
-        console.error("Failed to disable user:", error);
-        return;
-    }
+    return error;
 }
 
 export const deleteUser = async (userId: string) => {
@@ -31,9 +28,18 @@ export const deleteUser = async (userId: string) => {
         .delete()
         .eq('id', userId);
 
-    if (error) {
-        throw new Error("Failed to delete user");
-    }
+    return error;
+}
+
+export const resendInvite = async (userId: string) => {
+    const { error } = await supabase.functions.invoke("update-user", {
+        body: {
+            type: "resend-invite",
+            id: userId
+        }
+    });
+
+    return error;
 }
 
 export const getUserById = async (userId: string) => {

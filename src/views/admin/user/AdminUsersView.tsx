@@ -6,14 +6,16 @@ import {useNavigate} from "react-router";
 import Table from "../../../components/info/Table.tsx";
 import Card from "../../../components/info/Card.tsx";
 import {getAdminUserViewColumns} from "../../../types/columns/admin-user-view-columns.tsx";
-import {archiveUser, deleteUser} from "../../../partials/users.ts";
+import {archiveUser, deleteUser, resendInvite} from "../../../partials/users.ts";
+import StatusCard from "../../../components/general/StatusCard.tsx";
 
 export default function AdminUsersView() {
-
     const navigate = useNavigate();
     const [users, setUsers] = useState<User[]>([])
     const [loading, setLoading] = useState<boolean>(false);
     const [showArchived] = useState<boolean>(false);
+    const [isError, setIsError] = useState<boolean>(false);
+    const [message, setMessage] = useState<string|null>(null);
 
     const filteredUsers = useMemo(
         () => users.filter(u => !u.is_archived || showArchived),
@@ -24,21 +26,63 @@ export default function AdminUsersView() {
         navigate(`/admin/users/edit/${id}`);
     };
 
-    const handleArchiveUser = (id: string) => {
+    const handleArchiveUser = async (id: string) => {
         const confirmed = window.confirm("Are you sure you want to archive this user?");
         if (!confirmed) return;
-        archiveUser(id).then(() => fetchUsers());
+
+        const error = await archiveUser(id);
+
+        if (error) {
+            setIsError(true);
+            setMessage("Failed to archive user.")
+            return;
+        }
+
+        setIsError(false);
+        setMessage("Successfully archived user.")
+        await fetchUsers();
     };
 
-    const handleDeleteUser = (id: string) => {
+    const handleResendInvite = async (id: string) => {
+        const error = await resendInvite(id);
+
+        if (error) {
+            setIsError(true);
+            setMessage(error.details);
+            return;
+        }
+
+        setIsError(false);
+        setMessage("Resent invite")
+    }
+
+    const handleDeleteUser = async (id: string) => {
         const confirmed = window.confirm("Are you sure you want to delete this user?");
         if (!confirmed) return;
-        deleteUser(id).then(() => fetchUsers());
+
+        const error = await deleteUser(id);
+
+        if (error && error.details.includes("still referenced")) {
+            setIsError(true);
+            setMessage("Failed to delete user as there are still dogs assigned to them.");
+            return;
+        }
+
+        if (error) {
+            setIsError(true);
+            setMessage("Failed to delete user.");
+            return;
+        }
+
+        setIsError(false);
+        setMessage("Successfully deleted user.")
+
+        await fetchUsers();
     };
 
     const table = useReactTable({
         data: filteredUsers,
-        columns: getAdminUserViewColumns({handleEditUser, handleDeleteUser, handleArchiveUser}),
+        columns: getAdminUserViewColumns({handleEditUser, handleDeleteUser, handleArchiveUser, handleResendInvite}),
         getCoreRowModel: getCoreRowModel(),
         getRowId: originalRow => originalRow.id,
         enableRowSelection: true
@@ -55,7 +99,7 @@ export default function AdminUsersView() {
             .select("*")
             .order("created_at", {ascending: false});
         if (error) {
-            console.log("Error occurred while fetching dogs:", error);
+            console.log("Error occurred while fetching users:", error);
             return;
         }
         if (data) {
@@ -67,7 +111,6 @@ export default function AdminUsersView() {
     useEffect(() => {
         fetchUsers();
     }, []);
-
 
     return (
         <div className="user-view">
@@ -81,6 +124,7 @@ export default function AdminUsersView() {
                 <div className="user-cards">
                     <Card title="Total Users" value={users.length} />
                 </div>
+                <StatusCard message={message} isError={isError}/>
                 <Table loading={loading} table={table} />
             </div>
         </div>
