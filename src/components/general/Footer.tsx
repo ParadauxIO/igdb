@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
         <footer className="igdb-footer">
             <div className="footer__content">
                 <span className="footer__copy">
-                    © {new Date().getFullYear()} Irish Guide Dogs.
+                    © {new Date().getFullYear()} Irish Guide Dogs for the Blind.
                 </span>
                 {" "}<Link to="/terms">Terms</Link>
             </div>
