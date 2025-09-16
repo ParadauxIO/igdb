@@ -22,6 +22,12 @@ export const getAdminUserViewColumns = ({handleEditUser, handleDeleteUser, handl
             footer: info => info.column.id,
         }),
 
+        columnHelper.accessor('email', {
+            header: 'Email',
+            cell: info => info.getValue(),
+            footer: info => info.column.id,
+        }),
+
         columnHelper.accessor('permission_role', {
             header: 'Role',
             cell: info => info.getValue() ?? 'N/A',
