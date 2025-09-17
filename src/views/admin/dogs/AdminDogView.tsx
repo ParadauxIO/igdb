@@ -49,7 +49,6 @@ export default function AdminDogView() {
     async function loadDogs() {
         setLoading(true);
         const returnedDogs = await getDogsWithNames();
-        console.log(returnedDogs)
         if (returnedDogs) {
             setDogs(returnedDogs);
             setLoading(false);
@@ -70,18 +69,26 @@ export default function AdminDogView() {
                         <span>New Dog</span>
                     </button>
                 </div>
+                <div className="dog-count">
+                    <div className="left">
+                        Total Dogs: <span id="total-count">{dogs.length}</span>
+                    </div>
+                    <div className="right">
+                        <form>
+                            <label htmlFor="dog_is_enabled">Show archived dogs?</label>
+                            <input
+                                type="checkbox"
+                                id="dog_is_enabled"
+                                checked={showArchived}
+                                onChange={e => setShowArchived(e.target.checked)}
+                                placeholder="Filter by status"
+                            />
+                        </form>
+                    </div>
+                </div>
                 <div className="table-wrapper">
                     <Table loading={loading} table={table}/>
                 </div>
-                <form>
-                    <label htmlFor="dog_is_enabled">Show archived dogs?</label>
-                    <input
-                        type="checkbox"
-                        id="dog_is_enabled"
-                        checked={showArchived}
-                        onChange={e => setShowArchived(e.target.checked)}
-                        placeholder="Filter by status"
-                    /></form>
             </div>
         </div>
     )
