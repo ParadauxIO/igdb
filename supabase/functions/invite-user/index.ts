@@ -12,7 +12,8 @@ const functionalRoles = [
     'trainer',
     'temporary boarder',
     'client',
-    'adoptive family'
+    'adoptive family',
+    'sponsor'
 ];
 // ---------  END SETTINGS ---------
 const priviligedSupabaseClient = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '');
@@ -53,13 +54,18 @@ serve(async (req)=>{
         });
     }
     const { email, functional_role } = await req.json();
+
     if (!email || !functional_role) {
         return new Response('Bad Request: Missing email or functional_role', {
             status: 400,
             headers: getCorsHeaders(origin)
         });
     }
-    if (!validateEmail(email)) {
+
+    const rawEmail = String(email ?? '');
+    const normalisedEmail = rawEmail.trim().toLowerCase();
+
+    if (!validateEmail(normalisedEmail)) {
         return new Response('Bad Request: Invalid email format', {
             status: 400,
             headers: getCorsHeaders(origin)
@@ -77,7 +83,7 @@ serve(async (req)=>{
             headers: getCorsHeaders(origin)
         });
     }
-    const { data, error: e1 } = await priviligedSupabaseClient.auth.admin.inviteUserByEmail(email, {
+    const { data, error: e1 } = await priviligedSupabaseClient.auth.admin.inviteUserByEmail(normalisedEmail, {
         redirectTo
     });
     if (e1) {
@@ -107,16 +113,36 @@ serve(async (req)=>{
         }
         userId = invitedUser.id;
     }
-    const { error: e2 } = await priviligedSupabaseClient.from('users').insert({
-        id: userId,
-        functional_role: functional_role,
-        permission_role: "viewer"
-    });
-    if (e2) {
-        console.error(e2);
-        return new Response(`Error inviting user: ${e2.message}`, {
+    const { error: updErr } = await priviligedSupabaseClient
+        .from('users')
+        .update({
+            functional_role,
+            email: normalisedEmail,
+        })
+        .eq('id', userId);
+
+    if (updErr) {
+        console.error(updErr);
+        return new Response(`Error inviting user: ${updErr.message}`, {
             status: 400,
-            headers: getCorsHeaders(origin)
+            headers: getCorsHeaders(origin),
+        });
+    }
+
+    // ensure functional_role & email are set/normalised;
+    const { error: updErr } = await priviligedSupabaseClient
+        .from('users')
+        .update({
+            functional_role,
+            email: normalisedEmail, // fine now that the column exists
+        })
+        .eq('id', userId);
+
+    if (updErr) {
+        console.error(updErr);
+        return new Response(`Error inviting user: ${updErr.message}`, {
+            status: 400,
+            headers: getCorsHeaders(origin),
         });
     }
     return new Response(JSON.stringify({

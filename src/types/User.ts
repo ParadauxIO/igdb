@@ -1,6 +1,7 @@
 export interface User {
     id: string;
     name: string;
+    email: string;
     permission_role: 'viewer' | 'admin' | 'updater';
     functional_role: string;
     phone: string;
