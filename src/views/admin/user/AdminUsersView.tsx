@@ -4,16 +4,16 @@ import {supabase} from "../../../state/supabaseClient.ts";
 import {getCoreRowModel, useReactTable} from "@tanstack/react-table";
 import {useNavigate} from "react-router";
 import Table from "../../../components/info/Table.tsx";
-import Card from "../../../components/info/Card.tsx";
 import {getAdminUserViewColumns} from "../../../types/columns/admin-user-view-columns.tsx";
 import {archiveUser, deleteUser, resendInvite} from "../../../partials/users.ts";
 import StatusCard from "../../../components/general/StatusCard.tsx";
+import "./AdminUsersView.scss";
 
 export default function AdminUsersView() {
     const navigate = useNavigate();
     const [users, setUsers] = useState<User[]>([])
     const [loading, setLoading] = useState<boolean>(false);
-    const [showArchived] = useState<boolean>(false);
+    const [showArchived, setShowArchived] = useState<boolean>(false);
     const [isError, setIsError] = useState<boolean>(false);
     const [message, setMessage] = useState<string|null>(null);
 
@@ -121,11 +121,28 @@ export default function AdminUsersView() {
                         <span>Invite New User</span>
                     </button>
                 </div>
-                <div className="user-cards">
-                    <Card title="Total Users" value={users.length} />
+                <div className="user-count">
+                    <div className="left">
+                        Total Users: <span id="total-count">{users.length}</span>
+                    </div>
+                    <div className="right">
+                        <form>
+                            <label htmlFor="user_is_enabled">Show archived users?</label>
+                            <input
+                                type="checkbox"
+                                id="user_is_enabled"
+                                checked={showArchived}
+                                onChange={e => setShowArchived(e.target.checked)}
+                                placeholder="Filter by status"
+                            />
+                            </form>
+                    </div>
                 </div>
                 <StatusCard message={message} isError={isError}/>
-                <Table loading={loading} table={table} />
+                <div className="table-wrapper">
+                    <Table loading={loading} table={table} />
+                </div>
+
             </div>
         </div>
     )

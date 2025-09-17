@@ -13,7 +13,6 @@ type AdminUserViewColumnsProps = {
 const columnHelper = createColumnHelper<User>();
 export const getAdminUserViewColumns = ({handleEditUser, handleDeleteUser, handleArchiveUser, handleResendInvite}: AdminUserViewColumnsProps) => {
     return [
-        // Multiselect checkbox for selecting rows
 
         // Fields from the user type
         columnHelper.accessor('name', {
