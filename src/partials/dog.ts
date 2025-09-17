@@ -16,7 +16,8 @@ export const getUserDogs = async (userId: string): Promise<DogSearchResult[]> =>
     const {data, error} = await supabase
         .from("dogs")
         .select("dog_id, dog_name")
-        .eq("dog_current_handler", userId);
+        .eq("dog_current_handler", userId)
+        .eq("dog_is_archived", false);
 
     if (error) {
         throw new Error("Failed to fetch dogs");

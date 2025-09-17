@@ -6,6 +6,7 @@ import type {DogUpdate} from "../../types/DogUpdate.ts";
 import Update from "./Update.tsx";
 import {useAuth} from "../../state/hooks/useAuth.ts";
 import {getUserFeed} from "../../partials/update.ts";
+import { getDogsWithNames } from "../../partials/dog.ts";
 import {Link} from "react-router";
 
 export default function UpdateFeed() {
@@ -50,8 +51,25 @@ export default function UpdateFeed() {
             }
             setLoading(true);
             try {
-                const data = await getUserFeed();
-                if (active) setUpdates(data);
+                const [updatesData, dogsData] = await Promise.all([
+                  getUserFeed(),
+                  getDogsWithNames(),
+                ]);
+
+                if (!dogsData) {throw new Error("Failed to load dogs");}
+                
+                const dogArchiveMap = new Map(
+                    dogsData.map((dog) => [dog.dog_id, dog.dog_is_archived])
+                );
+
+                // only include updates where the dog is NOT archived
+                const filtered = updatesData.filter(
+                    (update) => dogArchiveMap.get(update.dog_id) === false
+                );
+
+                if (active) setUpdates(filtered);
+            } catch (err) {
+              console.error("Failed to fetch updates or dogs:", err);
             } finally {
                 if (active) setLoading(false);
             }
