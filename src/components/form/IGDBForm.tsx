@@ -10,7 +10,7 @@ import MediaUploader from "./MediaUploader";
 export type FormField = {
     name: string;
     label: string;
-    type: 'text' | 'textarea' | 'password' | 'select' | 'checkbox' | 'datetime' | 'user-select' | 'dog-select' | 'file-upload' | 'component';
+    type: 'text' | 'textarea'| 'post-textarea' | 'password' | 'select' | 'checkbox' | 'datetime' | 'user-select' | 'dog-select' | 'file-upload' | 'component';
     description?: string;
     required?: boolean;
     component?: React.ComponentType<any>;
@@ -178,7 +178,31 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                                     rows={10}
                                 />
                             </div>
-                        )
+                        );
+
+                    case 'post-textarea':
+                        const maxLength = 200;
+                        return (
+                            <div key={field.name} className="text-input form-input">
+                                <label className="font-semibold">{field.label}</label>
+                                {field.description && <p className="description">{field.description}</p>}
+                                <textarea
+                                    name={field.name}
+                                    required={field.required}
+                                    value={value || ''}
+                                    onChange={e => {
+                                        const input = e.target.value.slice(0, maxLength);
+                                        handleChange(field.name, input);
+                                    }}
+                                    maxLength={maxLength}
+                                    className="border p-2 rounded"
+                                    rows={10}
+                                />
+                                <p className="char-counter text-sm text-gray-500">
+                                    {(value as string)?.length || 0}/{maxLength} characters
+                                </p>
+                            </div>
+                        );
 
                     case 'dog-select':
                         return (

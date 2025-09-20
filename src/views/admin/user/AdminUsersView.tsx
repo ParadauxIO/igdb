@@ -4,7 +4,6 @@ import {supabase} from "../../../state/supabaseClient.ts";
 import {getCoreRowModel, useReactTable} from "@tanstack/react-table";
 import {useNavigate} from "react-router";
 import Table from "../../../components/info/Table.tsx";
-import Card from "../../../components/info/Card.tsx";
 import {getAdminUserViewColumns} from "../../../types/columns/admin-user-view-columns.tsx";
 import {archiveUser, deleteUser, resendInvite} from "../../../partials/users.ts";
 import StatusCard from "../../../components/general/StatusCard.tsx";
