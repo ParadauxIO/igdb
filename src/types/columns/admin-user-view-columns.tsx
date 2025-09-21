@@ -51,7 +51,7 @@ export const getAdminUserViewColumns = ({handleEditUser, handleDeleteUser, handl
         }),
 
         columnHelper.accessor('days_since_last_posted', {
-            header: 'Days Since Last Post',
+            header: 'Last Posted',
             cell: info => {
                 const value = info.getValue();
                 if (value === null || value === undefined) return '—';
