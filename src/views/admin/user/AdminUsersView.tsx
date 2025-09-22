@@ -27,6 +27,7 @@ export default function AdminUsersView() {
             // Nulls go last
             const aDays = a.days_since_last_posted ?? -1;
             const bDays = b.days_since_last_posted ?? -1;
+            
             return bDays - aDays;
             });
         }
@@ -144,7 +145,7 @@ export default function AdminUsersView() {
 
             const lastUpdate = latestUpdateByUser[user.id];
             if (!lastUpdate) {
-            return { ...user, days_since_last_posted: null };
+            return { ...user, days_since_last_posted: 'Never' };
             }
 
             const lastUpdateDate = new Date(lastUpdate);
