@@ -2,7 +2,6 @@
 =                                              Create Tables                                                          =
 ======================================================================================================================*/
 
-
 -- Users table (extends Supabase auth.users)
 CREATE TABLE public.users
 (
