@@ -1,6 +1,6 @@
 import {supabase} from "../state/supabaseClient.ts";
 import type {DogUpdate} from "../types/DogUpdate.ts";
-import {uploadAndGetUrl} from "./fileUpload";
+import {uploadDogUpdateMedia} from "./fileUpload";
 
 /**
  * Posts a new dog update.
@@ -10,12 +10,10 @@ export const postUpdate = async (
 ): Promise<DogUpdate> => {
     let update_media_urls: string[] = [];
 
-    if (form.files && form.files.length > 0) {
-        update_media_urls = await uploadAndGetUrl(
-            form.files,
-            "sample", // TODO: change bucket name in prod
-            "updates"
-        );
+    if (form.files && form.dog_id && form.update_created_by && form.files.length > 0) {
+        update_media_urls = await uploadDogUpdateMedia(form.files, form.dog_id, form.update_created_by);
+    } else {
+        throw new Error("Failed to post update!");
     }
 
     const {data, error} = await supabase

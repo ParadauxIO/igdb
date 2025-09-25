@@ -87,6 +87,7 @@ export const createDog = async (form: Partial<Dog>) => {
 }
 
 export const updateDog = async (form: Partial<Dog>) => {
+    console.log("form", form);
     const {data, error} = await supabase
         .from('dogs')
         .update({...form})

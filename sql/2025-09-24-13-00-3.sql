@@ -73,38 +73,26 @@ CREATE TRIGGER dog_changes_trigger
     WHEN (OLD IS DISTINCT FROM NEW)
 EXECUTE FUNCTION public.log_dog_changes();
 
-
-
-
-
-
+/*======================================================================================================================
+=                                              Static Data Changes                                                     =
+======================================================================================================================*/
 
 -- Ingrid's configuration changes
 INSERT INTO public.system_settings (setting_key, setting_value, setting_type)
 VALUES ('postCharacterLimit', '200', 'integer');
 
+/*======================================================================================================================
+=                                              Row Level Security Changes                                              =
+======================================================================================================================*/
 
 -- dog-avatars RLS
 -- Only admins can add images to the dog-avatars bucket
 
--- INSERT
-create policy "avatars admin insert"
-    on storage.objects for insert
-    with check (
-    bucket_id = 'dog-avatars'
-        and public.is_admin(auth.uid())
-    );
-
--- UPDATE (rename/metadata)
-create policy "avatars admin update"
-    on storage.objects for update
-    using (bucket_id = 'dog-avatars' and public.is_admin(auth.uid()))
-    with check (bucket_id = 'dog-avatars' and public.is_admin(auth.uid()));
-
--- DELETE
-create policy "avatars admin delete"
-    on storage.objects for delete
-    using (bucket_id = 'dog-avatars' and public.is_admin(auth.uid()));
+CREATE POLICY "Admins have full access to the avatars bucket 1obye21_0"
+    ON storage.objects
+    FOR SELECT
+    TO authenticated
+    USING (bucket_id = 'dog-avatars' and public.is_admin(auth.uid()));
 
 -- dog-updates RLS
 create policy "updates owner insert"

@@ -5,7 +5,7 @@ import IGDBForm, {type FormField} from "../../../components/form/IGDBForm.tsx";
 import {useAuth} from "../../../state/hooks/useAuth.ts";
 import {createDog, getDogById, updateDog} from "../../../partials/dog.ts";
 import "./AdminEditDogView.scss";
-import { uploadAndGetUrl } from "../../../partials/fileUpload.ts";
+import { uploadDogAvatar } from "../../../partials/fileUpload.ts";
 import StatusCard from "../../../components/general/StatusCard.tsx";
 
 export default function AdminEditDogView() {
@@ -56,9 +56,8 @@ export default function AdminEditDogView() {
                     filesToUpload = [dog.dog_picture];
                 }
 
-                if (filesToUpload.length > 0) {
-                    const [uploadedUrl] = await uploadAndGetUrl(filesToUpload, "sample", "dogs");
-                    dog.dog_picture = uploadedUrl; // replace File(s) with URL
+                if (filesToUpload.length > 0 && dogId) {
+                    dog.dog_picture = await uploadDogAvatar(filesToUpload[0], dogId);
                 } else if (typeof dog.dog_picture === "string") {
                     // Already a URL — do nothing
                 } else {
