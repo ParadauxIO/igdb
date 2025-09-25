@@ -123,7 +123,5 @@ export const uploadDogAvatar = async (
     // 4) Public URL
     const { data } = supabase.storage.from(bucket).getPublicUrl(path);
 
-    console.log("data, ", data);
-
     return data.publicUrl; // unique filename => no cache-buster required
 };

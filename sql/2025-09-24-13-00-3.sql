@@ -88,11 +88,10 @@ VALUES ('postCharacterLimit', '200', 'integer');
 -- dog-avatars RLS
 -- Only admins can add images to the dog-avatars bucket
 
-CREATE POLICY "Admins have full access to the avatars bucket 1obye21_0"
-    ON storage.objects
-    FOR SELECT
-    TO authenticated
-    USING (bucket_id = 'dog-avatars' and public.is_admin(auth.uid()));
+CREATE POLICY "Admins have full access 1obye21_0" ON storage.objects FOR SELECT TO public USING (bucket_id = 'dog-avatars' and public.is_admin(auth.uid()));
+CREATE POLICY "Admins have full access 1obye21_1" ON storage.objects FOR INSERT TO public WITH CHECK (bucket_id = 'dog-avatars' and public.is_admin(auth.uid()));
+CREATE POLICY "Admins have full access 1obye21_2" ON storage.objects FOR UPDATE TO public USING (bucket_id = 'dog-avatars' and public.is_admin(auth.uid()));
+CREATE POLICY "Admins have full access 1obye21_3" ON storage.objects FOR DELETE TO public USING (bucket_id = 'dog-avatars' and public.is_admin(auth.uid()));
 
 -- dog-updates RLS
 create policy "updates owner insert"
