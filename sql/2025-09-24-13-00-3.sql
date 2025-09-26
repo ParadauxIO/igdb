@@ -258,4 +258,7 @@ CREATE TRIGGER dog_changes_trigger
     WHEN (OLD IS DISTINCT FROM NEW)
 EXECUTE FUNCTION public.log_dog_changes();
 
+CREATE INDEX IF NOT EXISTS ix_dogs_handlers_gin
+    ON public.dogs USING GIN (dog_current_handlers);
+
 COMMIT;

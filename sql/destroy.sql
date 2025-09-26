@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS system_settings;
+DROP TABLE IF EXISTS dog_following;
+DROP TABLE IF EXISTS dog_history;
+DROP TABLE IF EXISTS dog_updates;
+DROP TABLE IF EXISTS dogs;
+DROP TABLE IF EXISTS users;
