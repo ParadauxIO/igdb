@@ -113,7 +113,7 @@ serve(async (req)=>{
         }
         userId = invitedUser.id;
     }
-    const { error: updErr } = await priviligedSupabaseClient
+    const { error: updErr2 } = await priviligedSupabaseClient
         .from('users')
         .update({
             functional_role,
@@ -121,9 +121,9 @@ serve(async (req)=>{
         })
         .eq('id', userId);
 
-    if (updErr) {
-        console.error(updErr);
-        return new Response(`Error inviting user: ${updErr.message}`, {
+    if (updErr2) {
+        console.error(updErr2);
+        return new Response(`Error inviting user: ${updErr2.message}`, {
             status: 400,
             headers: getCorsHeaders(origin),
         });

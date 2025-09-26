@@ -6,16 +6,16 @@ import ActionsDropdown, { type DropdownAction } from "../general/ActionsDropdown
 type UpdateProps = {
     update: DogUpdate;
     isAdmin: boolean | null;
+    isCreator: boolean | null;
     removeUpdate: (id: string) => void;
 };
 
-export default function Update({ update, isAdmin, removeUpdate }: UpdateProps) {
-    const admin = !!isAdmin;
-    const isApproved = !!update.update_date_approved;
+export default function Update({ update, isAdmin, isCreator, removeUpdate }: UpdateProps) {
+    const isApproved = update.update_date_approved;
     const created = new Date(update.update_created_at);
 
     const actions: DropdownAction[] = [
-        { label: admin ? "Remove" : "Cancel", action: removeUpdate } // or () => removeUpdate(update.update_id)
+        { label: (isAdmin || (isCreator && isApproved)) ? "Remove" : "Cancel", action: removeUpdate } // or () => removeUpdate(update.update_id)
     ];
 
     return (
@@ -35,9 +35,10 @@ export default function Update({ update, isAdmin, removeUpdate }: UpdateProps) {
 
             <div className="update-footer">
                 <div className="time">
-                    <time dateTime={created.toISOString()}>{created.toLocaleString()}</time>
+                    <time dateTime={created.toISOString()}>{created.toLocaleString() + " "}</time>
+                    <span>Post for {update.dog && update.dog.dog_name}</span>
                 </div>
-                {(!isApproved || admin) && (
+                {(isCreator || isAdmin) && (
                     <ActionsDropdown id={update.update_id} actions={actions} />
                 )}
             </div>
