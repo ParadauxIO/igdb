@@ -11,4 +11,7 @@ export interface DogUpdate {
 
     creator_name?: string;
     dog_name?: string;
+    dog?: {
+        dog_name?: string;
+    }
 }

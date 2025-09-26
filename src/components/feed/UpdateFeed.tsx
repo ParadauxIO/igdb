@@ -13,7 +13,7 @@ export default function UpdateFeed() {
     const [loading, setLoading] = useState(true);
     const { isAdmin, user } = useAuth();
     const userId = user?.id;
-
+    console.log(updates);
     const removeUpdate = useCallback(
         async (id: string) => {
             const confirmed = window.confirm(
@@ -99,6 +99,7 @@ export default function UpdateFeed() {
                     key={update.update_id}
                     update={update}
                     isAdmin={isAdmin}
+                    isCreator={update.update_created_by === user.id}
                     removeUpdate={removeUpdate}
                 />
             ))}

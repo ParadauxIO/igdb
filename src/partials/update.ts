@@ -10,19 +10,26 @@ export const postUpdate = async (
 ): Promise<DogUpdate> => {
     let update_media_urls: string[] = [];
 
-    if (form.files && form.dog_id && form.update_created_by && form.files.length > 0) {
-        update_media_urls = await uploadDogUpdateMedia(form.files, form.dog_id, form.update_created_by);
-    } else {
-        throw new Error("Failed to post update!");
+    // Only upload if files exist
+    if (form.files && form.files.length > 0 && form.dog_id && form.update_created_by) {
+        update_media_urls = await uploadDogUpdateMedia(
+            form.files,
+            form.dog_id,
+            form.update_created_by
+        );
     }
 
-    const {data, error} = await supabase
+    if (!form.dog_id || !form.update_created_by) {
+        throw new Error("Missing required fields: dog_id or update_created_by");
+    }
+
+    const { data, error } = await supabase
         .from("dog_updates")
         .insert({
             dog_id: form.dog_id,
             update_title: form.update_title,
             update_description: form.update_description,
-            update_media_urls,
+            update_media_urls, // empty array if no files
             update_created_by: form.update_created_by,
         })
         .select()
