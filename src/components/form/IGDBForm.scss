@@ -127,4 +127,71 @@
     color: red;
     margin-left: 4px;
   }
+
+  .search-multi-container {
+    position: relative;
+
+    &.disabled {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+  }
+
+  .search-multi-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 40px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    cursor: text;
+    padding: 6px 8px;
+    gap: 8px;
+  }
+
+  .pillbox {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+
+    .placeholder {
+      color: #888;
+      user-select: none;
+    }
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #e5e7eb;
+    background: #f7fafc;
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    line-height: 1;
+
+    .pill-label {
+      white-space: nowrap;
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pill-remove {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      padding: 0;
+      color: #666;
+    }
+
+    .pill-remove:hover {
+      color: #333;
+    }
+  }
 }

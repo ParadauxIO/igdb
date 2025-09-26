@@ -41,42 +41,64 @@ export default function AdminEditDogView() {
         return typeof File !== "undefined" && value instanceof File;
     }
 
+    function extractAvatarFile(picture: unknown): File | null {
+        if (!picture) return null;
+        if (Array.isArray(picture)) return picture.find(isFile) ?? null;
+        return isFile(picture) ? picture : null;
+    }
+
     const handleSubmit = async (dog: Partial<Dog>) => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
         try {
+            // always stamp creator if available
             dog.dog_created_by = user?.id;
 
-            if (dog.dog_picture) {
-                let filesToUpload: File[] = [];
+            // pull out any file (don’t pass File objects to Supabase .update/.insert)
+            const avatarFile = extractAvatarFile(dog.dog_picture);
 
-                if (Array.isArray(dog.dog_picture)) {
-                    filesToUpload = dog.dog_picture.filter(isFile);
-                } else if (isFile(dog.dog_picture)) {
-                    filesToUpload = [dog.dog_picture];
+            // if they passed a string URL, keep it; otherwise strip before writes
+            const preexistingUrl = typeof dog.dog_picture === "string" ? dog.dog_picture : undefined;
+
+            if (isEditMode && dogId) {
+                // EDIT: if there’s a new file, upload first so the single update includes URL
+                let pictureUrl = preexistingUrl;
+
+                if (avatarFile) {
+                    pictureUrl = await uploadDogAvatar(avatarFile, dogId);
                 }
 
-                if (filesToUpload.length > 0 && dogId) {
-                    dog.dog_picture = await uploadDogAvatar(filesToUpload[0], dogId);
-                } else if (typeof dog.dog_picture === "string") {
-                    // Already a URL — do nothing
-                } else {
-                    // Not valid file or string, clear the field
-                    dog.dog_picture = undefined;
+                await updateDog({
+                    ...dog,
+                    dog_id: dogId,
+                    dog_picture: pictureUrl, // undefined clears, string sets
+                });
+
+                setMessage("Dog has been successfully updated.");
+            } else {
+                // CREATE: first create without picture
+                const created = await createDog({
+                    ...dog,
+                    dog_picture: undefined, // ensure no file sneaks in
+                });
+
+                // Expect createDog to return the row incl. dog_id.
+                const newId = (created as Dog)?.dog_id;
+                if (!newId) throw new Error("createDog did not return a dog_id");
+
+                // If user uploaded an image, upload then patch just the picture
+                if (avatarFile) {
+                    const url = await uploadDogAvatar(avatarFile, newId);
+                    await updateDog({ dog_id: newId, dog_picture: url });
+                } else if (preexistingUrl) {
+                    // Edge case: they somehow provided a URL at create time
+                    await updateDog({ dog_id: newId, dog_picture: preexistingUrl });
                 }
-            } else {
-                dog.dog_picture = undefined;
+
+                setMessage("Dog has been successfully created.");
             }
 
-            if (isEditMode) {
-                await updateDog(dog);
-                setMessage(`Dog has been successfully updated.`);
-            } else {
-                await createDog(dog);
-                setMessage(`Dog has been successfully created.`);
-            }
-
-            setForm({}); // Clear form on success
+            setForm({});
             setIsError(false);
         } catch (error) {
             console.error("Submit error:", error);
@@ -125,9 +147,9 @@ export default function AdminEditDogView() {
             type: "text",
         },
         {
-            name: "dog_current_handler",
-            label: "Current Handler",
-            type: "user-select",
+            name: "dog_current_handlers",
+            label: "Current Handler(s)",
+            type: "user-multi-select",
         },
         {
             name: "dog_general_notes",

@@ -22,10 +22,7 @@ export const postUpdate = async (
             dog_id: form.dog_id,
             update_title: form.update_title,
             update_description: form.update_description,
-            update_type: form.update_type,
             update_media_urls,
-            update_location: form.update_location,
-            update_tags: form.update_tags,
             update_created_by: form.update_created_by,
         })
         .select()

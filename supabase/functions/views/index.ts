@@ -46,42 +46,44 @@ async function getDogsView(client: any) {
 }
 
 async function getUserFeedView(client: any, userId: string) {
+    // 1) Dog IDs the user follows
+    const { data: follows, error: fErr } = await client
+        .from("dog_following")
+        .select("dog_id")
+        .eq("user_id", userId);
+
+    if (fErr) throw fErr;
+    const followedDogIds = (follows ?? []).map((r: any) => r.dog_id);
+
+    // 2) Build OR filter
+    // - If user follows dogs: approved updates for those dogs
+    // - Always: the user's own updates (approved or not)
+    const orParts: string[] = [`update_created_by.eq.${userId}`];
+    if (followedDogIds.length > 0) {
+        orParts.unshift(
+            `and(update_date_approved.not.is.null,dog_id.in.(${followedDogIds.join(",")}))`
+        );
+    }
+
+    // 3) One-shot query with inner join + archived filter
     const { data, error } = await client
         .from("dog_updates")
         .select(`
-      update_id,
-      dog_id,
-      update_title,
-      update_description,
-      update_media_urls,
-      update_date_approved,
-      update_created_at,
-      update_created_by,
-      update_approved_by,
-      dogs!inner (
-        dog_id,
-        dog_name,
-        dog_role,
-        dog_yob,
-        dog_sex,
-        dog_picture,
-        dog_following!inner ( user_id )
-      )
-    `)
-        .eq("dogs.dog_following.user_id", userId)
-        .or(`update_date_approved.not.is.null,update_created_by.eq.${userId}`)
-        .order("update_created_at", { ascending: false });
+            update_id, dog_id, update_title, update_description, update_media_urls,
+            update_date_approved, update_created_at, update_created_by, update_approved_by,
+            dog:dogs!inner ( dog_id, dog_name, dog_role, dog_yob, dog_sex, dog_picture, dog_is_archived )
+            `)
+        .or(orParts.join(","))
+        .eq("dog.dog_is_archived", false);
 
     if (error) throw error;
 
-    // Strip join noise
-    return (data ?? []).map((row: any) => {
-        if (row?.dogs) {
-            const { dog_following, ...dogFields } = row.dogs as any;
-            return { ...row, dogs: dogFields };
-        }
-        return row;
-    });
+    // 4) Sort by approval time first, then creation
+    return (data ?? []).sort(
+        (a: any, b: any) =>
+            new Date(b.update_date_approved ?? b.update_created_at).getTime() -
+            new Date(a.update_date_approved ?? a.update_created_at).getTime()
+    );
 }
 
 // ---------  HANDLER ---------

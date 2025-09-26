@@ -71,10 +71,13 @@ export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleAr
             footer: info => info.column.id,
         }),
 
-        // Current Handler
-        columnHelper.accessor('dog_current_handler_name', {
-            header: 'Current Handler',
-            cell: info => info.getValue() ?? 'N/A',
+        // Current Handler(s)
+        columnHelper.accessor('dog_current_handler_names', {
+            header: 'Current Handler(s)',
+            cell: info => {
+                const names: string[] | null | undefined = info.getValue();
+                return names && names.length > 0 ? names.join(', ') : 'N/A';
+            },
             footer: info => info.column.id,
         }),
 
