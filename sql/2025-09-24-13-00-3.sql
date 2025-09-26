@@ -261,4 +261,44 @@ EXECUTE FUNCTION public.log_dog_changes();
 CREATE INDEX IF NOT EXISTS ix_dogs_handlers_gin
     ON public.dogs USING GIN (dog_current_handlers);
 
+-- DATA MANAGEMENT
+
+create or replace function bucket_usage()
+    returns table (
+                      bucket_id text,
+                      file_count bigint,
+                      total_bytes bigint,
+                      total_pretty text
+                  )
+    language sql
+    security invoker
+as $$
+select
+    o.bucket_id,
+    count(*) filter (where (o.metadata->>'size') ~ '^\d+$') as file_count,
+    coalesce(sum((o.metadata->>'size')::bigint), 0)         as total_bytes,
+    pg_size_pretty(coalesce(sum((o.metadata->>'size')::bigint), 0)) as total_pretty
+from storage.objects o
+where (o.metadata ? 'size') and (o.metadata->>'size') ~ '^\d+$'
+group by o.bucket_id
+order by total_bytes desc;
+$$;
+
+revoke execute on function public.bucket_usage() from public, anon, authenticated;
+grant execute on function public.bucket_usage() to service_role;
+
+create or replace function public.list_storage_objects(buckets text[])
+    returns table(bucket_id text, name text)
+    language sql
+    security definer
+    set search_path = public, storage
+as $$
+select o.bucket_id, o.name
+from storage.objects o
+where o.bucket_id = any (buckets)
+$$;
+
+revoke all on function public.list_storage_objects(text[]) from public;
+grant execute on function public.list_storage_objects(text[]) to service_role;
+
 COMMIT;
