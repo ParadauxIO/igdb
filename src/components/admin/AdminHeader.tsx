@@ -51,6 +51,7 @@ export default function AdminHeader() {
                             <li><NavLink to="/admin">Dashboard</NavLink></li>
                             <li><NavLink to="/admin/users">Manage Users</NavLink></li>
                             <li><NavLink to="/admin/dogs">Manage Dogs</NavLink></li>
+                            <li><NavLink to="/admin/data">Manage Data</NavLink></li>
                             <li><NavLink to="/">Back to Home</NavLink></li>
                         </>
                     )}
