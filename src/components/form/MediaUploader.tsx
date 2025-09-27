@@ -125,7 +125,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
               <p>
                   {atLimit
                     ? `Upload limit reached (${maxFiles} image${maxFiles === 1 ? '' : 's'})`
-                    : 'Drag & drop or click to select multiple images'}
+                    : <p> Drag &amp; drop or click to select multiple images</p>}
               </p>
                 <input
                     id={name}
