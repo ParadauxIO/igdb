@@ -1,9 +1,63 @@
 .notification-box {
-  animation: fadeIn 0.3s ease-out;
+  background-color: #fffbea; // light yellow
+  border: 1px solid #fcd34d; // golden border
+  color: #78350f; // dark text
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
   position: relative;
+  animation: fadeIn 0.3s ease-out;
+  font-family: sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.close-button {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #78350f;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+.message {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.link-wrapper {
+  margin-top: 0.75rem;
+}
+
+.link {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #2563eb; // blue-600
+  text-decoration: underline;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #1d4ed8; // blue-700
+  }
 }

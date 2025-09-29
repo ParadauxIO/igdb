@@ -1,6 +1,7 @@
 import {useEffect, useState, useCallback} from "react";
 import {supabase} from "../../state/supabaseClient.ts";
 import "./UpdateFeed.scss";
+import "./NotificationBox.scss"
 
 import type {DogUpdate} from "../../types/DogUpdate.ts";
 import Update from "./Update.tsx";
@@ -16,6 +17,7 @@ export default function UpdateFeed() {
     const { isAdmin, user } = useAuth();
     const userId = user?.id;
     const [showNotification, setShowNotification] = useState(false);
+    const [formattedDogList, setFormattedDogList] = useState('');
 
     console.log(updates);    
 
@@ -39,6 +41,13 @@ export default function UpdateFeed() {
         [updates]
     );
 
+    function formatDogList(dogNames: string[]): string {
+        if (dogNames.length === 0) return '';
+        if (dogNames.length === 1) return dogNames[0];
+        if (dogNames.length === 2) return `${dogNames[0]} or ${dogNames[1]}`;
+        return `${dogNames.slice(0, -1).join(', ')}, or ${dogNames[dogNames.length - 1]}`;
+    }
+
     useEffect(() => {
         let active = true;
 
@@ -49,7 +58,9 @@ export default function UpdateFeed() {
                 return;
             }
             setLoading(true);
+
             const THIRTY_DAYS_AGO = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+            
             try {
                 // Single call — server already excludes archived dogs
                 const updatesData = await getUserFeed();
@@ -58,22 +69,32 @@ export default function UpdateFeed() {
 
                 const myDogs = await getUserDogs(userId);
 
-                const dogIdToLatestUpdate = new Map<string, Date>();
+                // 1. Only consider updates made by this user
+                const userUpdates = updatesData.filter(
+                (update) => update.update_created_by === userId
+                );
 
-                updatesData.forEach((update) => {
-                    const prev = dogIdToLatestUpdate.get(update.dog_id);
-                    const updatedAt = new Date(update.update_created_at);
-                    if (!prev || updatedAt > prev) {
-                    dogIdToLatestUpdate.set(update.dog_id, updatedAt);
-                    }
+                // 2. Build a map of the latest update per dog by this user
+                const dogIdToUserLatestUpdate = new Map<string, Date>();
+
+                userUpdates.forEach((update) => {
+                const prev = dogIdToUserLatestUpdate.get(update.dog_id);
+                const updatedAt = new Date(update.update_created_at);
+                if (!prev || updatedAt > prev) {
+                    dogIdToUserLatestUpdate.set(update.dog_id, updatedAt);
+                }
                 });
 
-                const hasStaleDogs = myDogs.some((dog) => {
-                    const lastUpdate = dogIdToLatestUpdate.get(dog.dog_id);
-                    return !lastUpdate || lastUpdate < THIRTY_DAYS_AGO;
-                });
+                // 3. Identify stale dogs (no update or >30 days old)
+                const staleDogs = myDogs
+                    .filter(dog => {
+                        const lastUserUpdate = dogIdToUserLatestUpdate.get(dog.dog_id);
+                        return !lastUserUpdate || lastUserUpdate < THIRTY_DAYS_AGO;
+                    }).map(dog => dog.dog_name ?? "(Unnamed dog)");
 
-                if (active) setShowNotification(hasStaleDogs);
+                setFormattedDogList(formatDogList(staleDogs));
+                setShowNotification(staleDogs.length > 0);
+
             } catch (err) {
                 console.error("Failed to fetch updates:", err);
             } finally {
@@ -122,8 +143,10 @@ export default function UpdateFeed() {
         <div className="feed">
             {showNotification && (
                 <NotificationBox
-                    message="You haven't posted in a while! Make sure to update your dogs with recent progress."
-                    onClose={() => setShowNotification(false)}
+                message={`You haven’t posted about ${formattedDogList} in the last 30 days.`}
+                linkText="Create a new post here!"
+                linkHref="/update/post"
+                onClose={() => setShowNotification(false)}
                 />
             )}
             {updates.map((update) => (
