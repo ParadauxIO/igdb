@@ -5,7 +5,7 @@ import {getCoreRowModel, useReactTable} from "@tanstack/react-table";
 import {useNavigate} from "react-router";
 import type {Dog} from "../../../types/Dog.ts";
 import Table from "../../../components/info/Table.tsx";
-import {archiveDog, deleteDog, getDogsWithNames} from "../../../partials/dog.ts";
+import {archiveDog, deleteDog, exportDogArchive, getDogsWithNames} from "../../../partials/dog.ts";
 import {getAdminDogViewColumns} from "../../../types/columns/admin-dog-view-columns.tsx";
 
 export default function AdminDogView() {
@@ -13,6 +13,7 @@ export default function AdminDogView() {
     const [loading, setLoading] = useState<boolean>(false);
     const navigate = useNavigate();
     const [showArchived, setShowArchived] = useState<boolean>(false);
+    const [isExporting, setIsExporting] = useState<boolean>(false);
 
     const filteredDogs = useMemo(
         () => dogs.filter(dog => !dog.dog_is_archived || showArchived),
@@ -25,7 +26,7 @@ export default function AdminDogView() {
         if (!confirmed) return;
         try {
             await deleteDog(dogId);
-            await loadDogs(); 
+            await loadDogs();
         } catch (error) {
             alert("Failed to delete dog. Please try again.");
         }
@@ -36,7 +37,13 @@ export default function AdminDogView() {
         archiveDog(dogId).then(() => loadDogs());
     }
 
-    const adminDogViewColumns = getAdminDogViewColumns({handleEditDog, handleDeleteDog, handleArchiveDog})
+    const handleExportDog = async (dogId: string) => {
+        setIsExporting(true);
+        await exportDogArchive(dogId);
+        setIsExporting(false);
+    }
+
+    const adminDogViewColumns = getAdminDogViewColumns({handleEditDog, handleDeleteDog, handleArchiveDog, handleExportDog})
 
     const table = useReactTable({
         data: filteredDogs,
@@ -58,6 +65,19 @@ export default function AdminDogView() {
     useEffect(() => {
         loadDogs();
     }, []);
+
+    if (isExporting) {
+        return (
+            <div className="dog-view">
+                <div className="exporting">
+                    <h1>Currently Exporting</h1>
+                    <p> Please wait this may take some time.</p>
+                    <p>A 'tar.gz' file will be downloaded with the dog's media and text content.</p>
+                    <p>This file can be opened with tools such as 7zip or WinRar.</p>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="dog-view">
