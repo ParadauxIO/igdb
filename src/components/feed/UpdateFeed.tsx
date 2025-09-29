@@ -8,12 +8,14 @@ import {useAuth} from "../../state/hooks/useAuth.ts";
 import {getUserFeed} from "../../partials/update.ts";
 import { getDogsWithNames } from "../../partials/dog.ts";
 import {Link} from "react-router";
+import NotificationBox from "./NotificationBox.tsx";
 
 export default function UpdateFeed() {
     const [updates, setUpdates] = useState<DogUpdate[]>([]);
     const [loading, setLoading] = useState(true);
     const {isAdmin, user} = useAuth();
     const userId = user?.id; // keep dependency stable
+    const [showNotification, setShowNotification] = useState(false);
 
     const removeUpdate = useCallback(
         async (id: string) => {
@@ -50,6 +52,7 @@ export default function UpdateFeed() {
                 return;
             }
             setLoading(true);
+            const THIRTY_DAYS_AGO = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
             try {
                 const [updatesData, dogsData] = await Promise.all([
                   getUserFeed(),
@@ -68,6 +71,28 @@ export default function UpdateFeed() {
                 );
 
                 if (active) setUpdates(filtered);
+
+                // NEW: Check for stale or missing updates
+                const myDogs = dogsData.filter(
+                    (dog) => dog.dog_current_handler === userId && !dog.dog_is_archived
+                );
+
+                const dogIdToLatestUpdate = new Map<string, Date>();
+
+                updatesData.forEach((update) => {
+                    const prev = dogIdToLatestUpdate.get(update.dog_id);
+                    const updatedAt = new Date(update.update_created_at);
+                    if (!prev || updatedAt > prev) {
+                    dogIdToLatestUpdate.set(update.dog_id, updatedAt);
+                    }
+                });
+
+                const hasStaleDogs = myDogs.some((dog) => {
+                    const lastUpdate = dogIdToLatestUpdate.get(dog.dog_id);
+                    return !lastUpdate || lastUpdate < THIRTY_DAYS_AGO;
+                });
+
+                if (active) setShowNotification(hasStaleDogs);
             } catch (err) {
               console.error("Failed to fetch updates or dogs:", err);
             } finally {
@@ -113,6 +138,12 @@ export default function UpdateFeed() {
 
     return (
         <div className="feed">
+            {showNotification && (
+                <NotificationBox
+                    message="You haven't posted in a while! Make sure to update your dogs with recent progress."
+                    onClose={() => setShowNotification(false)}
+                />
+            )}
             {updates.map((update) => (
                 <Update
                     key={update.update_id}
