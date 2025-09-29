@@ -6,16 +6,18 @@ import type {DogUpdate} from "../../types/DogUpdate.ts";
 import Update from "./Update.tsx";
 import {useAuth} from "../../state/hooks/useAuth.ts";
 import {getUserFeed} from "../../partials/update.ts";
-import { getDogsWithNames } from "../../partials/dog.ts";
+import { getUserDogs } from "../../partials/dog.ts";
 import {Link} from "react-router";
 import NotificationBox from "./NotificationBox.tsx";
 
 export default function UpdateFeed() {
     const [updates, setUpdates] = useState<DogUpdate[]>([]);
     const [loading, setLoading] = useState(true);
-    const {isAdmin, user} = useAuth();
-    const userId = user?.id; // keep dependency stable
+    const { isAdmin, user } = useAuth();
+    const userId = user?.id;
     const [showNotification, setShowNotification] = useState(false);
+
+    console.log(updates);    
 
     const removeUpdate = useCallback(
         async (id: string) => {
@@ -24,18 +26,12 @@ export default function UpdateFeed() {
             );
             if (!confirmed) return;
 
-            // optimistic update
             const prev = updates;
             setUpdates((curr) => curr.filter((u) => u.update_id !== id));
 
-            const {error} = await supabase
-                .from("dog_updates")
-                .delete()
-                .eq("update_id", id);
-
+            const { error } = await supabase.from("dog_updates").delete().eq("update_id", id);
             if (error) {
                 console.error("Error removing update:", error);
-                // rollback
                 setUpdates(prev);
                 alert("Failed to remove update.");
             }
@@ -45,6 +41,7 @@ export default function UpdateFeed() {
 
     useEffect(() => {
         let active = true;
+
         const fetchUpdates = async () => {
             if (!userId) {
                 setUpdates([]);
@@ -54,28 +51,12 @@ export default function UpdateFeed() {
             setLoading(true);
             const THIRTY_DAYS_AGO = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
             try {
-                const [updatesData, dogsData] = await Promise.all([
-                  getUserFeed(),
-                  getDogsWithNames(),
-                ]);
+                // Single call — server already excludes archived dogs
+                const updatesData = await getUserFeed();
 
-                if (!dogsData) {throw new Error("Failed to load dogs");}
-                
-                const dogArchiveMap = new Map(
-                    dogsData.map((dog) => [dog.dog_id, dog.dog_is_archived])
-                );
+                if (active) setUpdates(updatesData ?? []);
 
-                // only include updates where the dog is NOT archived
-                const filtered = updatesData.filter(
-                    (update) => dogArchiveMap.get(update.dog_id) === false
-                );
-
-                if (active) setUpdates(filtered);
-
-                // NEW: Check for stale or missing updates
-                const myDogs = dogsData.filter(
-                    (dog) => dog.dog_current_handler === userId && !dog.dog_is_archived
-                );
+                const myDogs = await getUserDogs(userId);
 
                 const dogIdToLatestUpdate = new Map<string, Date>();
 
@@ -94,11 +75,12 @@ export default function UpdateFeed() {
 
                 if (active) setShowNotification(hasStaleDogs);
             } catch (err) {
-              console.error("Failed to fetch updates or dogs:", err);
+                console.error("Failed to fetch updates:", err);
             } finally {
                 if (active) setLoading(false);
             }
         };
+
         fetchUpdates();
         return () => {
             active = false;
@@ -149,6 +131,7 @@ export default function UpdateFeed() {
                     key={update.update_id}
                     update={update}
                     isAdmin={isAdmin}
+                    isCreator={update.update_created_by === user.id}
                     removeUpdate={removeUpdate}
                 />
             ))}

@@ -204,7 +204,7 @@ export default function AdminUsersView() {
                 <div className="table-wrapper">
                     <Table loading={loading} table={table} />
                 </div>
-                
+
             </div>
         </div>
     )

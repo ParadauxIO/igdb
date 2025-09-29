@@ -7,11 +7,32 @@ import SearchDropdown from "./SearchDropdown.tsx";
 import {useAuth} from "../../state/hooks/useAuth.ts";
 import MediaUploader from "./MediaUploader";
 import { getSetting } from "../../partials/settings.ts";
+import SearchMultiSelect from "./SearchMultiSelect.tsx";
+
+export const formFieldTypes = [
+    "text",
+    "textarea",
+    "post-textarea",
+    "password",
+    "select",
+    "checkbox",
+    "datetime",
+    "user-select",
+    "dog-select",
+    "file-upload",
+    "number",
+    "component",
+    "multi-select",
+    "user-multi-select",
+    "dog-multi-select",
+] as const;
+
+export type FormFieldType = typeof formFieldTypes[number];
 
 export type FormField = {
     name: string;
     label: string;
-    type: 'text' | 'textarea'| 'post-textarea' | 'password' | 'select' | 'checkbox' | 'datetime' | 'user-select' | 'dog-select' | 'file-upload' | 'number' | 'component';
+    type: FormFieldType;
     description?: string;
     required?: boolean;
     component?: React.ComponentType<any>;
@@ -30,8 +51,8 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
     const [users, setUsers] = useState<User[]>([]);
     const [userDogs, setUserDogs] = useState<DogSearchResult[]>([]);
     const {user} = useAuth();
-    const hasUserSelect = fields.some(field => field.type === 'user-select');
-    const hasDogSelect = fields.some(field => field.type === 'dog-select');
+    const hasUserSelect = fields.some(field => field.type === 'user-select' || field.type === 'user-multi-select');
+    const hasDogSelect = fields.some(field => field.type === 'dog-select' || field.type === 'dog-multi-select');
     const [postCharacterLimit, setPostCharacterLimit] = useState<number | null>(null);
 
     useEffect(() => {
@@ -289,6 +310,63 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                                 <field.component/>
                             </div>
                         ) : null;
+
+                    case 'multi-select': {
+                        const arrayValue = (form[field.name as keyof T] as unknown as string[] | undefined) ?? [];
+                        return (
+                            <div key={field.name} className="form-input">
+                                <SearchMultiSelect
+                                    label={field.label}
+                                    name={field.name}
+                                    values={arrayValue}
+                                    required={field.required}
+                                    fetchOptions={async () => {
+                                        // If you want static options via field.options:
+                                        if (field.options && field.options.length) {
+                                            return field.options.map(o => ({label: o, value: o}));
+                                        }
+                                        // Otherwise throw to force caller to pass a custom component,
+                                        // or swap this to fetch from elsewhere.
+                                        return [];
+                                    }}
+                                    onChangeValues={(vals) => handleChange(field.name, vals)}
+                                />
+                                {field.description && <p className="description">{field.description}</p>}
+                            </div>
+                        );
+                    }
+
+                    case 'user-multi-select': {
+                        const arrayValue = (form[field.name as keyof T] as unknown as string[] | undefined) ?? [];
+                        return (
+                            <SearchMultiSelect
+                                label={field.label}
+                                name={field.name}
+                                values={arrayValue}
+                                required={field.required}
+                                fetchOptions={async () =>
+                                    users.map(u => ({ label: u.name ?? "(No name)", value: u.id }))
+                                }
+                                onChangeValues={(vals) => handleChange(field.name, vals)}
+                            />
+                        );
+                    }
+
+                    case 'dog-multi-select': {
+                        const arrayValue = (form[field.name as keyof T] as unknown as string[] | undefined) ?? [];
+                        return (
+                            <SearchMultiSelect
+                                label={field.label}
+                                name={field.name}
+                                values={arrayValue}
+                                required={field.required}
+                                fetchOptions={async () =>
+                                    userDogs.map(d => ({ label: d.dog_name ?? "(Unnamed dog)", value: d.dog_id }))
+                                }
+                                onChangeValues={(vals) => handleChange(field.name, vals)}
+                            />
+                        );
+                    }
 
                     default:
                         console.error("IGDBForm: Unsupported field type:", field.type);
