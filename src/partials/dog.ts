@@ -180,3 +180,56 @@ export const archiveDog = async (dogId: string) => {
         return;
     }
 }
+
+const filenameFromDisposition = (h: string | null, fallback: string) => {
+    if (!h) return fallback;
+    // e.g. attachment; filename="Rex-<uuid>.tar.gz"
+    const m = /filename\*?=(?:UTF-8''|")?([^\";]+)"?/i.exec(h);
+    return m?.[1] ? decodeURIComponent(m[1]) : fallback;
+}
+
+/**
+ * Calls the edge function and downloads the tar.gz
+ */
+export const exportDogArchive = async (dogId: string) => {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/export-dog`;
+    const res = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            // Needed by Supabase Functions from the browser:
+            "Authorization": session?.access_token ? `Bearer ${session.access_token}` : "",
+            "apikey": import.meta.env.VITE_SUPABASE_ANON_KEY,
+            // Optional: make it clear we want a file back
+            "Accept": "application/gzip",
+        },
+        body: JSON.stringify({ dog_id: dogId }),
+    });
+
+    if (!res.ok) {
+        // try read error JSON, fall back to text
+        let msg = `${res.status} ${res.statusText}`;
+        try {
+            const j = await res.json();
+            msg = j?.error ?? msg;
+        } catch {
+            msg = await res.text();
+        }
+        throw new Error(msg || "Export failed");
+    }
+
+    const blob = await res.blob(); // streaming under the hood; fine for typical sizes
+    const cd = res.headers.get("Content-Disposition");
+    const filename = filenameFromDisposition(cd, `dog-${dogId}.tar.gz`);
+
+    const href = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = href;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(href);
+}
