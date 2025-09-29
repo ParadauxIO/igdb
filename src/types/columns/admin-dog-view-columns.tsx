@@ -9,9 +9,10 @@ type AdminDogViewColumnsProps = {
     handleEditDog: (id: string) => void;
     handleDeleteDog: (id: string) => void;
     handleArchiveDog: (id: string) => void;
+    handleExportDog: (id: string) => void;
 }
 
-export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleArchiveDog}: AdminDogViewColumnsProps) => {
+export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleArchiveDog, handleExportDog}: AdminDogViewColumnsProps) => {
     return useMemo(() => [
         columnHelper.display({
             id: "select",
@@ -131,8 +132,9 @@ export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleAr
                 const actions = useMemo(() => [
                     {label: "Edit", action: handleEditDog},
                     {label: "Delete", action: handleDeleteDog},
-                    {label: "Archive", action: handleArchiveDog}
-                ], [handleEditDog, handleDeleteDog, handleArchiveDog]);
+                    {label: "Archive", action: handleArchiveDog},
+                    {label: "Export", action: handleExportDog}
+                ], [handleEditDog, handleDeleteDog, handleArchiveDog, handleExportDog]);
 
                 return (
                     <ActionsDropdown
@@ -142,5 +144,5 @@ export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleAr
                 );
             }
         }),
-    ], [handleEditDog, handleDeleteDog, handleArchiveDog]);
+    ], [handleEditDog, handleDeleteDog, handleArchiveDog, handleExportDog]);
 }
