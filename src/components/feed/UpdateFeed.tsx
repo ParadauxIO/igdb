@@ -19,8 +19,6 @@ export default function UpdateFeed() {
     const [showNotification, setShowNotification] = useState(false);
     const [formattedDogList, setFormattedDogList] = useState('');
 
-    console.log(updates);    
-
     const removeUpdate = useCallback(
         async (id: string) => {
             const confirmed = window.confirm(
@@ -60,7 +58,7 @@ export default function UpdateFeed() {
             setLoading(true);
 
             const THIRTY_DAYS_AGO = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-            
+
             try {
                 // Single call — server already excludes archived dogs
                 const updatesData = await getUserFeed();
@@ -68,6 +66,8 @@ export default function UpdateFeed() {
                 if (active) setUpdates(updatesData ?? []);
 
                 const myDogs = await getUserDogs(userId);
+
+                console.log(myDogs);
 
                 // 1. Only consider updates made by this user
                 const userUpdates = updatesData.filter(
@@ -92,8 +92,12 @@ export default function UpdateFeed() {
                         return !lastUserUpdate || lastUserUpdate < THIRTY_DAYS_AGO;
                     }).map(dog => dog.dog_name ?? "(Unnamed dog)");
 
-                setFormattedDogList(formatDogList(staleDogs));
-                setShowNotification(staleDogs.length > 0);
+                    if (active) {
+                        const formatted = formatDogList(staleDogs);
+                        setFormattedDogList(formatted);
+                        const notify = staleDogs.length > 0;
+                        setShowNotification(notify);
+                    }
 
             } catch (err) {
                 console.error("Failed to fetch updates:", err);
@@ -128,36 +132,36 @@ export default function UpdateFeed() {
         );
     }
 
-    if (updates.length === 0) {
-        return (
-            <div className="no-feed">
-                <h1>
-                    Follow dogs in order to see their updates.
-                </h1>
-                <Link to="/dogs">Go to the dogs page.</Link>
-            </div>
-        );
-    }
-
     return (
         <div className="feed">
-            {showNotification && (
+            {/* ✅ Always show notification if applicable */}
+            {showNotification && formattedDogList && (
                 <NotificationBox
-                message={`You haven’t posted about ${formattedDogList} in the last 30 days.`}
-                linkText="Create a new post here!"
-                linkHref="/update/post"
-                onClose={() => setShowNotification(false)}
+                    message={`You haven’t posted about ${formattedDogList} in the last 30 days.`}
+                    linkText="Create a new post here!"
+                    linkHref="/update/post"
+                    onClose={() => setShowNotification(false)}
                 />
             )}
-            {updates.map((update) => (
-                <Update
-                    key={update.update_id}
-                    update={update}
-                    isAdmin={isAdmin}
-                    isCreator={update.update_created_by === user.id}
-                    removeUpdate={removeUpdate}
-                />
-            ))}
+
+            {/* 🔕 No updates? Show guidance */}
+            {updates.length === 0 ? (
+                <div className="no-feed">
+                    <h1>Follow dogs in order to see their updates.</h1>
+                    <Link to="/dogs">Go to the dogs page.</Link>
+                </div>
+            ) : (
+                // ✅ Render updates
+                updates.map((update) => (
+                    <Update
+                        key={update.update_id}
+                        update={update}
+                        isAdmin={isAdmin}
+                        isCreator={update.update_created_by === user.id}
+                        removeUpdate={removeUpdate}
+                    />
+                ))
+            )}
         </div>
     );
 }
