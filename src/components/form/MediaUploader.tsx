@@ -9,6 +9,7 @@ interface MediaUploaderProps {
     required?: boolean;
     onChange: (files: File[]) => void;
     errorMessage?: string;
+    maxFiles?: number;
 }
 
 const MediaUploader: React.FC<MediaUploaderProps> = ({
@@ -17,6 +18,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                                                          required,
                                                          onChange,
                                                          errorMessage,
+                                                         maxFiles,
                                                      }) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -64,8 +66,14 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     }, []);
 
     const addFiles = (incoming: FileList | File[]) => {
-        const toAdd = Array.from(incoming) as File[];
-        onChange([...(value ?? []), ...toAdd]);
+      const toAdd = Array.from(incoming) as File[];
+      const currentFiles = value ?? [];
+      
+      const remainingSlots = maxFiles ? maxFiles - currentFiles.length : toAdd.length;
+      if (remainingSlots <= 0) return; // Can't add more
+
+      const filesToAdd = toAdd.slice(0, remainingSlots);
+      onChange([...currentFiles, ...filesToAdd]);
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,6 +104,8 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
         onChange(next);
     };
 
+    const atLimit = maxFiles !== undefined && files.length >= maxFiles;
+
     return (
         <div>
             <div
@@ -108,10 +118,15 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                     padding: '20px',
                     textAlign: 'center',
                     cursor: 'pointer',
-                    background: 'white',
+                    background: atLimit ? '#f9f9f9' : 'white',
+                    opacity: atLimit ? 0.6 : 1,
                 }}
             >
-                <p>Drag &amp; drop or click to select multiple images</p>
+              <p>
+                  {atLimit
+                    ? `Upload limit reached (${maxFiles} image${maxFiles === 1 ? '' : 's'})`
+                    : 'Drag & drop or click to select multiple images'}
+              </p>
                 <input
                     id={name}
                     type="file"

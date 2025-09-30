@@ -8,6 +8,7 @@ import {getAdminUserViewColumns} from "../../../types/columns/admin-user-view-co
 import {archiveUser, deleteUser, resendInvite} from "../../../partials/users.ts";
 import StatusCard from "../../../components/general/StatusCard.tsx";
 import "./AdminUsersView.scss";
+import { FaFilter } from 'react-icons/fa';
 
 export default function AdminUsersView() {
     const navigate = useNavigate();
@@ -16,11 +17,23 @@ export default function AdminUsersView() {
     const [showArchived, setShowArchived] = useState<boolean>(false);
     const [isError, setIsError] = useState<boolean>(false);
     const [message, setMessage] = useState<string|null>(null);
+    const [sortByLongestNoPost, setSortByLongestNoPost] = useState<boolean>(false);
 
-    const filteredUsers = useMemo(
-        () => users.filter(u => !u.is_archived || showArchived),
-        [users, showArchived]
-    );
+    const filteredUsers = useMemo(() => {
+        let list = users.filter(u => !u.is_archived || showArchived);
+
+        if (sortByLongestNoPost) {
+            list = [...list].sort((a, b) => {
+            // Nulls go last
+            const aDays = a.days_since_last_posted ?? -1;
+            const bDays = b.days_since_last_posted ?? -1;
+            
+            return bDays - aDays;
+            });
+        }
+
+        return list;
+    }, [users, showArchived, sortByLongestNoPost]);
 
     const handleEditUser = (id: string) => {
         navigate(`/admin/users/edit/${id}`);
@@ -94,19 +107,60 @@ export default function AdminUsersView() {
 
     const fetchUsers = async () => {
         setLoading(true);
-        const {data, error} = await supabase
-            .from('users')
-            .select("*")
-            .order("created_at", {ascending: false});
-        if (error) {
-            console.log("Error occurred while fetching users:", error);
+
+        // 1. Fetch all users
+        const { data: usersData, error: usersError } = await supabase
+            .from("users")
+            .select("*");
+
+        // 2. Fetch latest update per user
+        const { data: updatesData, error: updatesError } = await supabase
+            .from("dog_updates")
+            .select("update_created_by, update_created_at")
+            .order("update_created_at", { ascending: false });
+
+        if (usersError || updatesError) {
+            console.error("Failed to fetch data:", usersError || updatesError);
+            setLoading(false);
             return;
         }
-        if (data) {
-            setUsers(data);
+
+        // 3. Map latest update per user
+        const latestUpdateByUser: Record<string, string> = {};
+
+        for (const update of updatesData ?? []) {
+            const userId = update.update_created_by;
+            if (!latestUpdateByUser[userId]) {
+            latestUpdateByUser[userId] = update.update_created_at;
+            }
         }
+
+        // 4. Combine users + computed `days_since_last_posted`
+        const today = new Date();
+
+        const enrichedUsers = (usersData ?? []).map(user => {
+            if (user.permission_role == "viewer") {
+            return { ...user, days_since_last_posted: null };
+            }
+
+            const lastUpdate = latestUpdateByUser[user.id];
+            if (!lastUpdate) {
+            return { ...user, days_since_last_posted: 'Never' };
+            }
+
+            const lastUpdateDate = new Date(lastUpdate);
+            const diffTime = today.getTime() - lastUpdateDate.getTime();
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+            return {
+            ...user,
+            days_since_last_posted: diffDays,
+            };
+        });
+
+        setUsers(enrichedUsers);
         setLoading(false);
-    }
+    };
 
     useEffect(() => {
         fetchUsers();
@@ -136,6 +190,14 @@ export default function AdminUsersView() {
                                 placeholder="Filter by status"
                             />
                             </form>
+                            <button
+                                onClick={() => setSortByLongestNoPost(prev => !prev)}
+                                className="sort-btn"
+                                title="Sort users by inactivity (days since last post)"
+                                >
+                                <FaFilter style={{ marginRight: '6px' }} />
+                                {sortByLongestNoPost ? "Default Sort" : "Sort by Inactivity"}
+                            </button>
                     </div>
                 </div>
                 <StatusCard message={message} isError={isError}/>

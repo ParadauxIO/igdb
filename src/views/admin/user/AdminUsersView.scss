@@ -123,4 +123,37 @@
         color: #212529;
       }
     }
+
+    .icon-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      font-size: 1.2rem;
+      color: #333;
+
+      &:hover {
+        color: #007bff;
+      }
+    }
+
+    .sort-btn {
+      display: flex;
+      align-items: center;
+      background-color: #f3f3f3;
+      border: 1px solid #ccc;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 0.75rem;
+
+      svg {
+        margin-right: 6px;
+      }
+
+      &:hover {
+        background-color: #e6e6e6;
+      }
+    }
   }
+  

@@ -13,10 +13,23 @@ export const fetchTerms = async (): Promise<string> => {
     return data.setting_value;
 }
 
-export const updateSetting = async (
-    key: string,
-    value: string
-): Promise<void> => {
+export async function getSetting(key: string): Promise<string | null> {
+  const { data, error } = await supabase
+    .from("system_settings")
+    .select("setting_value")
+    .eq("setting_key", key)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Error fetching setting", key, error);
+    return null;
+  }
+
+  return data?.setting_value ?? null;
+}
+
+export const updateSetting = 
+    async (key: string, value: string): Promise<void> => {
     const { error } = await supabase
         .from("system_settings")
         .update({

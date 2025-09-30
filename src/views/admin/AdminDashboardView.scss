@@ -13,6 +13,22 @@
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 16px;
   }
+
+  .forms-wrapper {
+    display: flex;
+    gap: 2rem; // space between the forms
+    align-items: flex-start; // keep tops aligned
+
+    // Optional: make them equal width
+    & > form {
+      flex: 1;
+    }
+
+    // Responsive: stack on small screens
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
 }
 
 
