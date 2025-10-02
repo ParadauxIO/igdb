@@ -15,7 +15,7 @@ const PostUpdateView = () => {
     const fields: FormField[] = [
         {name: 'dog_id', label: 'Dog Name', type: 'dog-select', required: true},
         {name: 'update_title', label: 'Post Title', type: 'text', required: true},
-        {name: 'update_description', label: 'Post Description', type: 'textarea', required: false},
+        {name: 'update_description', label: 'Post Description', type: 'post-textarea', required: false},
         {name: 'files', label: 'Media', type: 'file-upload', required: false}
     ]
 

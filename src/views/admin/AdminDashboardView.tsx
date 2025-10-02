@@ -9,11 +9,12 @@ import {getApprovalQueue} from "../../partials/update.ts";
 import type {User} from "../../types/User.ts";
 import {getUsers} from "../../partials/users.ts";
 import IGDBForm, {type FormField} from "../../components/form/IGDBForm.tsx";
-import {fetchTerms, updateSetting} from "../../partials/settings.ts";
+import {getSetting, updateSetting} from "../../partials/settings.ts";
 import StatusCard from "../../components/general/StatusCard.tsx";
 
 interface SettingsForm {
     terms: string;
+    postCharacterLimit: string | number;
 }
 
 export default function AdminDashboardView() {
@@ -34,18 +35,41 @@ export default function AdminDashboardView() {
         },
     ];
 
+    const postSettingsFields: FormField[] = [
+        {
+            name: "postCharacterLimit",
+            label: "Post Character Limit",
+            description: "Maximum number of characters allowed in a post.",
+            type: "number", //TODO: integer
+            required: false
+        },
+    ];
+
     async function load() {
-        const [returnedDogs, returnedApprovalQueue, returnedUsers, returnedTerms] = await Promise.all([
+        const [returnedDogs, returnedApprovalQueue, returnedUsers, returnedTerms, returnedLimit] = await Promise.all([
             getDogsWithNames(),
             getApprovalQueue(false),
             getUsers(),
-            fetchTerms()
+            //fetchTerms()
+            getSetting("terms"),
+            getSetting("postCharacterLimit")
         ]);
+
+        //const postCharLimitSetting = await getSetting("postCharacterLimit");
 
         if (returnedDogs) setDogs(returnedDogs);
         if (returnedApprovalQueue) setApprovalQueue(returnedApprovalQueue);
         if (returnedUsers) setUsers(returnedUsers);
-        if (returnedTerms) setForm(prev => ({...prev, terms: returnedTerms}));
+        if (returnedTerms) {
+            setForm(prev => ({
+            ...prev,
+            terms: returnedTerms}))
+        };
+        if (returnedLimit) {
+            setForm(prev => ({
+            ...prev,
+            postCharacterLimit: returnedLimit}))
+        };
     }
 
     useEffect(() => {
@@ -55,8 +79,13 @@ export default function AdminDashboardView() {
     const onFormSubmit = async (returnedForm: Partial<SettingsForm>) => {
         try {
             if (returnedForm.terms != null) {
-                await updateSetting("terms", returnedForm.terms);
+            await updateSetting("terms", returnedForm.terms);
             }
+
+            if (returnedForm.postCharacterLimit != null) {
+            await updateSetting("postCharacterLimit", String(returnedForm.postCharacterLimit));
+            }
+
             setMessage("Settings updated successfully");
             setIsError(false);
         } catch (e) {
@@ -64,7 +93,7 @@ export default function AdminDashboardView() {
             setIsError(true);
             console.log(e);
         }
-    }
+    };
 
     return (
         <div className="admin-dashboard">
@@ -84,12 +113,21 @@ export default function AdminDashboardView() {
                 <h1> System Settings </h1>
                 <p> Here you can configure the overall system. </p>
                 <StatusCard message={message} isError={isError}/>
+            <div className="forms-wrapper">
                 <IGDBForm
                     form={form}
                     setForm={setForm}
                     fields={settingsFields}
                     onSubmit={onFormSubmit}
                 />
+                <IGDBForm
+                    form={form}
+                    setForm={setForm}
+                    fields={postSettingsFields}
+                    onSubmit={onFormSubmit}
+                    postCharacterLimit={Number(form.postCharacterLimit) || 200}
+                />
+            </div>
             </div>
         </div>
     );

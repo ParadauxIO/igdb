@@ -6,11 +6,13 @@ import {type DogSearchResult, getUserDogs} from "../../partials/dog.ts";
 import SearchDropdown from "./SearchDropdown.tsx";
 import {useAuth} from "../../state/hooks/useAuth.ts";
 import MediaUploader from "./MediaUploader";
+import { getSetting } from "../../partials/settings.ts";
 import SearchMultiSelect from "./SearchMultiSelect.tsx";
 
 export const formFieldTypes = [
     "text",
     "textarea",
+    "post-textarea",
     "password",
     "select",
     "checkbox",
@@ -18,6 +20,7 @@ export const formFieldTypes = [
     "user-select",
     "dog-select",
     "file-upload",
+    "number",
     "component",
     "multi-select",
     "user-multi-select",
@@ -25,6 +28,7 @@ export const formFieldTypes = [
 ] as const;
 
 export type FormFieldType = typeof formFieldTypes[number];
+
 export type FormField = {
     name: string;
     label: string;
@@ -40,6 +44,7 @@ interface IGDBFormProps<T> {
     setForm: (f: Partial<T>) => void;
     fields: FormField[];
     onSubmit: (form: Partial<T>) => void;
+    postCharacterLimit?: number;
 }
 
 export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormProps<T>) {
@@ -48,6 +53,7 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
     const {user} = useAuth();
     const hasUserSelect = fields.some(field => field.type === 'user-select' || field.type === 'user-multi-select');
     const hasDogSelect = fields.some(field => field.type === 'dog-select' || field.type === 'dog-multi-select');
+    const [postCharacterLimit, setPostCharacterLimit] = useState<number | null>(null);
 
     useEffect(() => {
         if (!user) return;
@@ -71,6 +77,19 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                 });
         }
     }, [user]);
+
+    useEffect(() => {
+        getSetting("postCharacterLimit")
+            .then(val => {
+            const parsed = parseInt(val ?? '', 10);
+            if (!isNaN(parsed)) {
+                setPostCharacterLimit(parsed);
+            }
+            })
+            .catch(err => {
+            console.error("Failed to fetch postCharacterLimit:", err);
+            });
+    }, []);
 
     const handleChange = (name: string, value: any) => {
         setForm({
@@ -196,7 +215,35 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                                     rows={10}
                                 />
                             </div>
-                        )
+                        );
+
+                    case 'post-textarea':
+                        return (
+                            <div key={field.name} className="text-input form-input">
+                            <label className="font-semibold">{field.label}</label>
+                            {field.description && <p className="description">{field.description}</p>}
+
+                            <textarea
+                                name={field.name}
+                                required={field.required}
+                                value={value || ''}
+                                onChange={e => {
+                                const input = postCharacterLimit ? e.target.value.slice(0, postCharacterLimit) : e.target.value;
+                                handleChange(field.name, input);
+                                }}
+                                maxLength={postCharacterLimit ?? undefined}
+                                className="border p-2 rounded"
+                                rows={10}
+                                disabled={postCharacterLimit === null}
+                            />
+
+                            {postCharacterLimit !== null && (
+                                <p className="char-counter text-sm text-gray-500">
+                                {(value as string)?.length || 0}/{postCharacterLimit} characters
+                                </p>
+                            )}
+                            </div>
+                    );
 
                     case 'dog-select':
                         return (
@@ -227,10 +274,35 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                                     value={filesValue ?? null}
                                     required={field.required}
                                     onChange={(files: File[]) => handleChange(field.name, files)}
+                                    maxFiles={3}
                                 />
                             </div>
                         );
                     }
+
+                    case 'number':
+                        return (
+                            <div key={field.name} className="text-input form-input">
+                                <label className={`font-semibold ${field.required ? 'required' : ''}`}>
+                                    {field.label}
+                                </label>
+                                {field.description && <p className="description">{field.description}</p>}
+                                <input
+                                    type="number"
+                                    name={field.name}
+                                    required={field.required}
+                                    value={value === undefined || value === null ? '' : value.toString()}
+                                    onChange={e => {
+                                    const val = e.target.value;
+                                    const parsed = val === '' ? undefined : parseInt(val, 10);
+                                    handleChange(field.name, parsed);
+                                    }}
+                                    className="border p-2 rounded"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                />
+                            </div>
+                    );
 
                     case 'component':
                         return field.component ? (
