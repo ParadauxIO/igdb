@@ -11,6 +11,7 @@ import SearchMultiSelect from "./SearchMultiSelect.tsx";
 
 export const formFieldTypes = [
     "text",
+    "title-text",
     "textarea",
     "post-textarea",
     "password",
@@ -54,6 +55,8 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
     const hasUserSelect = fields.some(field => field.type === 'user-select' || field.type === 'user-multi-select');
     const hasDogSelect = fields.some(field => field.type === 'dog-select' || field.type === 'dog-multi-select');
     const [postCharacterLimit, setPostCharacterLimit] = useState<number | null>(null);
+    const [titleCharacterLimit, setTitleCharacterLimit] = useState<number | null>(null);
+
 
     useEffect(() => {
         if (!user) return;
@@ -79,17 +82,26 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
     }, [user]);
 
     useEffect(() => {
-        getSetting("postCharacterLimit")
-            .then(val => {
-            const parsed = parseInt(val ?? '', 10);
-            if (!isNaN(parsed)) {
-                setPostCharacterLimit(parsed);
+        Promise.all([
+            getSetting("postCharacterLimit"),
+            getSetting("titleCharacterLimit")
+        ])
+        .then(([postLimitVal, titleLimitVal]) => {
+            const parsedPost = parseInt(postLimitVal ?? '', 10);
+            if (!isNaN(parsedPost)) {
+                setPostCharacterLimit(parsedPost);
             }
-            })
-            .catch(err => {
-            console.error("Failed to fetch postCharacterLimit:", err);
-            });
+
+            const parsedTitle = parseInt(titleLimitVal ?? '', 10);
+            if (!isNaN(parsedTitle)) {
+                setTitleCharacterLimit(parsedTitle);
+            }
+        })
+        .catch(err => {
+            console.error("Failed to fetch settings:", err);
+        });
     }, []);
+    
 
     const handleChange = (name: string, value: any) => {
         setForm({
@@ -240,6 +252,33 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                             {postCharacterLimit !== null && (
                                 <p className="char-counter text-sm text-gray-500">
                                 {(value as string)?.length || 0}/{postCharacterLimit} characters
+                                </p>
+                            )}
+                            </div>
+                    );
+
+                    case 'title-text':
+                        return (
+                            <div key={field.name} className="text-input form-input">
+                            <label className="font-semibold">{field.label}</label>
+                            {field.description && <p className="description">{field.description}</p>}
+
+                            <input
+                                name={field.name}
+                                required={field.required}
+                                value={value || ''}
+                                onChange={e => {
+                                const input = titleCharacterLimit ? e.target.value.slice(0, titleCharacterLimit) : e.target.value;
+                                handleChange(field.name, input);
+                                }}
+                                maxLength={titleCharacterLimit ?? undefined}
+                                className="border p-2 rounded"
+                                disabled={titleCharacterLimit === null}
+                            />
+
+                            {titleCharacterLimit !== null && (
+                                <p className="char-counter text-sm text-gray-500">
+                                {(value as string)?.length || 0}/{titleCharacterLimit} characters
                                 </p>
                             )}
                             </div>
