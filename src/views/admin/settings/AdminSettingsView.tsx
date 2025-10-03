@@ -11,7 +11,7 @@ interface SettingsForm {
     notificationPeriodDays: string | number;
 }
 
-export default function AdminDashboardView() {
+export default function AdminSettingsView() {
     const [form, setForm] = useState<Partial<SettingsForm>>({});
     const [message, setMessage] = useState<string>("");
     const [isError, setIsError] = useState<boolean>(false);
@@ -95,6 +95,11 @@ export default function AdminDashboardView() {
                 await updateSetting("titleCharacterLimit", String(returnedForm.titleCharacterLimit));
             }
 
+            if (returnedForm.notificationPeriodDays != null) {
+                await updateSetting("notificationPeriodDays", String(returnedForm.notificationPeriodDays));
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             setMessage("Settings updated successfully");
             setIsError(false);
         } catch (e) {
