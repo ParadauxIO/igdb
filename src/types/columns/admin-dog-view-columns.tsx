@@ -122,6 +122,17 @@ export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleAr
             footer: info => info.column.id,
         }),
 
+        columnHelper.accessor('days_since_last_posted', {
+            header: 'Last Posted',
+            cell: info => {
+                const value = info.getValue() as string | number | null;
+                if (value === null || value === undefined) return '—';
+                if (value === 'Never') return 'Never'; 
+                return `${value} day${value === 1 ? '' : 's'} ago`;
+            },
+            footer: info => info.column.id,
+        }),
+
         // Actions menu remains unchanged
         columnHelper.display({
             id: "actions",
