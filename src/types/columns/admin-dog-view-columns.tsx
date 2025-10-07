@@ -46,12 +46,6 @@ export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleAr
             footer: info => info.column.id,
         }),
 
-        // Role
-        columnHelper.accessor('dog_role', {
-            header: 'Role',
-            footer: info => info.column.id,
-        }),
-
         // Year of Birth (dog_yob)
         columnHelper.accessor('dog_yob', {
             header: 'Year of Birth',
@@ -63,12 +57,6 @@ export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleAr
         columnHelper.accessor('dog_sex', {
             header: 'Sex',
             cell: info => info.getValue() ?? 'Unknown',
-            footer: info => info.column.id,
-        }),
-
-        // Status
-        columnHelper.accessor('dog_status', {
-            header: 'Status',
             footer: info => info.column.id,
         }),
 
@@ -96,20 +84,6 @@ export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleAr
             footer: info => info.column.id,
         }),
 
-        // Created At
-        columnHelper.accessor('dog_created_at', {
-            header: 'Created At',
-            cell: info => new Date(info.getValue()).toLocaleString(),
-            footer: info => info.column.id,
-        }),
-
-        // Updated At
-        columnHelper.accessor('dog_updated_at', {
-            header: 'Updated At',
-            cell: info => new Date(info.getValue()).toLocaleString(),
-            footer: info => info.column.id,
-        }),
-
         // Created By
         columnHelper.accessor('dog_created_by_name', {
             header: 'Created By',
@@ -127,7 +101,7 @@ export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleAr
             cell: info => {
                 const value = info.getValue() as string | number | null;
                 if (value === null || value === undefined) return '—';
-                if (value === 'Never') return 'Never'; 
+                if (value === 'Never') return 'Never';
                 return `${value} day${value === 1 ? '' : 's'} ago`;
             },
             footer: info => info.column.id,
