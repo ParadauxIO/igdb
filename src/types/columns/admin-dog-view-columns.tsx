@@ -14,24 +14,6 @@ type AdminDogViewColumnsProps = {
 
 export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleArchiveDog, handleExportDog}: AdminDogViewColumnsProps) => {
     return useMemo(() => [
-        columnHelper.display({
-            id: "select",
-            header: ({table}) => (
-                <input
-                    type="checkbox"
-                    checked={table.getIsAllRowsSelected()}
-                    onChange={table.getToggleAllRowsSelectedHandler()}
-                />
-            ),
-            cell: ({row}) => (
-                <input
-                    type="checkbox"
-                    checked={row.getIsSelected()}
-                    onChange={row.getToggleSelectedHandler()}
-                />
-            ),
-        }),
-
         // Picture
         columnHelper.accessor('dog_picture', {
             header: 'Picture',
@@ -67,13 +49,6 @@ export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleAr
                 const names: string[] | null | undefined = info.getValue();
                 return names && names.length > 0 ? names.join(', ') : 'N/A';
             },
-            footer: info => info.column.id,
-        }),
-
-        // General Notes
-        columnHelper.accessor('dog_general_notes', {
-            header: 'General Notes',
-            cell: info => info.getValue() ?? '',
             footer: info => info.column.id,
         }),
 

@@ -9,25 +9,6 @@ const columnHelper = createColumnHelper<DogUpdate>();
 export const getAdminApprovalQueueColumns = (userId: string) => {
     return useMemo(
         () => [
-            // Row select
-            columnHelper.display({
-                id: "select",
-                header: ({table}) => (
-                    <input
-                        type="checkbox"
-                        checked={table.getIsAllRowsSelected()}
-                        onChange={table.getToggleAllRowsSelectedHandler()}
-                    />
-                ),
-                cell: ({row}) => (
-                    <input
-                        type="checkbox"
-                        checked={row.getIsSelected()}
-                        onChange={row.getToggleSelectedHandler()}
-                    />
-                ),
-            }),
-
             // Dog name (from join)
             columnHelper.accessor("dog_name", {
                 header: "Dog",
@@ -38,7 +19,14 @@ export const getAdminApprovalQueueColumns = (userId: string) => {
 
             // Creator name (from join)
             columnHelper.accessor("creator_name", {
-                header: "By",
+                header: "Name",
+                cell: (info) => info.getValue() || "—",
+                enableSorting: true,
+                footer: (info) => info.column.id,
+            }),
+
+            columnHelper.accessor("creator_email", {
+                header: "Email",
                 cell: (info) => info.getValue() || "—",
                 enableSorting: true,
                 footer: (info) => info.column.id,
