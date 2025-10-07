@@ -12,63 +12,103 @@ type AdminDogViewColumnsProps = {
     handleExportDog: (id: string) => void;
 }
 
-export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleArchiveDog, handleExportDog}: AdminDogViewColumnsProps) => {
+const cmpDaysSince = (rowA: any, rowB: any, columnId: string) => {
+    const va = rowA.getValue(columnId);
+    const vb = rowB.getValue(columnId);
+
+    // classify
+    const cls = (v: any): 0 | 1 | 2 => {
+        if (typeof v === "number" && Number.isFinite(v)) return 0; // numbers first
+        if (v === "Never") return 1;                               // then 'Never'
+        return 2;                                                  // then null/undefined/other
+    };
+
+    const ca = cls(va);
+    const cb = cls(vb);
+    if (ca !== cb) return ca - cb;
+
+    // same class, compare within class
+    if (ca === 0) {
+        // both numbers
+        return (va as number) - (vb as number);
+    }
+    if (ca === 1) {
+        // both 'Never' -> equal
+        return 0;
+    }
+    // both blanks -> equal
+    return 0;
+};
+
+export const getAdminDogViewColumns = ({
+                                           handleEditDog, handleDeleteDog, handleArchiveDog, handleExportDog
+                                       }: AdminDogViewColumnsProps) => {
     return useMemo(() => [
-        // Picture
         columnHelper.accessor('dog_picture', {
             header: 'Picture',
             cell: info => info.getValue() ? <img src={info.getValue()!} alt="Dog" width={250}/> : 'No Image',
-            footer: info => info.column.id,
+            enableSorting: false, // images shouldn't sort
         }),
 
-        // Name
         columnHelper.accessor('dog_name', {
             header: 'Name',
             cell: info => info.getValue(),
-            footer: info => info.column.id,
+            enableSorting: true,
+            sortingFn: "alphanumeric",
         }),
 
-        // Year of Birth (dog_yob)
         columnHelper.accessor('dog_yob', {
             header: 'Year of Birth',
             cell: info => info.getValue() ? info.getValue().toString() : 'N/A',
-            footer: info => info.column.id,
+            enableSorting: true,
+            sortingFn: (a, b, id) =>
+                (a.getValue<number | null>(id) ?? Infinity) - (b.getValue<number | null>(id) ?? Infinity),
         }),
 
-        // Sex
         columnHelper.accessor('dog_sex', {
             header: 'Sex',
             cell: info => info.getValue() ?? 'Unknown',
-            footer: info => info.column.id,
+            enableSorting: true,
+            sortingFn: "alphanumeric",
         }),
 
-        // Current Handler(s)
         columnHelper.accessor('dog_current_handler_names', {
             header: 'Current Handler(s)',
             cell: info => {
                 const names: string[] | null | undefined = info.getValue();
                 return names && names.length > 0 ? names.join(', ') : 'N/A';
             },
-            footer: info => info.column.id,
+            enableSorting: true,
+            // sort by joined string for determinism
+            sortingFn: (a, b, id) => {
+                const sa = (a.getValue<string[] | null>(id) ?? []).join(", ");
+                const sb = (b.getValue<string[] | null>(id) ?? []).join(", ");
+                return sa.localeCompare(sb, undefined, { sensitivity: "base" });
+            },
         }),
 
-        // Active
         columnHelper.accessor('dog_is_archived', {
             header: 'Active',
             cell: info => info.getValue() ? 'No' : 'Yes',
-            footer: info => info.column.id,
+            enableSorting: true,
+            // 'Yes' before 'No' in ascending
+            sortingFn: (a, b, id) => {
+                const va = a.getValue<boolean>(id);
+                const vb = b.getValue<boolean>(id);
+                return Number(va) - Number(vb); // false(0)=Active first, true(1)=Archived later
+            },
         }),
 
-        // Created By
         columnHelper.accessor('dog_created_by_name', {
             header: 'Created By',
-            footer: info => info.column.id,
+            enableSorting: true,
+            sortingFn: "alphanumeric",
         }),
 
-        // Last Edited By
         columnHelper.accessor('dog_last_edited_by_name', {
             header: 'Last Edited By',
-            footer: info => info.column.id,
+            enableSorting: true,
+            sortingFn: "alphanumeric",
         }),
 
         columnHelper.accessor('days_since_last_posted', {
@@ -79,30 +119,24 @@ export const getAdminDogViewColumns = ({handleEditDog, handleDeleteDog, handleAr
                 if (value === 'Never') return 'Never';
                 return `${value} day${value === 1 ? '' : 's'} ago`;
             },
-            footer: info => info.column.id,
+            enableSorting: true,
+            sortingFn: cmpDaysSince, // <- the custom sorter
         }),
 
-        // Actions menu remains unchanged
         columnHelper.display({
             id: "actions",
             header: "Actions",
-            cell: ({row}) => {
+            enableSorting: false,
+            cell: ({ row }) => {
                 const dog = row.original;
-
-                const actions = useMemo(() => [
-                    {label: "Edit", action: handleEditDog},
-                    {label: "Delete", action: handleDeleteDog},
-                    {label: "Archive", action: handleArchiveDog},
-                    {label: "Export", action: handleExportDog}
-                ], [handleEditDog, handleDeleteDog, handleArchiveDog, handleExportDog]);
-
-                return (
-                    <ActionsDropdown
-                        id={dog.dog_id}
-                        actions={actions}
-                    />
-                );
-            }
+                const actions = [
+                    { label: "Edit", action: handleEditDog },
+                    { label: "Delete", action: handleDeleteDog },
+                    { label: "Archive", action: handleArchiveDog },
+                    { label: "Export", action: handleExportDog },
+                ];
+                return <ActionsDropdown id={dog.dog_id} actions={actions} />;
+            },
         }),
     ], [handleEditDog, handleDeleteDog, handleArchiveDog, handleExportDog]);
-}
+};

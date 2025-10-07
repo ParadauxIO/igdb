@@ -3,13 +3,12 @@ import "./AdminDogView.scss";
 import {supabase} from "../../../state/supabaseClient.ts";
 
 import {FaPlus} from "react-icons/fa";
-import {getCoreRowModel, useReactTable} from "@tanstack/react-table";
+import {getCoreRowModel, getSortedRowModel, type SortingState, useReactTable} from "@tanstack/react-table";
 import {useNavigate} from "react-router";
 import type {Dog} from "../../../types/Dog.ts";
 import Table from "../../../components/info/Table.tsx";
 import {archiveDog, deleteDog, exportDogArchive, getDogsWithNames} from "../../../partials/dog.ts";
 import {getAdminDogViewColumns} from "../../../types/columns/admin-dog-view-columns.tsx";
-import {FaFilter} from 'react-icons/fa';
 import StaleDogNotification from "../../../components/feed/StaleDogNotificationBox.tsx";
 
 export default function AdminDogView() {
@@ -18,29 +17,11 @@ export default function AdminDogView() {
     const navigate = useNavigate();
     const [showArchived, setShowArchived] = useState<boolean>(false);
     const [isExporting, setIsExporting] = useState<boolean>(false);
-    const [sortByLongestNoPost, setSortByLongestNoPost] = useState<boolean>(false);
+    const [sorting, setSorting] = useState<SortingState>([]);
 
     const filteredDogs = useMemo(() => {
-        let list = dogs.filter(dog => !dog.dog_is_archived || showArchived);
-
-        if (sortByLongestNoPost) {
-            list = [...list].sort((a, b) => {
-                const normalize = (val: number | string | null | undefined): number => {
-                    if (val === null || val === undefined) return -2; // blanks last
-                    if (val === 'Never') return -1;                   // 'Never' after numbers
-                    if (typeof val === 'number') return val;
-                    return -2; // fallback
-                };
-
-                const aDays = normalize(a.days_since_last_posted);
-                const bDays = normalize(b.days_since_last_posted);
-
-                return bDays - aDays; // descending
-            });
-        }
-
-        return list;
-    }, [dogs, showArchived, sortByLongestNoPost]);
+        return dogs.filter(dog => !dog.dog_is_archived || showArchived);
+    }, [dogs, showArchived]);
 
     const handleEditDog = (dogId: string) => navigate(`/admin/dogs/edit/${dogId}`);
     const handleDeleteDog = async (dogId: string) => {
@@ -54,6 +35,7 @@ export default function AdminDogView() {
             console.log("Error deleting dog: ", error);
         }
     };
+
     const handleArchiveDog = (dogId: string) => {
         const confirmed = window.confirm("Are you sure you want to archive this dog?");
         if (!confirmed) return;
@@ -76,10 +58,13 @@ export default function AdminDogView() {
     const table = useReactTable({
         data: filteredDogs,
         columns: adminDogViewColumns,
+        state: { sorting },
+        onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
-        getRowId: originalRow => originalRow.dog_id,
-        enableRowSelection: true
-    })
+        getSortedRowModel: getSortedRowModel(), // <- required
+        getRowId: (originalRow) => originalRow.dog_id,
+        enableRowSelection: true,
+    });
 
     async function loadDogs() {
         setLoading(true);
@@ -173,14 +158,6 @@ export default function AdminDogView() {
                                 placeholder="Filter by status"
                             />
                         </form>
-                        <button
-                            onClick={() => setSortByLongestNoPost(prev => !prev)}
-                            className="sort-btn"
-                            title="Sort users by inactivity (days since last post)"
-                        >
-                            <FaFilter style={{marginRight: '6px'}}/>
-                            {sortByLongestNoPost ? "Default Sort" : "Sort by Inactivity"}
-                        </button>
                     </div>
                 </div>
                 <div className="admin-stale-dog-notification">
