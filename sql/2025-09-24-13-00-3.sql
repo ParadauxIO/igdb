@@ -9,6 +9,9 @@ ON CONFLICT (setting_key) DO UPDATE
     SET setting_value = EXCLUDED.setting_value,
         setting_type  = EXCLUDED.setting_type;
 
+INSERT INTO public.system_settings (setting_key, setting_value, setting_type)
+VALUES ('titleCharacterLimit', '80', 'integer'), ('notificationPeriodDays', '30', 'integer');
+
 /*======================================================================================================================
 =                                              Row Level Security Changes                                              =
 ======================================================================================================================*/

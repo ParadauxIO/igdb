@@ -26,6 +26,7 @@ import AuthenticatedLayout from "./views/layouts/AuthenticatedLayout.tsx";
 import AdminLayout from "./views/layouts/AdminLayout.tsx";
 import AdminDashboardView from "./views/admin/AdminDashboardView.tsx";
 import AdminEditUserView from "./views/admin/user/AdminEditUserView.tsx";
+import AdminSettingsView from "./views/admin/settings/AdminSettingsView.tsx";
 import OnboardingView from "./views/auth/OnboardingView.tsx";
 import PasswordResetView from "./views/auth/PasswordResetView.tsx";
 import TermsView from "./views/TermsView.tsx";
@@ -90,6 +91,7 @@ createRoot(document.getElementById("root")!).render(
                             <Route path="users/edit/:userId" element={<AdminEditUserView />} />
                             <Route path="users/invite" element={<UserInviteView />} />
                             <Route path="data" element={<AdminDataManagementView/>}/>
+                            <Route path="settings" element={<AdminSettingsView />} />
                         </Route>
 
                         {/* Default */}

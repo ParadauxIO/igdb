@@ -142,7 +142,7 @@ export async function getApprovalQueue(showApproved: boolean): Promise<DogUpdate
       update_created_by,
       update_approved_by,
 
-      creator:users!dog_updates_update_created_by_fkey(name),
+      creator:users!dog_updates_update_created_by_fkey(name, email),
       dog:dogs!dog_updates_dog_id_fkey(dog_name)
     `)
         .order("update_created_at", {ascending: false});
@@ -159,6 +159,7 @@ export async function getApprovalQueue(showApproved: boolean): Promise<DogUpdate
     return (data ?? []).map((row: any) => ({
         ...row,
         creator_name: row.creator?.name ?? "",
+        creator_email: row.creator?.email ?? "",
         dog_name: row.dog?.dog_name ?? "",
     })) as DogUpdate[];
 }

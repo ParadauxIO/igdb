@@ -40,4 +40,24 @@
       }
     }
   }
+
+  .th-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: default;
+  }
+
+  .th-btn.sortable {
+    cursor: pointer;
+  }
+
+  .sort-indicator {
+    opacity: 0.7;
+    font-size: 0.9em;
+  }
 }

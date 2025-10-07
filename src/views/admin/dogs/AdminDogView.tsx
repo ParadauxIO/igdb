@@ -1,12 +1,15 @@
 import {useEffect, useMemo, useState} from "react";
 import "./AdminDogView.scss";
+import {supabase} from "../../../state/supabaseClient.ts";
+
 import {FaPlus} from "react-icons/fa";
-import {getCoreRowModel, useReactTable} from "@tanstack/react-table";
+import {getCoreRowModel, getSortedRowModel, type SortingState, useReactTable} from "@tanstack/react-table";
 import {useNavigate} from "react-router";
 import type {Dog} from "../../../types/Dog.ts";
 import Table from "../../../components/info/Table.tsx";
 import {archiveDog, deleteDog, exportDogArchive, getDogsWithNames} from "../../../partials/dog.ts";
 import {getAdminDogViewColumns} from "../../../types/columns/admin-dog-view-columns.tsx";
+import StaleDogNotification from "../../../components/feed/StaleDogNotificationBox.tsx";
 
 export default function AdminDogView() {
     const [dogs, setDogs] = useState<Dog[]>([])
@@ -14,11 +17,11 @@ export default function AdminDogView() {
     const navigate = useNavigate();
     const [showArchived, setShowArchived] = useState<boolean>(false);
     const [isExporting, setIsExporting] = useState<boolean>(false);
+    const [sorting, setSorting] = useState<SortingState>([]);
 
-    const filteredDogs = useMemo(
-        () => dogs.filter(dog => !dog.dog_is_archived || showArchived),
-        [dogs, showArchived]
-    );
+    const filteredDogs = useMemo(() => {
+        return dogs.filter(dog => !dog.dog_is_archived || showArchived);
+    }, [dogs, showArchived]);
 
     const handleEditDog = (dogId: string) => navigate(`/admin/dogs/edit/${dogId}`);
     const handleDeleteDog = async (dogId: string) => {
@@ -29,8 +32,10 @@ export default function AdminDogView() {
             await loadDogs();
         } catch (error) {
             alert("Failed to delete dog. Please try again.");
+            console.log("Error deleting dog: ", error);
         }
     };
+
     const handleArchiveDog = (dogId: string) => {
         const confirmed = window.confirm("Are you sure you want to archive this dog?");
         if (!confirmed) return;
@@ -43,23 +48,72 @@ export default function AdminDogView() {
         setIsExporting(false);
     }
 
-    const adminDogViewColumns = getAdminDogViewColumns({handleEditDog, handleDeleteDog, handleArchiveDog, handleExportDog})
+    const adminDogViewColumns = getAdminDogViewColumns({
+        handleEditDog,
+        handleDeleteDog,
+        handleArchiveDog,
+        handleExportDog
+    })
 
     const table = useReactTable({
         data: filteredDogs,
         columns: adminDogViewColumns,
+        state: { sorting },
+        onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
-        getRowId: originalRow => originalRow.dog_id,
-        enableRowSelection: true
-    })
+        getSortedRowModel: getSortedRowModel(), // <- required
+        getRowId: (originalRow) => originalRow.dog_id,
+        enableRowSelection: true,
+    });
 
     async function loadDogs() {
         setLoading(true);
+
+        // 1. Fetch all dogs
         const returnedDogs = await getDogsWithNames();
-        if (returnedDogs) {
-            setDogs(returnedDogs);
+
+        if (!returnedDogs) {
             setLoading(false);
+            return;
         }
+
+        // 2. Fetch latest update per dog
+        const {data: updatesData, error: updatesError} = await supabase
+            .from("dog_updates")
+            .select("dog_id, update_created_at")
+            .order("update_created_at", {ascending: false});
+
+        if (updatesError) {
+            console.error("Failed to fetch updates:", updatesError);
+            setLoading(false);
+            return;
+        }
+
+        // 3. Map latest update per dog
+        const latestUpdateByDog: Record<string, string> = {};
+        for (const update of updatesData ?? []) {
+            const dogId = update.dog_id;
+            if (!latestUpdateByDog[dogId]) {
+                latestUpdateByDog[dogId] = update.update_created_at;
+            }
+        }
+
+        // 4. Compute days since last update for each dog
+        const today = new Date();
+        const enrichedDogs = returnedDogs.map(dog => {
+            const lastUpdate = latestUpdateByDog[dog.dog_id];
+            if (!lastUpdate) {
+                return {...dog, days_since_last_posted: "Never"};
+            }
+            const lastUpdateDate = new Date(lastUpdate);
+            const diffTime = today.getTime() - lastUpdateDate.getTime();
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            return {...dog, days_since_last_posted: diffDays};
+        });
+
+        // 5. Set enriched dogs state
+        setDogs(enrichedDogs);
+        setLoading(false);
     }
 
     useEffect(() => {
@@ -105,6 +159,9 @@ export default function AdminDogView() {
                             />
                         </form>
                     </div>
+                </div>
+                <div className="admin-stale-dog-notification">
+                    <StaleDogNotification/>
                 </div>
                 <div className="table-wrapper">
                     <Table loading={loading} table={table}/>

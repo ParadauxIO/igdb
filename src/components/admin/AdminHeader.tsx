@@ -48,11 +48,12 @@ export default function AdminHeader() {
                         </li>
                     ) : (
                         <>
-                            <li><NavLink to="/admin">Dashboard</NavLink></li>
+                            <li><NavLink to="/admin">Approval Queue</NavLink></li>
                             <li><NavLink to="/admin/users">Manage Users</NavLink></li>
                             <li><NavLink to="/admin/dogs">Manage Dogs</NavLink></li>
                             <li><NavLink to="/admin/data">Manage Data</NavLink></li>
-                            <li><NavLink to="/">Back to Home</NavLink></li>
+                            <li><NavLink to="/admin/settings">Settings</NavLink></li>
+                            <li><NavLink to="/">Home</NavLink></li>
                         </>
                     )}
                 </ul>

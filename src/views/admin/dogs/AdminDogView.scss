@@ -7,6 +7,16 @@
       margin-inline: 1rem;
     }
 
+    img {
+      max-width: 75px;
+    }
+
+    .admin-stale-dog-notification {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+    }
+
     .view-header {
       display: flex;
       justify-content: space-between;
@@ -132,5 +142,24 @@
     justify-content: center;
     align-items: center;
     width: 100%;
+  }
+
+  .sort-btn {
+      display: flex;
+      align-items: center;
+      background-color: #f3f3f3;
+      border: 1px solid #ccc;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 0.75rem;
+
+      svg {
+        margin-right: 6px;
+      }
+
+      &:hover {
+        background-color: #e6e6e6;
+      }
   }
 }

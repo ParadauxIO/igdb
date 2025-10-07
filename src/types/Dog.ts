@@ -19,6 +19,7 @@ export interface Dog {
     dog_last_edited_by: string;
     dog_last_edited_by_user?: DogHandlerName;
     dog_last_edited_by_name?: string;
+    days_since_last_posted?: number | string | null;
 }
 
 export type DogHandlerName = {

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { DogUpdate } from "../../types/DogUpdate";
 import "./ApprovalQueue.scss";
 import { getApprovalQueue } from "../../partials/update";
-import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import {getCoreRowModel, getSortedRowModel, type SortingState, useReactTable} from "@tanstack/react-table";
 import { getAdminApprovalQueueColumns } from "../../types/columns/admin-approval-queue-columns";
 import Table from "../info/Table";
 import { useAuth } from "../../state/hooks/useAuth";
@@ -12,6 +12,7 @@ export default function ApprovalQueue() {
     const [showApproved, setShowApproved] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [sorting, setSorting] = useState<SortingState>([]);
     const { user } = useAuth();
 
     const columns = getAdminApprovalQueueColumns(user?.id ?? "");
@@ -36,9 +37,12 @@ export default function ApprovalQueue() {
     const table = useReactTable({
         data: updates,
         columns,
-        getCoreRowModel: getCoreRowModel(),
+        state: { sorting },
         getRowId: (row) => String(row.update_id ?? `${row.dog_id}:${row.update_created_at}`), // unique & stable
         enableRowSelection: true,
+        onSortingChange: setSorting,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
     });
 
     return (
