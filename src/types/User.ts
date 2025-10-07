@@ -11,7 +11,7 @@ export interface User {
     updated_at: Date;
     password?: string; // Optional for user profile updates
     confirm_password?: string; // Optional for user profile updates
-    days_since_last_posted?: number | null;
+    days_since_last_posted?: number | string | null;
 }
 
 

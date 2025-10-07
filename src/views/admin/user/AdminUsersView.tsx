@@ -24,11 +24,17 @@ export default function AdminUsersView() {
 
         if (sortByLongestNoPost) {
             list = [...list].sort((a, b) => {
-            // Nulls go last
-            const aDays = a.days_since_last_posted ?? -1;
-            const bDays = b.days_since_last_posted ?? -1;
-            
-            return bDays - aDays;
+                const normalize = (val: number | string | null | undefined): number => {
+                    if (val === null || val === undefined) return -2; // blanks last
+                    if (val === 'Never') return -1;                   // 'Never' after numbers
+                    if (typeof val === 'number') return val;
+                    return -2; // fallback
+                };
+
+                const aDays = normalize(a.days_since_last_posted);
+                const bDays = normalize(b.days_since_last_posted);
+
+                return bDays - aDays; // descending
             });
         }
 
