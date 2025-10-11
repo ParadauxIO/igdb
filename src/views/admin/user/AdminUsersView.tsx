@@ -1,45 +1,26 @@
 import {useEffect, useMemo, useState} from "react";
 import type {User} from "../../../types/User.ts";
 import {supabase} from "../../../state/supabaseClient.ts";
-import {getCoreRowModel, useReactTable} from "@tanstack/react-table";
+import {getCoreRowModel, getSortedRowModel, type SortingState, useReactTable} from "@tanstack/react-table";
 import {useNavigate} from "react-router";
 import Table from "../../../components/info/Table.tsx";
 import {getAdminUserViewColumns} from "../../../types/columns/admin-user-view-columns.tsx";
 import {archiveUser, deleteUser, resendInvite} from "../../../partials/users.ts";
 import StatusCard from "../../../components/general/StatusCard.tsx";
 import "./AdminUsersView.scss";
-import { FaFilter } from 'react-icons/fa';
 
 export default function AdminUsersView() {
     const navigate = useNavigate();
     const [users, setUsers] = useState<User[]>([])
     const [loading, setLoading] = useState<boolean>(false);
     const [showArchived, setShowArchived] = useState<boolean>(false);
+    const [sorting, setSorting] = useState<SortingState>([]);
     const [isError, setIsError] = useState<boolean>(false);
     const [message, setMessage] = useState<string|null>(null);
-    const [sortByLongestNoPost, setSortByLongestNoPost] = useState<boolean>(false);
 
     const filteredUsers = useMemo(() => {
-        let list = users.filter(u => !u.is_archived || showArchived);
-
-        if (sortByLongestNoPost) {
-            list = [...list].sort((a, b) => {
-                const normalize = (val: number | string | null | undefined): number => {
-                    if (val === null || val === undefined) return -2; // blanks last
-                    if (val === 'Never') return -1;                   // 'Never' after numbers
-                    if (typeof val === 'number') return val;
-                    return -2; // fallback
-                };
-
-                const aDays = normalize(a.days_since_last_posted);
-                const bDays = normalize(b.days_since_last_posted);
-
-                return bDays - aDays; // descending
-            });
-        }
-
-        return list;
-    }, [users, showArchived, sortByLongestNoPost]);
+        return users.filter(u => !u.is_archived || showArchived);
+    }, [users, showArchived]);
 
     const handleEditUser = (id: string) => {
         navigate(`/admin/users/edit/${id}`);
@@ -101,10 +82,13 @@ export default function AdminUsersView() {
 
     const table = useReactTable({
         data: filteredUsers,
+        state: { sorting },
         columns: getAdminUserViewColumns({handleEditUser, handleDeleteUser, handleArchiveUser, handleResendInvite}),
-        getCoreRowModel: getCoreRowModel(),
         getRowId: originalRow => originalRow.id,
-        enableRowSelection: true
+        enableRowSelection: true,
+        onSortingChange: setSorting,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
     })
 
     const handleUserInvitation = () => {
@@ -196,14 +180,6 @@ export default function AdminUsersView() {
                                 placeholder="Filter by status"
                             />
                             </form>
-                            <button
-                                onClick={() => setSortByLongestNoPost(prev => !prev)}
-                                className="sort-btn"
-                                title="Sort users by inactivity (days since last post)"
-                                >
-                                <FaFilter style={{ marginRight: '6px' }} />
-                                {sortByLongestNoPost ? "Default Sort" : "Sort by Inactivity"}
-                            </button>
                     </div>
                 </div>
                 <StatusCard message={message} isError={isError}/>

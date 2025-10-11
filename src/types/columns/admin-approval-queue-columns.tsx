@@ -9,70 +9,67 @@ const columnHelper = createColumnHelper<DogUpdate>();
 export const getAdminApprovalQueueColumns = (userId: string) => {
     return useMemo(
         () => [
-            // Row select
-            columnHelper.display({
-                id: "select",
-                header: ({table}) => (
-                    <input
-                        type="checkbox"
-                        checked={table.getIsAllRowsSelected()}
-                        onChange={table.getToggleAllRowsSelectedHandler()}
-                    />
-                ),
-                cell: ({row}) => (
-                    <input
-                        type="checkbox"
-                        checked={row.getIsSelected()}
-                        onChange={row.getToggleSelectedHandler()}
-                    />
-                ),
-            }),
-
             // Dog name (from join)
             columnHelper.accessor("dog_name", {
                 header: "Dog",
                 cell: (info) => info.getValue() || "—",
                 enableSorting: true,
+                sortingFn: "alphanumeric",
                 footer: (info) => info.column.id,
             }),
 
             // Creator name (from join)
             columnHelper.accessor("creator_name", {
-                header: "By",
+                header: "Name",
                 cell: (info) => info.getValue() || "—",
                 enableSorting: true,
+                sortingFn: "alphanumeric",
+                footer: (info) => info.column.id,
+            }),
+
+            // Creator email (case-insensitive)
+            columnHelper.accessor("creator_email", {
+                header: "Email",
+                cell: (info) => info.getValue() || "—",
+                enableSorting: true,
+                sortingFn: "alphanumeric",
                 footer: (info) => info.column.id,
             }),
 
             // Title
             columnHelper.accessor("update_title", {
                 header: "Title",
+                cell: (info) => info.getValue() || "—",
                 enableSorting: true,
+                sortingFn: "alphanumeric",
                 footer: (info) => info.column.id,
             }),
 
-            // Description
+            // Description (long text; simple alpha sort)
             columnHelper.accessor("update_description", {
                 header: "Description",
-                cell: (info) => info.getValue(),
+                cell: (info) => info.getValue() || "—",
+                enableSorting: true,
+                sortingFn: "alphanumeric",
                 footer: (info) => info.column.id,
             }),
 
-            // Media
+            // Media (sort by number of items)
             columnHelper.accessor("update_media_urls", {
                 header: "Media",
+                enableSorting: true,
+                sortingFn: (a, b, id) => {
+                    const la = ((a.getValue<string[] | null>(id) ?? []) as string[]).length;
+                    const lb = ((b.getValue<string[] | null>(id) ?? []) as string[]).length;
+                    return la - lb; // asc: fewer first; desc flips automatically
+                },
                 cell: (info) => {
                     const urls = (info.getValue() ?? []) as string[];
                     if (urls.length) {
                         return (
-                            <div style={{display: "flex", gap: "8px", flexWrap: "wrap"}}>
+                            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                                 {urls.map((url, idx) => (
-                                    <a
-                                        key={url ?? idx}
-                                        href={url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
+                                    <a key={url ?? idx} href={url} target="_blank" rel="noopener noreferrer">
                                         <img
                                             src={url}
                                             alt={`Media ${idx + 1}`}
@@ -95,11 +92,32 @@ export const getAdminApprovalQueueColumns = (userId: string) => {
                 footer: (info) => info.column.id,
             }),
 
-            // Actions
+            columnHelper.accessor("update_created_at", {
+                header: "Created At",
+                enableSorting: true,
+                sortingFn: "datetime",
+                cell: (info) => {
+                    const value = info.getValue() as string | null;
+                    if (!value) return "—";
+                    // Display in local readable format; adjust to taste
+                    const date = new Date(value);
+                    return date.toLocaleString(undefined, {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    });
+                },
+                footer: (info) => info.column.id,
+            }),
+
+            // Actions (never sortable)
             columnHelper.display({
                 id: "actions",
                 header: "Actions",
-                cell: ({row}) => {
+                enableSorting: false,
+                cell: ({ row }) => {
                     const update = row.original;
                     const actions = [
                         {
@@ -107,27 +125,27 @@ export const getAdminApprovalQueueColumns = (userId: string) => {
                             action: async (id: string) => {
                                 try {
                                     await approveUpdate(id, userId);
-                                    window.location.reload(); // reload after success
+                                    window.location.reload();
                                 } catch (error) {
                                     console.error("Failed to approve update", error);
                                     alert("Failed to approve update");
                                 }
-                            }
+                            },
                         },
                         {
                             label: "Delete",
                             action: async (id: string) => {
                                 try {
                                     await rejectUpdate(id);
-                                    window.location.reload(); // reload after success
+                                    window.location.reload();
                                 } catch (error) {
                                     console.error("Failed to delete update", error);
                                     alert("Failed to delete update");
                                 }
-                            }
-                        }
+                            },
+                        },
                     ];
-                    return <ActionsDropdown id={update.update_id} actions={actions}/>;
+                    return <ActionsDropdown id={update.update_id} actions={actions} />;
                 },
             }),
         ],

@@ -47,35 +47,43 @@ export default function AdminSettingsView() {
         },
     ];
 
-        async function load() {
-            const [returnedTerms, returnedPostCharLimit, returnedTitleCharLimit, returnedNotifDays] = await Promise.all([
-                getSetting("terms"),
-                getSetting("postCharacterLimit"),
-                getSetting("titleCharacterLimit"),
-                getSetting("notificationPeriodDays")
-            ]);
-    
-            if (returnedTerms) {
-                setForm(prev => ({
+    async function load() {
+        const [returnedTerms, returnedPostCharLimit, returnedTitleCharLimit, returnedNotifDays] = await Promise.all([
+            getSetting("terms"),
+            getSetting("postCharacterLimit"),
+            getSetting("titleCharacterLimit"),
+            getSetting("notificationPeriodDays")
+        ]);
+
+        if (returnedTerms) {
+            setForm(prev => ({
                 ...prev,
-                terms: returnedTerms}))
-            };
-            if (returnedPostCharLimit) {
-                setForm(prev => ({
-                ...prev,
-                postCharacterLimit: returnedPostCharLimit}))
-            };
-            if (returnedTitleCharLimit) {
-                setForm(prev => ({
-                ...prev,
-                titleCharacterLimit: returnedTitleCharLimit}))
-            };
-            if (returnedNotifDays) {
-                setForm(prev => ({
-                ...prev,
-                notificationPeriodDays: returnedNotifDays}))
-            };
+                terms: returnedTerms
+            }))
         }
+        ;
+        if (returnedPostCharLimit) {
+            setForm(prev => ({
+                ...prev,
+                postCharacterLimit: returnedPostCharLimit
+            }))
+        }
+        ;
+        if (returnedTitleCharLimit) {
+            setForm(prev => ({
+                ...prev,
+                titleCharacterLimit: returnedTitleCharLimit
+            }))
+        }
+        ;
+        if (returnedNotifDays) {
+            setForm(prev => ({
+                ...prev,
+                notificationPeriodDays: returnedNotifDays
+            }))
+        }
+        ;
+    }
 
     useEffect(() => {
         load();
@@ -98,8 +106,8 @@ export default function AdminSettingsView() {
             if (returnedForm.notificationPeriodDays != null) {
                 await updateSetting("notificationPeriodDays", String(returnedForm.notificationPeriodDays));
             }
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            window.scrollTo({top: 0, behavior: 'smooth'});
             setMessage("Settings updated successfully");
             setIsError(false);
         } catch (e) {
@@ -109,7 +117,7 @@ export default function AdminSettingsView() {
         }
     }
 
-        return (
+    return (
         <div className="admin-dashboard">
             <div className="admin-settings">
                 <h1>System Settings</h1>

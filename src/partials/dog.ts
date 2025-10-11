@@ -130,7 +130,7 @@ export const createDog = async (form: Partial<Dog>) => {
 export const updateDog = async (form: Partial<Dog>) => {
     const {data, error} = await supabase
         .from('dogs')
-        .update({...form})
+        .update({...form, dog_updated_at: new Date()})
         .eq('dog_id', form.dog_id)
         .select()
         .single();

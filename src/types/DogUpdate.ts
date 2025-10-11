@@ -10,6 +10,7 @@ export interface DogUpdate {
     update_approved_by: string | null;
 
     creator_name?: string;
+    creator_email?: string;
     dog_name?: string;
     dog?: {
         dog_name?: string;
