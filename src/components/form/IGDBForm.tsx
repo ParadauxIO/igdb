@@ -38,6 +38,7 @@ export type FormField = {
     required?: boolean;
     component?: React.ComponentType<any>;
     options?: string[];
+    maxFiles?: number;
 };
 
 interface IGDBFormProps<T> {
@@ -313,7 +314,7 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                                     value={filesValue ?? null}
                                     required={field.required}
                                     onChange={(files: File[]) => handleChange(field.name, files)}
-                                    maxFiles={3}
+                                    maxFiles={field.maxFiles ?? 3} // 👈 fallback to 3
                                 />
                             </div>
                         );
