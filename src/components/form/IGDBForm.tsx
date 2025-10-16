@@ -314,7 +314,7 @@ export default function IGDBForm<T>({form, setForm, fields, onSubmit}: IGDBFormP
                                     value={filesValue ?? null}
                                     required={field.required}
                                     onChange={(files: File[]) => handleChange(field.name, files)}
-                                    maxFiles={field.maxFiles ?? 3} // 👈 fallback to 3
+                                    maxFiles={field.maxFiles ?? 3}
                                 />
                             </div>
                         );
