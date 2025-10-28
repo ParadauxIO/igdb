@@ -16,7 +16,7 @@ const PostUpdateView = () => {
         {name: 'dog_id', label: 'Dog Name', type: 'dog-select', required: true},
         {name: 'update_title', label: 'Post Title', type: 'title-text', required: true},
         {name: 'update_description', label: 'Post Description', type: 'post-textarea', required: false},
-        {name: 'files', label: 'Media', type: 'file-upload', required: false}
+        {name: 'files', label: 'Media', type: 'file-upload', required: false, maxFiles: 3}
     ]
 
     const handleUpdate = async (update: Partial<DogUpdate>) => {
