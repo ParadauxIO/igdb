@@ -66,14 +66,21 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     }, []);
 
     const addFiles = (incoming: FileList | File[]) => {
-      const toAdd = Array.from(incoming) as File[];
-      const currentFiles = value ?? [];
-      
-      const remainingSlots = maxFiles ? maxFiles - currentFiles.length : toAdd.length;
-      if (remainingSlots <= 0) return; // Can't add more
+        const toAdd = Array.from(incoming) as File[];
 
-      const filesToAdd = toAdd.slice(0, remainingSlots);
-      onChange([...currentFiles, ...filesToAdd]);
+        if (maxFiles === 1) {
+            // Replace existing file with the new one
+            onChange(toAdd.slice(0, 1));
+            return;
+        }
+
+        const currentFiles = value ?? [];
+        const remainingSlots = maxFiles ? maxFiles - currentFiles.length : toAdd.length;
+
+        if (remainingSlots <= 0) return;
+
+        const filesToAdd = toAdd.slice(0, remainingSlots);
+        onChange([...currentFiles, ...filesToAdd]);
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,8 +130,10 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                 }}
             >
               <p>
-                  {atLimit
-                    ? `Upload limit reached (${maxFiles} image${maxFiles === 1 ? '' : 's'})`
+                {atLimit && maxFiles !== 1
+                  ? `Upload limit reached (${maxFiles} image${maxFiles === 1 ? '' : 's'})`
+                  : maxFiles === 1
+                    ? 'Click or drag to upload a photo'
                     : 'Drag & drop or click to select multiple images'}
               </p>
                 <input

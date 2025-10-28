@@ -140,6 +140,7 @@ export default function AdminEditDogView() {
             label: "Dog Photo",
             type: "file-upload",
             required: false,
+            maxFiles: 1, 
         },
         {
             name: "dog_status",
