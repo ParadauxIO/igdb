@@ -57,26 +57,44 @@ export default function AdminUsersView() {
     }
 
     const handleDeleteUser = async (id: string) => {
-        const confirmed = window.confirm("Are you sure you want to delete this user?");
-        if (!confirmed) return;
+        if (!window.confirm("Are you sure you want to delete this user?")) return;
 
-        const error = await deleteUser(id);
-
-        if (error && error.details.includes("still referenced")) {
-            setIsError(true);
-            setMessage("Failed to delete user as there are still dogs assigned to them.");
-            return;
-        }
+        const { error } = await deleteUser(id);
 
         if (error) {
-            setIsError(true);
-            setMessage("Failed to delete user.");
-            return;
+            // Prefer status first
+            switch (error.status) {
+                case 401:
+                    setIsError(true);
+                    setMessage("You’re not signed in or your session expired.");
+                    return;
+                case 403:
+                    setIsError(true);
+                    setMessage("You need admin permissions to delete users.");
+                    return;
+                case 404:
+                    setIsError(true);
+                    setMessage("That user doesn’t exist.");
+                    return;
+                case 409: {
+                    // Our function returns a machine-readable payload too; try to pull counts.
+                    // Supabase puts function response body into error.message (string), not JSON.
+                    // So we also try to decode the last response via `data` if present.
+                    // Easiest: just show a friendly message.
+                    setIsError(true);
+                    setMessage("Failed to delete user: there are still references (dogs or updates) assigned to them.");
+                    return;
+                }
+                default:
+                    setIsError(true);
+                    setMessage("Failed to delete user due to a server error.");
+                    return;
+            }
         }
 
+        // Success path
         setIsError(false);
-        setMessage("Successfully deleted user.")
-
+        setMessage("Successfully deleted user.");
         await fetchUsers();
     };
 

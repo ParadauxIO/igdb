@@ -22,14 +22,13 @@ export const archiveUser = async (userId: string) => {
     return error;
 }
 
-export const deleteUser = async (userId: string) => {
-    const { error } = await supabase
-        .from('users')
-        .delete()
-        .eq('id', userId);
-
-    return error;
-}
+export const deleteUser = async (id: string) => {
+    const { data, error } = await supabase.functions.invoke("delete-user", {
+        method: "POST",
+        body: { id },
+    });
+    return { data, error };
+};
 
 export const resendInvite = async (userId: string) => {
     const { error } = await supabase.functions.invoke("update-user", {
